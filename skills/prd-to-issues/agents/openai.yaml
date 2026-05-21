@@ -1,0 +1,4 @@
+interface:
+  display_name: "PRD to Issues"
+  short_description: "Convert PRDs into execution-ready issues"
+  default_prompt: "Use $prd-to-issues to convert this PRD into execution-ready issues."

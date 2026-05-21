@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write a PRD"
+  short_description: "Turn ideas into implementation-ready PRDs"
+  default_prompt: "Use $write-a-prd to turn this feature idea into an implementation-ready PRD."

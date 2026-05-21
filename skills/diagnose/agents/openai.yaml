@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diagnose"
+  short_description: "Debug hard bugs with evidence loops"
+  default_prompt: "Use $diagnose to debug this failure with a reproducible evidence loop."
