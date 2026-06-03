@@ -6,6 +6,18 @@ These skills are written as agent-facing operating procedures rather than public
 
 This is not an official OpenAI skill library.
 
+## Why This Exists
+
+I use Codex as an engineering partner, not only as a code generator. These skills capture the parts of engineering work that should be repeatable:
+
+- turning vague product or engineering requests into scoped execution plans
+- debugging with a disciplined reproduce, minimize, instrument, and regression-test loop
+- reviewing architecture and implementation decisions with repository-local context
+- preserving decisions in durable notes so future agents do not rediscover the same constraints
+- keeping test-driven development practical without turning tests into brittle ceremony
+
+The skills are intentionally written as operating procedures because the goal is reliable behavior under real project pressure, not a polished prompt gallery.
+
 ## Skills
 
 - `diagnose`: a disciplined reproduce, minimize, hypothesize, instrument, fix, and regression-test loop for hard bugs and performance regressions.
@@ -31,3 +43,11 @@ The repository root is intentionally small so additional Codex-related assets ca
 Each skill is self-contained. To reuse one, copy the relevant directory under your Codex skills path and review its `SKILL.md` before relying on it in a different repository or workflow.
 
 Because these are personal workflows, treat them as examples of agent operating design rather than universal best practices.
+
+## Example Workflows
+
+- Use `write-a-prd` to turn a rough implementation idea into a decision-ready product or engineering brief.
+- Use `prd-to-issues` to split that brief into sequenced implementation issues with explicit validation.
+- Use `tdd` when a change needs a tight test-first loop.
+- Use `grill-with-docs` before merging architecture-heavy changes that depend on repository conventions.
+- Use `decision-trace-writer` after important tradeoffs are settled so future work has a stable reference.
