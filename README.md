@@ -20,6 +20,7 @@ The skills are intentionally written as operating procedures because the goal is
 
 ## Skills
 
+- `agent-legibility-review`: a framework-agnostic repository review workflow for finding AI-agent navigation risks, hidden rules, duplicated authorities, and ambiguous ownership.
 - `architecture-review`: a repository architecture review workflow focused on ownership, authoritative sources, boundaries, drift, and phased refactor planning.
 - `diagnose`: a disciplined reproduce, minimize, hypothesize, instrument, fix, and regression-test loop for hard bugs and performance regressions.
 - `decision-trace-writer`: a workflow for preserving stable engineering decisions as durable, agent-facing traces.
