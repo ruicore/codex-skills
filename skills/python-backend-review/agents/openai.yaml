@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python Backend Review"
+  short_description: "Python backend version review"
+  default_prompt: "Review this Python backend repository against a target Python version and Python backend fundamentals standard."
