@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python Ecosystem Review"
+  short_description: "Review Python library usage"
+  default_prompt: "Use $python-ecosystem-review to review this Python repository's important ecosystem library usage and integration boundaries."

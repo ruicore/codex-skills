@@ -27,6 +27,7 @@ The skills are intentionally written as operating procedures because the goal is
 - `grill-me`: a direct senior-engineer critique mode for plans, designs, implementations, PRs, and technical decisions.
 - `grill-with-docs`: a deeper architecture and domain review workflow grounded in repository-local docs and conventions.
 - `python-backend-review`: a version-aware Python backend fundamentals review covering compatibility, typing, async correctness, configuration, logging, packaging, testing, and maintainability.
+- `python-ecosystem-review`: a dependency-aware review workflow for important Python ecosystem library usage and integration boundaries.
 - `prd-to-issues`: a converter from PRDs or implementation briefs into scoped, sequenced execution issues.
 - `tdd`: a test-driven development workflow with supporting notes on tests, mocking, interface design, refactoring, and deep modules.
 - `write-a-prd`: a workflow for turning rough ideas or engineering requests into structured PRDs and implementation-ready specs.
