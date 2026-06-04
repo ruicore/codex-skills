@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architecture Review"
+  short_description: "Review architecture boundaries and ownership"
+  default_prompt: "Use $architecture-review to review this repository's architecture and produce prioritized findings."
