@@ -1,57 +1,101 @@
 # Codex Skills
 
-This is my personal collection of Codex skills. The repository is public so it can also serve as a portfolio of how I structure reusable agent workflows: diagnosis loops, review protocols, specification writing, test-driven development, and durable engineering decision traces.
+Reusable AI-assisted engineering workflows for Codex.
 
-These skills are written as agent-facing operating procedures rather than public documentation. They are opinionated, tuned for my own Codex usage, and intended to be easy to inspect, adapt, or fork.
+This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, test-driven development, specification writing, PRD-to-issue planning, and durable decision traces.
 
-This is not an official OpenAI skill library.
+The goal is to make AI-assisted engineering more reliable under real project pressure. Each skill defines a workflow that an agent can follow with local repository evidence, explicit validation, and clear boundaries.
+
+This is a personal skill library, not an official OpenAI project.
 
 ## Why This Exists
 
-I use Codex as an engineering partner, not only as a code generator. These skills capture the parts of engineering work that should be repeatable:
+I use Codex as an engineering partner, not only as a code generator. The work that benefits most from reusable skills is the work where consistency matters:
 
-- turning vague product or engineering requests into scoped execution plans
-- debugging with a disciplined reproduce, minimize, instrument, and regression-test loop
-- reviewing architecture and implementation decisions with repository-local context
-- preserving decisions in durable notes so future agents do not rediscover the same constraints
-- keeping test-driven development practical without turning tests into brittle ceremony
+- turning vague requests into scoped implementation plans
+- debugging with a reproduce, minimize, instrument, fix, and regression-test loop
+- reviewing architecture using repository-local evidence
+- preserving decisions so future work does not rediscover the same constraints
+- keeping TDD practical and behavior-focused
+- converting product or engineering briefs into executable issue plans
 
-The skills are intentionally written as operating procedures because the goal is reliable behavior under real project pressure, not a polished prompt gallery.
+The skills are intentionally written as operating procedures because the target outcome is repeatable engineering behavior, not clever wording.
 
-## Skills
+## Install
 
-- `agent-legibility-review`: a framework-agnostic repository review workflow for finding AI-agent navigation risks, hidden rules, duplicated authorities, and ambiguous ownership.
-- `architecture-review`: a repository architecture review workflow focused on ownership, authoritative sources, boundaries, drift, and phased refactor planning.
-- `diagnose`: a disciplined reproduce, minimize, hypothesize, instrument, fix, and regression-test loop for hard bugs and performance regressions.
-- `decision-trace-writer`: a workflow for preserving stable engineering decisions as durable, agent-facing traces.
-- `grill-me`: a direct senior-engineer critique mode for plans, designs, implementations, PRs, and technical decisions.
-- `grill-with-docs`: a deeper architecture and domain review workflow grounded in repository-local docs and conventions.
-- `python-backend-review`: a version-aware Python backend fundamentals review covering compatibility, typing, async correctness, configuration, logging, packaging, testing, and maintainability.
-- `python-ecosystem-review`: a dependency-aware review workflow for important Python ecosystem library usage and integration boundaries.
-- `prd-to-issues`: a converter from PRDs or implementation briefs into scoped, sequenced execution issues.
-- `tdd`: a test-driven development workflow with supporting notes on tests, mocking, interface design, refactoring, and deep modules.
-- `write-a-prd`: a workflow for turning rough ideas or engineering requests into structured PRDs and implementation-ready specs.
+Copy the skill directory you want into your Codex skills directory:
 
-## Layout
+```bash
+mkdir -p ~/.codex/skills
+cp -R skills/diagnose ~/.codex/skills/
+```
 
-- `skills/`: Codex skill directories.
-- `skills/*/SKILL.md`: the main instructions for each skill.
-- `skills/*/agents/openai.yaml`: optional metadata for discovery and UI presentation.
-- `skills/*/*.md`: supporting references, templates, and conventions used by a skill.
-- `skills/*/scripts/`: optional helper scripts used by a skill.
-
-The repository root is intentionally small so additional Codex-related assets can be added beside `skills/` later without obscuring the skill definitions.
+Then review the copied `SKILL.md` before relying on it in another repository. Some skills include supporting notes or scripts; keep those files with the skill directory.
 
 ## Use
 
-Each skill is self-contained. To reuse one, copy the relevant directory under your Codex skills path and review its `SKILL.md` before relying on it in a different repository or workflow.
+Each skill is self-contained:
+
+- `skills/*/SKILL.md` contains the main workflow.
+- `skills/*/agents/openai.yaml` contains optional discovery metadata.
+- `skills/*/*.md` contains supporting references, templates, or conventions.
+- `skills/*/scripts/` contains helper scripts when a workflow needs one.
+
+Use a skill when the task matches the workflow, not because the skill name sounds related. For example, use `diagnose` when there is a concrete bug or performance regression; use `architecture-review` when the question is about ownership, boundaries, authority, or change surface.
+
+## Skills and Engineering Outcomes
+
+| Skill | Engineering outcome | What it protects against |
+|---|---|---|
+| `diagnose` | Builds a fast feedback loop before fixing bugs. | Guessing, unverified fixes, missing regression tests. |
+| `tdd` | Drives implementation through behavior-focused red-green-refactor slices. | Brittle tests, implementation-coupled tests, speculative code. |
+| `architecture-review` | Reviews ownership, authority, boundaries, drift, and change surface. | Scattered rules, duplicated concepts, unclear module responsibility. |
+| `agent-legibility-review` | Finds repository navigation risks for future coding agents. | Hidden conventions, conflicting docs, ambiguous task entry points. |
+| `grill-me` | Applies direct senior-engineer critique to plans and implementation choices. | Weak assumptions, vague tradeoffs, under-specified risks. |
+| `grill-with-docs` | Grounds critique in local repository docs and decision records. | Generic advice that ignores project-specific constraints. |
+| `python-backend-review` | Reviews Python backend fundamentals across typing, async, config, logging, packaging, and tests. | Backend regressions caused by ecosystem or maintainability blind spots. |
+| `python-ecosystem-review` | Checks important third-party library usage and integration boundaries. | Misused dependencies, version drift, unsafe ecosystem assumptions. |
+| `write-a-prd` | Turns rough ideas into structured product or engineering briefs. | Ambiguous requirements and unreviewable implementation starts. |
+| `prd-to-issues` | Splits a brief into scoped, dependency-aware execution issues. | Horizontal task splitting, untestable tickets, unclear sequencing. |
+| `decision-trace-writer` | Records durable technical decisions for future readers and agents. | Repeated rediscovery of settled constraints and rationale. |
+
+## Design Principles
+
+- **Workflow over prompt:** a useful skill defines steps, evidence, checkpoints, and validation.
+- **Local evidence first:** repository docs, code, tests, configs, and runtime behavior outrank generic best practices.
+- **Bounded scope:** each skill should do one kind of engineering work well.
+- **Observable outcomes:** a skill should produce a review, test, issue plan, decision trace, or verified fix.
+- **Validation before confidence:** claims should be backed by tests, repro loops, source inspection, or explicit uncertainty.
+- **Reusable but not universal:** these skills encode opinions and defaults; adapt them before using them in a different engineering culture.
+
+## Example Workflow
+
+Vague task:
+
+> "This API sometimes returns the wrong result. Can you fix it?"
+
+Repeatable skill-driven flow:
+
+1. Use `diagnose` to build a deterministic feedback loop: failing test, replay script, CLI fixture, or HTTP request.
+2. Reproduce the exact symptom and capture the failure mode.
+3. Generate ranked, falsifiable hypotheses before changing code.
+4. Add targeted instrumentation that maps to one hypothesis at a time.
+5. Convert the minimized repro into a regression test at the correct seam.
+6. Fix the bug and rerun both the regression test and the original repro.
+7. If the bug exposed unclear ownership or poor test seams, use `architecture-review` to identify the smallest boundary improvement.
+8. If the fix requires a broader change, use `prd-to-issues` to split follow-up work into verifiable slices.
+9. Use `decision-trace-writer` when an important tradeoff or constraint needs to be preserved.
+
+The value is not that the agent receives a better phrase. The value is that the work becomes inspectable, repeatable, and easier to resume later.
+
+## Maintenance
+
+This repository is versioned informally through Git history. When changing a skill:
+
+- keep the skill focused on its original engineering outcome
+- update supporting notes when workflow assumptions change
+- prefer concrete examples over broad advice
+- remove stale instructions rather than layering exceptions
+- test scripts or templates locally when they are part of the workflow
 
 Because these are personal workflows, treat them as examples of agent operating design rather than universal best practices.
-
-## Example Workflows
-
-- Use `write-a-prd` to turn a rough implementation idea into a decision-ready product or engineering brief.
-- Use `prd-to-issues` to split that brief into sequenced implementation issues with explicit validation.
-- Use `tdd` when a change needs a tight test-first loop.
-- Use `grill-with-docs` before merging architecture-heavy changes that depend on repository conventions.
-- Use `decision-trace-writer` after important tradeoffs are settled so future work has a stable reference.
