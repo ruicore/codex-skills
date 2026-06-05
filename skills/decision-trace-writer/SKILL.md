@@ -256,11 +256,11 @@ Prefer the repository's existing durable-memory convention. If no convention exi
 Example paths:
 
 ```text
-<trace directory>/YYYY-MM-DD_<decision_slug>_trace.md
-decision-traces/YYYY-MM-DD_<decision_slug>_trace.md
+<trace directory>/YYYY-MM-DD_HHmm_<decision_slug>_trace.md
+decision-traces/YYYY-MM-DD_HHmm_<decision_slug>_trace.md
 ```
 
-Use a focused slug based on the decision. Mention `.manifest/decision-traces/` only when the current repository already uses it or the user asks for it.
+Preserve hour and minute in new trace filenames to avoid same-day collisions and keep chronological order clear. Use a focused slug based on the decision. Mention `.manifest/decision-traces/` only when the current repository already uses it or the user asks for it.
 
 ## Before Finishing
 
