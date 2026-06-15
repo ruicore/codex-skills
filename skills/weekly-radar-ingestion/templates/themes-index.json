@@ -1,0 +1,10 @@
+{
+  "theme-slug": [
+    {
+      "date": "YYYY-MM-DD",
+      "title": "",
+      "markdown_path": "radars/YYYY/YYYY-MM-DD.md",
+      "data_path": "data/YYYY/YYYY-MM-DD.json"
+    }
+  ]
+}

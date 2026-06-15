@@ -1,0 +1,4 @@
+interface:
+  display_name: "Weekly Radar Ingestion"
+  short_description: "Ingest reviewed AI radar reports"
+  default_prompt: "Use $weekly-radar-ingestion to ingest this reviewed weekly AI Systems Engineering Radar report into ai-signal-radar."

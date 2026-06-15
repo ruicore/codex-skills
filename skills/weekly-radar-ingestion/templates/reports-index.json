@@ -1,0 +1,9 @@
+[
+  {
+    "date": "YYYY-MM-DD",
+    "title": "",
+    "themes": [],
+    "markdown_path": "radars/YYYY/YYYY-MM-DD.md",
+    "data_path": "data/YYYY/YYYY-MM-DD.json"
+  }
+]
