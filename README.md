@@ -2,7 +2,7 @@
 
 Reusable AI-assisted engineering workflows for Codex.
 
-This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, test-driven development, specification writing, PRD-to-issue planning, durable decision traces, and reviewed weekly radar ingestion.
+This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, test-driven development, specification writing, PRD-to-issue planning, durable decision traces, reviewed weekly radar ingestion, and radar history analysis.
 
 The goal is to make AI-assisted engineering more reliable under real project pressure. Each skill defines a workflow that an agent can follow with local repository evidence, explicit validation, and clear boundaries.
 
@@ -19,6 +19,7 @@ I use Codex as an engineering partner, not only as a code generator. The work th
 - keeping TDD practical and behavior-focused
 - converting product or engineering briefs into executable issue plans
 - ingesting reviewed AI systems radar reports into durable agent-readable memory
+- analyzing reviewed radar history for monthly, quarterly, theme, and idea-mining reports
 
 The skills are intentionally written as operating procedures because the target outcome is repeatable engineering behavior, not clever wording.
 
@@ -60,6 +61,7 @@ Use a skill when the task matches the workflow, not because the skill name sound
 | `prd-to-issues` | Splits a brief into scoped, dependency-aware execution issues. | Horizontal task splitting, untestable tickets, unclear sequencing. |
 | `decision-trace-writer` | Records durable technical decisions for future readers and agents. | Repeated rediscovery of settled constraints and rationale. |
 | `weekly-radar-ingestion` | Ingests Ray-reviewed weekly AI Systems Engineering Radar reports into durable signal records. | Treating approved reports as drafts, losing reasoning, and unstructured long-term agent memory. |
+| `radar-analysis` | Mines reviewed AI signal radar history for monthly reviews, quarterly synthesis, theme analysis, and idea candidates. | Unsupported trend claims, summary drift, and analysis detached from reviewed repository evidence. |
 
 ## Design Principles
 
