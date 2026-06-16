@@ -2,7 +2,7 @@
 
 Reusable AI-assisted engineering workflows for Codex.
 
-This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, test-driven development, specification writing, PRD-to-issue planning, durable decision traces, reviewed weekly radar ingestion, and radar history analysis.
+This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, database access audit, test-driven development, specification writing, PRD-to-issue planning, durable decision traces, reviewed weekly radar ingestion, and radar history analysis.
 
 The goal is to make AI-assisted engineering more reliable under real project pressure. Each skill defines a workflow that an agent can follow with local repository evidence, explicit validation, and clear boundaries.
 
@@ -15,6 +15,7 @@ I use Codex as an engineering partner, not only as a code generator. The work th
 - turning vague requests into scoped implementation plans
 - debugging with a reproduce, minimize, instrument, fix, and regression-test loop
 - reviewing architecture using repository-local evidence
+- auditing database access patterns without assuming a specific stack
 - preserving decisions so future work does not rediscover the same constraints
 - keeping TDD practical and behavior-focused
 - converting product or engineering briefs into executable issue plans
@@ -52,6 +53,7 @@ Use a skill when the task matches the workflow, not because the skill name sound
 | `diagnose` | Builds a fast feedback loop before fixing bugs. | Guessing, unverified fixes, missing regression tests. |
 | `tdd` | Drives implementation through behavior-focused red-green-refactor slices. | Brittle tests, implementation-coupled tests, speculative code. |
 | `architecture-review` | Reviews ownership, authority, boundaries, drift, and change surface. | Scattered rules, duplicated concepts, unclear module responsibility. |
+| `database-access-audit` | Reviews database access patterns across stacks with read-only, evidence-first scope control. | Looped DB I/O, unsafe bulk writes, N+1 queries, missing scope predicates, transaction drift, and unverified rowcount assumptions. |
 | `agent-legibility-review` | Finds repository navigation risks for future coding agents. | Hidden conventions, conflicting docs, ambiguous task entry points. |
 | `grill-me` | Applies direct senior-engineer critique to plans and implementation choices. | Weak assumptions, vague tradeoffs, under-specified risks. |
 | `grill-with-docs` | Grounds critique in local repository docs and decision records. | Generic advice that ignores project-specific constraints. |
