@@ -52,18 +52,18 @@ Use a skill when the task matches the workflow, not because the skill name sound
 |---|---|---|
 | <nobr><code>diagnose</code></nobr> | Builds a fast feedback loop before fixing bugs. | Guessing, unverified fixes, missing regression tests. |
 | <nobr><code>tdd</code></nobr> | Drives implementation through behavior-focused red-green-refactor slices. | Brittle tests, implementation-coupled tests, speculative code. |
-| <nobr><code>architecture-review</code></nobr> | Reviews ownership, authority, boundaries, drift, and change surface. | Scattered rules, duplicated concepts, unclear module responsibility. |
-| <nobr><code>database-access-audit</code></nobr> | Reviews database access patterns across stacks with read-only, evidence-first scope control. | Looped DB I/O, unsafe bulk writes, N+1 queries, missing scope predicates, transaction drift, and unverified rowcount assumptions. |
-| <nobr><code>agent-legibility-review</code></nobr> | Finds repository navigation risks for future coding agents. | Hidden conventions, conflicting docs, ambiguous task entry points. |
-| <nobr><code>grill-me</code></nobr> | Applies direct senior-engineer critique to plans and implementation choices. | Weak assumptions, vague tradeoffs, under-specified risks. |
-| <nobr><code>grill-with-docs</code></nobr> | Grounds critique in local repository docs and decision records. | Generic advice that ignores project-specific constraints. |
-| <nobr><code>python-backend-review</code></nobr> | Reviews Python backend fundamentals across typing, async, config, logging, packaging, and tests. | Backend regressions caused by ecosystem or maintainability blind spots. |
-| <nobr><code>python-ecosystem-review</code></nobr> | Checks important third-party library usage and integration boundaries. | Misused dependencies, version drift, unsafe ecosystem assumptions. |
-| <nobr><code>write-a-prd</code></nobr> | Turns rough ideas into structured product or engineering briefs. | Ambiguous requirements and unreviewable implementation starts. |
-| <nobr><code>prd-to-issues</code></nobr> | Splits a brief into scoped, dependency-aware execution issues. | Horizontal task splitting, untestable tickets, unclear sequencing. |
-| <nobr><code>decision-trace-writer</code></nobr> | Records durable technical decisions for future readers and agents. | Repeated rediscovery of settled constraints and rationale. |
-| <nobr><code>weekly-radar-ingestion</code></nobr> | Ingests Ray-reviewed weekly AI Systems Engineering Radar reports into durable signal records. | Treating approved reports as drafts, losing reasoning, and unstructured long-term agent memory. |
-| <nobr><code>radar-analysis</code></nobr> | Mines reviewed AI signal radar history for monthly reviews, quarterly synthesis, theme analysis, and idea candidates. | Unsupported trend claims, summary drift, and analysis detached from reviewed repository evidence. |
+| <nobr><code>architecture&#8209;review</code></nobr> | Reviews ownership, authority, boundaries, drift, and change surface. | Scattered rules, duplicated concepts, unclear module responsibility. |
+| <nobr><code>database&#8209;access&#8209;audit</code></nobr> | Reviews database access patterns across stacks with read-only, evidence-first scope control. | Looped DB I/O, unsafe bulk writes, N+1 queries, missing scope predicates, transaction drift, and unverified rowcount assumptions. |
+| <nobr><code>agent&#8209;legibility&#8209;review</code></nobr> | Finds repository navigation risks for future coding agents. | Hidden conventions, conflicting docs, ambiguous task entry points. |
+| <nobr><code>grill&#8209;me</code></nobr> | Applies direct senior-engineer critique to plans and implementation choices. | Weak assumptions, vague tradeoffs, under-specified risks. |
+| <nobr><code>grill&#8209;with&#8209;docs</code></nobr> | Grounds critique in local repository docs and decision records. | Generic advice that ignores project-specific constraints. |
+| <nobr><code>python&#8209;backend&#8209;review</code></nobr> | Reviews Python backend fundamentals across typing, async, config, logging, packaging, and tests. | Backend regressions caused by ecosystem or maintainability blind spots. |
+| <nobr><code>python&#8209;ecosystem&#8209;review</code></nobr> | Checks important third-party library usage and integration boundaries. | Misused dependencies, version drift, unsafe ecosystem assumptions. |
+| <nobr><code>write&#8209;a&#8209;prd</code></nobr> | Turns rough ideas into structured product or engineering briefs. | Ambiguous requirements and unreviewable implementation starts. |
+| <nobr><code>prd&#8209;to&#8209;issues</code></nobr> | Splits a brief into scoped, dependency-aware execution issues. | Horizontal task splitting, untestable tickets, unclear sequencing. |
+| <nobr><code>decision&#8209;trace&#8209;writer</code></nobr> | Records durable technical decisions for future readers and agents. | Repeated rediscovery of settled constraints and rationale. |
+| <nobr><code>weekly&#8209;radar&#8209;ingestion</code></nobr> | Ingests Ray-reviewed weekly AI Systems Engineering Radar reports into durable signal records. | Treating approved reports as drafts, losing reasoning, and unstructured long-term agent memory. |
+| <nobr><code>radar&#8209;analysis</code></nobr> | Mines reviewed AI signal radar history for monthly reviews, quarterly synthesis, theme analysis, and idea candidates. | Unsupported trend claims, summary drift, and analysis detached from reviewed repository evidence. |
 
 ## Design Principles
 
