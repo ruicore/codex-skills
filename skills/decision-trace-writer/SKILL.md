@@ -9,6 +9,27 @@ Write a local, durable decision trace that lets a future Codex instance understa
 
 The trace is not a public user document. Treat it as agent-facing project memory. Follow the current repository's durable-memory convention instead of assuming one.
 
+## Worth Recording Gate
+
+When this skill is invoked, first decide whether a durable trace is worth writing or updating. Do not create a trace only because the skill triggered.
+
+Record a durable trace when at least one of these is true:
+- the user explicitly asks to preserve context for future Codex runs, agent memory, or durable local guidance
+- a stable engineering decision, finding, or constraint has been clarified and future agents are likely to need it
+- local evidence confirmed, weakened, or disproved a review claim, bug hypothesis, or architecture concern in a way that should not be re-litigated
+- the decision rejects an obvious alternative that a future agent might otherwise reintroduce
+- the decision affects architecture boundaries, integration contracts, user-facing behavior, correctness, data integrity, migrations, evaluations, or cross-surface behavior
+- implementation or validation changed the status of an existing decision trace
+
+Do not write a durable trace when the work is only:
+- a routine implementation detail with no new reusable decision
+- a transient task plan, TODO list, meeting-style summary, or chat recap
+- an unresolved investigation where the facts are still changing
+- a duplicate of an existing trace with no changed decision, status, validation, or revisit trigger
+- something a final response, inline code comment, active issue, or ordinary project document can capture more clearly
+
+If the answer is "not worth recording," stop using this skill for the task and briefly state why no durable trace was created. If the answer is borderline in an interactive session, explain the tradeoff and ask or propose before creating a new trace.
+
 ## Not For
 
 Do not use this skill for:
@@ -71,6 +92,9 @@ Do not create duplicate traces for the same decision just because a later Codex 
 - If a trace location is version-controlled, be especially conservative.
 
 ## Core Workflow
+
+0. Decide whether a durable trace is warranted.
+   Apply the Worth Recording Gate before inspecting placement or writing files. If no trace is warranted, do not continue the trace-writing workflow.
 
 1. Read local truth first.
    Inspect the relevant local context files, code, tests, diffs, logs, and prior trace files before writing. Do not reconstruct the decision only from conversation memory.
