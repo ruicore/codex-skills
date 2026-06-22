@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Career Signal Researcher"
+  short_description: "AI systems career and market signal radar"
+  default_prompt: "Use $ai-career-signal-researcher to research AI systems engineering trends, career skill demand, and portfolio or content opportunities."
