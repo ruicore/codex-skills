@@ -2,7 +2,7 @@
 
 Reusable AI-assisted engineering workflows for Codex.
 
-This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, database access audit, test-driven development, specification writing, PRD-to-issue planning, durable decision traces, reviewed weekly radar ingestion, and radar history analysis.
+This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, database access audit, test-driven development, specification writing, PRD-to-issue planning, durable decision traces, reviewed weekly radar ingestion, radar history analysis, external research, visual artifacts, publishing workflows, and tool-specific operations.
 
 The goal is to make AI-assisted engineering more reliable under real project pressure. Each skill defines a workflow that an agent can follow with local repository evidence, explicit validation, and clear boundaries.
 
@@ -21,6 +21,9 @@ I use Codex as an engineering partner, not only as a code generator. The work th
 - converting product or engineering briefs into executable issue plans
 - ingesting reviewed AI systems radar reports into durable agent-readable memory
 - analyzing reviewed radar history for monthly, quarterly, theme, and idea-mining reports
+- researching current AI engineering career signals and content opportunities
+- turning sponsorship emails into prioritized brand-deal lead lists
+- operating specialized tools such as Buffer, Paper, Readwise, Excalidraw, and genmedia with repeatable guardrails
 
 The skills are intentionally written as operating procedures because the target outcome is repeatable engineering behavior, not clever wording.
 
@@ -64,6 +67,14 @@ Use a skill when the task matches the workflow, not because the skill name sound
 | <nobr><code>decision&#8209;trace&#8209;writer</code></nobr> | Records durable technical decisions for future readers and agents. | Repeated rediscovery of settled constraints and rationale. |
 | <nobr><code>weekly&#8209;radar&#8209;ingestion</code></nobr> | Ingests Ray-reviewed weekly AI Systems Engineering Radar reports into durable signal records. | Treating approved reports as drafts, losing reasoning, and unstructured long-term agent memory. |
 | <nobr><code>radar&#8209;analysis</code></nobr> | Mines reviewed AI signal radar history for monthly reviews, quarterly synthesis, theme analysis, and idea candidates. | Unsupported trend claims, summary drift, and analysis detached from reviewed repository evidence. |
+| <nobr><code>ai&#8209;career&#8209;signal&#8209;researcher</code></nobr> | Researches AI systems engineering career signals, market demand, and portfolio opportunities. | Hype-driven learning plans, popularity-only evidence, and recommendations detached from backend engineering reality. |
+| <nobr><code>brand&#8209;deal&#8209;researcher</code></nobr> | Converts sponsorship and paid-promotion emails into researched, prioritized lead lists. | Missing real opportunities, duplicate follow-ups, weak fit scoring, and unverified brand claims. |
+| <nobr><code>buffer&#8209;publisher</code></nobr> | Operates Buffer accounts, channels, ideas, drafts, queues, and scheduled posts through the GraphQL API. | Accidental publishing, wrong-channel posts, missing preflight checks, and unsafe social-post mutations. |
+| <nobr><code>excalidraw&#8209;diagrams</code></nobr> | Creates polished editable Excalidraw diagrams from text descriptions and structured plans. | Unclear diagram scope, inconsistent visual style, and non-editable one-off visuals. |
+| <nobr><code>genmedia</code></nobr> | Uses the genmedia CLI to discover, inspect, run, and manage fal.ai model endpoints. | Invented endpoint IDs, schema guessing, credential leakage, and untracked generated media. |
+| <nobr><code>paper&#8209;deck&#8209;style</code></nobr> | Guides minimal, spacious, high-end Paper slide deck design. | Crowded slides, text-heavy decks, mismatched section styles, and weak visual hierarchy. |
+| <nobr><code>paper&#8209;mcp</code></nobr> | Edits open Paper boards through the local Paper MCP server with inspection and screenshot verification. | Fragile UI automation, unverified board edits, raw node-ID leakage, and accidental destructive canvas changes. |
+| <nobr><code>readwise&#8209;cli&#8209;control</code></nobr> | Searches, exports, organizes, and automates Readwise or Reader through the official CLI. | Browser-auth dead ends, missing source links, raw result dumps, and unconfirmed library writes. |
 
 ## Design Principles
 

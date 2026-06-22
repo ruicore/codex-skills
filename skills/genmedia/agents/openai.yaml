@@ -1,0 +1,6 @@
+interface:
+  display_name: "Genmedia"
+  short_description: "Run fal.ai media models from the terminal"
+  default_prompt: "Use $genmedia to search fal.ai models, inspect the schema, run the right endpoint, and return downloaded output files."
+policy:
+  allow_implicit_invocation: true
