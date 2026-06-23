@@ -19,6 +19,7 @@ A repository is agent-legible when:
 - changes are localized
 - impact scope is predictable
 - ambiguity is minimized
+- Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
 
 This is not a code-style review, framework review, idiom review, performance review, security review, clean-code review, maintainability review, or generic architecture review. Discuss structure only when it directly affects finding code, discovering rules, identifying ownership, predicting impact, or making safe modifications.
 
@@ -93,6 +94,22 @@ Use this priority scale:
 
 Report only issues that materially affect future agent behavior, navigation, or modification safety. Do not report harmless duplication, cosmetic naming, preferred organization, generic clean-code advice, or documentation gaps without a concrete agent failure mode.
 
+## Finding Disproof Pass
+
+Generate candidate findings first, then challenge each one before reporting it.
+
+For each candidate:
+
+- Search for counter-evidence in docs, tests, names, nearby comments, repository instructions, generated-code notices, and common edit paths.
+- Ask whether a future agent can actually find the correct edit point through existing docs, tests, names, or call paths.
+- Check whether the alleged hidden rule is already explicit in a nearby authoritative location.
+- Check whether the predicted agent failure mode is concrete, or merely speculative.
+- Check whether tests already cover the behavior strongly enough to make the change safe to modify.
+- Downgrade or reject findings when counter-evidence is strong; preserve uncertainty instead of overstating future-agent risk.
+- Avoid letting the same reasoning path both create and validate the finding without challenge.
+
+When useful, list rejected candidates under "Non-Issues / Intentionally Not Flagged" so future reviews do not repeat the same false positive.
+
 ## Output Format
 
 Use this structure unless the user asks for a different format. Maximize unique information per section.
@@ -165,10 +182,15 @@ Order actions by leverage and safety. Prefer small changes that create authorita
 
 Do not repeat full findings. For each action, reference the owning section, expected blast radius, and validation needed when non-trivial.
 
+### 9. Non-Issues / Intentionally Not Flagged
+
+Use only when it adds signal. Briefly list candidate findings rejected by the disproof pass and the evidence that made them safe or intentional.
+
 ## Quality Bar
 
 - Ground claims in inspected code, docs, tests, configs, generated artifacts, or runtime wiring.
 - Each issue must have one primary output section.
+- Findings must survive the Finding Disproof Pass and include a concrete agent failure mode.
 - Separate agent-legibility risk from style, taste, maintainability, framework practice, and generic architecture preference.
 - Do not recommend new abstraction unless it reduces real ambiguity, duplicated authority, missing authority, or scattered change surface.
 - Do not flag naming, structure, responsibility, or documentation concerns unless they affect findability, rule discovery, ownership clarity, change locality, or impact prediction.

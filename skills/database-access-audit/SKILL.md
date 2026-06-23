@@ -151,6 +151,7 @@ Rules:
 ## 8. Core Audit Principles
 
 - Do not treat every `for` loop as a defect. The defect is database I/O in the loop body, implicit lazy-load I/O, or another pattern that creates uncontrolled O(N) database interaction.
+- Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
 - Prefer single set-based database operations for same-value batch update, soft delete, hard delete, status transition, detach, restore, or archive when object-level semantics are not required.
 - For per-row different values, do not automatically force complex single-statement techniques. First evaluate batch size, call frequency, code complexity, database portability, and measured performance.
 - For per-row different values, framework-provided bulk APIs, bulk mappings, parameterized bulk execution, or driver-level multi-parameter execution may be sufficient and more maintainable than dialect-specific SQL.
@@ -525,7 +526,36 @@ Use for supporting improvements:
 
 Do not hardcode a recommendation for any specific database syntax in this skill. Refer to "dialect-specific single-statement technique" unless the current repository's stack and evidence justify a concrete recommendation.
 
-## 13. Validation Safety
+## 13. Finding Disproof Pass
+
+Before reporting findings, run an explicit disproof pass. Generate candidate findings first, then challenge each candidate with repository evidence before assigning priority.
+
+For each candidate finding:
+
+- Search for counter-evidence in code, tests, migrations, configs, docs, local conventions, runtime semantics, and intentional debt notes.
+- Reject the candidate when counter-evidence invalidates the risk.
+- Downgrade the candidate when the risk depends on unconfirmed scale, runtime behavior, stack semantics, or business contract.
+- Preserve uncertainty instead of overstating conclusions; say what evidence would prove or disprove the issue.
+- Avoid using the same reasoning path to both create and validate the finding. Re-check through a different path such as caller tracing, tests, configuration, schema/migration evidence, logs, or documented conventions.
+- Put useful rejected candidates under "Non-Issues / Intentionally Not Flagged" so future reviewers do not repeat the same false positive.
+
+Concrete database-access disproof checks:
+
+- A loop is not a defect unless database I/O, lazy loading, flush, commit, repository call, query-builder execution, or driver execution occurs inside the loop.
+- Object-level mutation is not automatically inefficient; check whether the unit of work, ORM, query builder, driver, or database batches work at flush, save, execute, or commit time.
+- Raw SQL is not automatically unsafe; check parameter binding, identifier allowlists, tenant/project/user scope preservation, rowcount/returned-row behavior, tests, and maintainability justification.
+- A set-based rewrite is not automatically better; check whether it would bypass hooks, events, validators, cascades, audit logs, outbox/domain events, cache invalidation, search indexing, counters, notifications, webhooks, permission caches, lifecycle hooks, or downstream sync jobs.
+- Missing rowcount is not automatically severe; check all-or-nothing semantics, idempotency, stack rowcount behavior, returned rows, missing-ID reporting, and the business contract.
+- N+1 is not confirmed unless relationship access, deferred fields, serialization, rendering, or computed properties actually trigger implicit I/O, or SQL logs, query-count tests, tracing, or runtime evidence show repeated queries.
+- Empty input behavior must be verified before claiming broad-write risk. Check early returns, no-op guards, predicate generation, empty-list semantics, duplicate-ID handling, and maximum batch-size validation.
+
+Use survival status consistently:
+
+- `survived`: evidence supports the risk after counter-evidence checks.
+- `downgraded`: a real concern remains, but priority or confidence is reduced by counter-evidence or uncertainty.
+- `rejected`: repository evidence invalidates the candidate; do not report it as a finding.
+
+## 14. Validation Safety
 
 - Default audit mode is static and read-only.
 - Do not connect to production databases.
@@ -535,7 +565,7 @@ Do not hardcode a recommendation for any specific database syntax in this skill.
 - EXPLAIN, benchmark, and query-count guidance must be safe and scoped. Avoid expensive production operations, broad table scans, locks, or data mutation.
 - When unsure whether a command touches live data, do not run it. Ask for confirmation or recommend a safe validation plan instead.
 
-## 14. Fix Mode Guardrails
+## 15. Fix Mode Guardrails
 
 This skill is audit-first. If the user later asks for fixes, apply these guardrails:
 
@@ -548,7 +578,7 @@ This skill is audit-first. If the user later asks for fixes, apply these guardra
 - State the intended operation-shape change for each fix, such as looped DB I/O to set-based operation, or object-level mutation to bulk API.
 - Add or recommend tests for empty batch, duplicate IDs, missing IDs, forbidden IDs, partial success, all-or-nothing behavior, concurrency-sensitive relation attach, and query count when applicable.
 
-## 15. Required Audit Workflow
+## 16. Required Audit Workflow
 
 1. Confirm the user-requested scope and whether the audit is read-only.
 2. Apply scope control. Keep main findings limited to the requested scope unless the user asks for whole-repository audit.
@@ -568,13 +598,15 @@ This skill is audit-first. If the user later asks for fixes, apply these guardra
 16. Search rowcount semantics, returned-row handling, missing-ID handling, duplicate-ID handling, and partial-success behavior.
 17. Search side effects and derived state such as audit logs, outbox/domain events, caches, search indexes, counters, notifications, webhooks, permission caches, hooks, and sync jobs.
 18. Search constraints, unique keys, foreign keys, indexes, migrations, and schema definitions.
-19. For each finding, evaluate scope status, empty-batch behavior, rowcount semantics, current behavior, operation shape, evidence strength, certainty, risk, simple fix direction, whether single SQL is necessary, maintainability tradeoff, validation needed, priority, and confidence.
-20. Group repeated findings before final output so recurring patterns do not hide the highest-risk issues.
-21. Separate out-of-scope P0 risks under "Out-of-scope but high-risk note".
-22. Output a read-only report unless the user explicitly asked for code changes.
-23. If fixes are requested, apply Fix Mode Guardrails before modifying code.
+19. Generate candidate findings with scope status, empty-batch behavior, rowcount semantics, current behavior, operation shape, evidence strength, certainty, risk, simple fix direction, whether single SQL is necessary, maintainability tradeoff, validation needed, priority, and confidence.
+20. Run the Finding Disproof Pass on each candidate before reporting it.
+21. Reject, downgrade, or preserve uncertainty based on counter-evidence.
+22. Group repeated surviving findings before final output so recurring patterns do not hide the highest-risk issues.
+23. Separate out-of-scope P0 risks under "Out-of-scope but high-risk note".
+24. Output a read-only report unless the user explicitly asked for code changes.
+25. If fixes are requested, apply Fix Mode Guardrails before modifying code.
 
-## 16. Required Report Format
+## 17. Required Report Format
 
 Use this structure unless the user explicitly requests another format.
 
@@ -613,6 +645,11 @@ Use this format for each finding:
 - Rowcount semantics:
   - matched rows / changed rows / returned rows / unavailable / stack-dependent / unknown / not applicable
 - Evidence:
+- Disproof attempted:
+- Counter-evidence checked:
+- Could be invalid if:
+- Survival status:
+  - survived / downgraded / rejected
 - Risk:
 - Recommendation:
 - Tradeoff:
@@ -631,6 +668,7 @@ Every finding must explain:
 - The access pattern.
 - The estimated operation shape and evidence strength.
 - Empty-batch behavior and rowcount semantics for batch update, delete, restore, purge, or archive findings.
+- The disproof attempted, counter-evidence checked, and why the finding survived or was downgraded.
 - The inferred runtime behavior and whether it is confirmed.
 - The risk to correctness, security, performance, operation, or maintainability.
 - The recommended direction, not necessarily a patch.
@@ -650,7 +688,7 @@ Order by value and risk:
 
 ### Non-Issues / Intentionally Not Flagged
 
-List reviewed areas that should not be changed now, with reasons such as:
+List useful rejected candidates or reviewed areas that should not be changed now, with reasons such as:
 
 - Batch size is bounded.
 - Path is low-frequency or admin-only.
@@ -676,12 +714,13 @@ List maintainer questions that materially affect the audit:
 
 The optional finding fields `Scope status`, `Empty batch behavior`, and `Rowcount semantics` may be omitted when clearly irrelevant. Include them for batch update, delete, restore, purge, and archive findings.
 
-## 17. Output Compactness And Grouping
+## 18. Output Compactness And Grouping
 
 - For small or first-pass scoped audits, start with a compact summary table of findings.
 - Expand only P0 and P1 findings by default.
 - For P2 and P3, provide grouped bullets unless the user requests exhaustive detail.
 - If the user asks for "full audit", "exhaustive", or "all findings", use the full finding template.
+- Include disproof fields for expanded findings. For low-priority grouped items, summarize the counter-evidence check in one phrase unless the user asks for exhaustive detail.
 - Group repeated findings by pattern when many files show the same issue.
 - Expand P0 and P1 findings by default with enough detail to act.
 - Summarize P2 and P3 findings unless the user asks for exhaustive detail.
@@ -690,7 +729,7 @@ The optional finding fields `Scope status`, `Empty batch behavior`, and `Rowcoun
 - Include enough location evidence for each grouped finding so the reader can verify representative call sites.
 - State sampling boundaries when the audit is not exhaustive.
 
-## 18. Tone And Wording
+## 19. Tone And Wording
 
 - Be precise and do not exaggerate.
 - Do not say a `for` loop is itself wrong.
@@ -709,7 +748,7 @@ The optional finding fields `Scope status`, `Empty batch behavior`, and `Rowcoun
 - Do not claim raw SQL is unsafe merely because it is raw SQL; judge parameterization, scope, and tests.
 - Do not expand the audit into a general security review beyond database access risks.
 
-## 19. Final Deliverable
+## 20. Final Deliverable
 
 When using this skill, deliver a read-only audit report by default. The final response must include:
 

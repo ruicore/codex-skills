@@ -34,6 +34,7 @@ It is not:
 - Do not recommend abstraction unless it reduces real duplication, clarifies ownership, or narrows a boundary.
 - Do not repeatedly report intentional architecture debt as a new defect; record its rationale and retirement condition.
 - Prefer local evidence over intended architecture: inspect code, docs, configs, generated artifacts, runtime wiring, validation signals, and recent diffs when relevant.
+- Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
 
 ## Review Process
 
@@ -69,7 +70,11 @@ Follow this order. Do not jump to recommendations before building the architectu
    - Ask how many modules must change for one important concept change, such as a new state, provider, workflow step, domain field, policy, validation rule, or integration.
    - Treat large change surface as architectural only when it reveals fragmented ownership, unclear authority, or excessive coupling.
 
-7. Produce findings and a phased refactor plan.
+7. Run the Finding Disproof Pass.
+   - Challenge each candidate finding with counter-evidence before reporting it.
+   - Reject, downgrade, or preserve uncertainty when local rationale, ownership evidence, tests, or scope limits weaken the claim.
+
+8. Produce findings and a phased refactor plan.
    - Prioritize issues by correctness risk, authority conflict, boundary erosion, drift, and change cost.
    - Recommend the smallest useful architectural improvement.
    - Favor changes that can be reviewed one concept or boundary at a time.
@@ -91,6 +96,23 @@ Use these checks to decide whether something is an architecture finding:
 - Debt lifecycle: Is a known architecture compromise documented with rationale and a retirement condition?
 
 Avoid turning local implementation concerns into architecture findings unless they affect ownership, authority, boundaries, concept lifecycle, architecture drift, or change surface.
+
+## Finding Disproof Pass
+
+Generate candidate findings first, then validate them adversarially before reporting them.
+
+For each candidate:
+
+- Search for counter-evidence in code ownership, docs, ADRs, tests, runtime wiring, generated artifacts, and recent local conventions.
+- Ask whether this is intentional architecture debt with rationale and a retirement condition.
+- Ask whether the issue is actually a local implementation concern rather than architecture.
+- Check whether a single authoritative owner or source was missed.
+- Check whether apparent duplication is necessary boundary translation rather than conflicting authority.
+- Check whether the proposed abstraction would reduce ownership ambiguity or merely add indirection.
+- Downgrade or reject findings when counter-evidence is strong; preserve uncertainty when the repository evidence is incomplete.
+- Avoid letting the same reasoning path both create and validate the finding without challenge.
+
+When useful, list rejected candidates under "Known Architecture Debt" or "Non-Issues / Intentionally Not Flagged" instead of reporting them as findings.
 
 ## Priority Scale
 
@@ -149,6 +171,10 @@ List only deliberate, documented, or accepted architecture debt that would other
 - rationale
 - retirement condition
 
+### Non-Issues / Intentionally Not Flagged
+
+Use only when it prevents repeated false positives. Briefly list candidate findings rejected by the disproof pass and the evidence that invalidated them.
+
 ### Refactor Plan
 
 - Phase 1: smallest low-risk ownership, authority, or boundary clarification
@@ -161,6 +187,7 @@ For each phase, name expected blast radius, validation needs, and rollback shape
 
 - Findings must be architectural, not ordinary implementation nits.
 - Findings must be evidence-backed. Say what was inspected and what remains uncertain when evidence is incomplete.
+- Findings must survive the Finding Disproof Pass; do not report candidates invalidated by local rationale, ownership evidence, tests, or scope limits.
 - Prefer targeted ownership, authority, boundary, or concept-lifecycle fixes over broad rewrites.
 - Do not recommend compatibility aliases, re-exports, adapters, or migration layers unless real consumers or rollout constraints justify them.
 - Do not include technology-specific rules unless they come from the current repository's own docs or code.
