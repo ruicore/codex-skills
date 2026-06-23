@@ -1,4 +1,4 @@
 interface:
   display_name: "Grill Me"
   short_description: "Pressure-test plans with direct critique"
-  default_prompt: "Use $grill-me to pressure-test this technical proposal."
+  default_prompt: "Use $grill-me to pressure-test this technical proposal with objections that have survived an explicit counter-evidence / disproof pass."

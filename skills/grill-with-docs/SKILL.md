@@ -17,7 +17,9 @@ Do not use it for ordinary bug fixes, small code edits, routine PR review, or on
 4. For each major question, explain why it matters, give the recommended answer, and name plausible alternative interpretations.
 5. When code can answer the question, inspect the code instead of asking.
 6. Pressure-test claims with concrete runtime scenarios: failure, retry, concurrency, partial success, rollback, ownership, and state transitions.
-7. Persist only stable, validated knowledge. Do not fossilize brainstorming.
+7. Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
+8. After raising objections, run the Self-Challenge Pass before turning them into conclusions or durable knowledge.
+9. Persist only stable, validated knowledge. Do not fossilize brainstorming.
 
 ## Repository Discovery
 
@@ -76,6 +78,18 @@ When the user states how something works:
 - Surface doc/code drift as a first-class finding.
 
 If implementation and desired architecture disagree, ask whether the code is wrong, the docs are stale, or the proposal intentionally changes the model.
+
+## Self-Challenge Pass
+
+After raising objections, try to disprove each serious objection with repository evidence.
+
+- Search for counter-evidence in code paths, docs, tests, runtime wiring, context files, ADRs, rollout notes, and explicit user constraints.
+- Distinguish objections that survive evidence from objections that are only missing-context concerns.
+- Downgrade or remove objections when repository evidence invalidates them.
+- Preserve uncertainty instead of overstating doc/code drift, ownership gaps, or semantic conflicts.
+- Do not manufacture criticism if the repository evidence supports the proposal.
+- Avoid using the same reasoning path to both create and validate the objection without challenge.
+- Persist only objections, decisions, or glossary updates that survive this pass or are explicitly accepted by the user as unresolved context.
 
 ## Scenario Pressure Tests
 

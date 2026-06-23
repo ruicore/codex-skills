@@ -20,7 +20,8 @@ When using this skill:
 5. Prefer code, logs, configs, tests, docs, and real runtime paths over architectural intent.
 6. Keep scope narrow. If the user's wording limits scope, do not silently expand it into migrations, product-policy changes, broad refactors, or platform work.
 7. Distinguish blocker risks from acceptable risks.
-8. Give one clear verdict and concrete next actions.
+8. Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
+9. Give one clear verdict and concrete next actions.
 
 ## Evidence Standard
 
@@ -29,6 +30,17 @@ If the critique concerns current implementation behavior, inspect the real code 
 If evidence is unavailable, say what is unverified and avoid presenting guesses as facts.
 
 For cross-boundary behavior, trace ownership across the relevant components instead of assuming the first repo or service found is responsible.
+
+## Self-Challenge Pass
+
+After raising objections, try to disprove each serious objection before making it part of the verdict.
+
+- Search for counter-evidence in code, docs, tests, configs, logs, rollout constraints, local conventions, and explicit scope limits.
+- Distinguish objections that survive evidence from objections that are only missing-context concerns.
+- Downgrade or remove objections when repository evidence invalidates them.
+- Preserve uncertainty instead of overstating a critique.
+- Do not manufacture criticism when the available evidence supports the proposal.
+- Avoid using the same reasoning path to both create and validate the objection without challenge.
 
 ## Risk Categories
 
@@ -48,6 +60,7 @@ Use only the categories that are relevant:
 - Prefer "this needs a constraint" over "this is bad" when a narrower version is viable.
 - Call out when the proposal is too broad to evaluate responsibly.
 - Do not manufacture balance. If the idea is weak, say so.
+- Do not manufacture criticism. If a serious objection fails the Self-Challenge Pass, drop it or label it as missing context.
 - Avoid generic advice; make objections decision-changing.
 - For fastest-landing experimental work, prefer the smallest compatible change and name what is deliberately deferred.
 
@@ -72,6 +85,10 @@ Group by relevant risk categories. Mark blocker risks clearly.
 ## What I Would Challenge
 
 Include uncomfortable questions and objections that could change the decision.
+
+## Self-Challenge
+
+For serious objections, state whether they survived evidence or remain missing-context concerns. Omit this section for very small critiques when it would add noise.
 
 ## Verdict
 

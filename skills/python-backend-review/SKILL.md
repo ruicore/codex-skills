@@ -17,6 +17,7 @@ Do not modify code during the review unless `review_only` is explicitly false. I
 - Recommend a change only when its expected benefit exceeds migration, review, testing, rollback, tooling, and production costs.
 - Keep recommendations small, location-specific, and testable.
 - Stay within Python backend fundamentals; defer architecture, deep agent-legibility, framework, business-domain, onboarding, and developer-experience concerns to other review skills.
+- Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
 
 ## Inputs
 
@@ -127,10 +128,27 @@ Review this baseline when the Python version, major dependencies, framework stac
 3. Prioritize findings.
    - Separate compatibility/correctness risks from useful cleanup and optional improvements.
    - Prefer small, reviewable, testable improvements.
+   - Run the Finding Disproof Pass before reporting findings.
 
 4. Keep maintainability lightweight.
    - Ask whether future contributors can find relevant code, understand names, see important rules, and verify changes quickly.
    - Do not perform architecture review, framework review, or deep agent-legibility review.
+
+## Finding Disproof Pass
+
+Generate candidate findings first, then challenge each one against repository evidence before reporting it.
+
+For each candidate:
+
+- Search for counter-evidence in the project baseline, version declarations, lock files, CI, runtime images, tests, existing conventions, and official documentation when version-specific claims matter.
+- Ask whether the candidate is a true compatibility or correctness issue, or only optional modernization.
+- Check whether the project baseline intentionally avoids the newer pattern.
+- Verify that the current library version or official documentation is enough to support the claim.
+- Ask whether the recommendation would increase migration, review, testing, rollback, or production cost without improving correctness, maintainability, readability, verification, compatibility, or operational reliability.
+- Downgrade or reject findings when counter-evidence is strong; preserve uncertainty instead of overstating modernization or compatibility claims.
+- Avoid letting the same reasoning path both create and validate the finding without challenge.
+
+When useful, list rejected modernization candidates under "Non-Issues / Intentionally Not Flagged" instead of reporting them as findings.
 
 ## Review Standards
 
@@ -330,6 +348,8 @@ Concrete findings with test/config/module references.
 
 Provide 3-5 follow-up prompts. Keep each prompt narrow and suitable for a small, reviewable change.
 
+Add a compact `Non-Issues / Intentionally Not Flagged` subsection when it helps explain why optional modernization or apparent compatibility issues were rejected by the disproof pass.
+
 ## Behavior Rules
 
 - Be concrete and location-specific.
@@ -343,6 +363,7 @@ Provide 3-5 follow-up prompts. Keep each prompt narrow and suitable for a small,
 - Prefer consistency with the existing baseline unless there is a clear reason to change it.
 - If recommending a change that conflicts with the baseline, explicitly mark it as a proposed baseline update.
 - Separate must-fix issues from nice-to-have cleanup.
+- Reject or downgrade candidate findings that fail the Finding Disproof Pass.
 - Do not recommend modernization only because the target Python version supports it.
 - Evaluate modernization against migration cost, review cost, test impact, rollback complexity, team familiarity, tooling compatibility, and production risk.
 - Treat web results as advisory and prefer official sources.

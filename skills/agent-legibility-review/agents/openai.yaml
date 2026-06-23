@@ -1,4 +1,4 @@
 interface:
   display_name: "Agent Legibility Review"
   short_description: "Review repos for AI-agent change risk"
-  default_prompt: "Use $agent-legibility-review to review this repository for agent navigability, duplicate concepts, hidden rules, ambiguous ownership, and high-risk hotspots."
+  default_prompt: "Use $agent-legibility-review to review this repository for agent navigability, duplicate concepts, hidden rules, ambiguous ownership, and high-risk hotspots, producing only findings that have survived an explicit counter-evidence / disproof pass."

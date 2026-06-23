@@ -1,4 +1,4 @@
 interface:
   display_name: "Database Access Audit"
   short_description: "Audit database access patterns"
-  default_prompt: "Use $database-access-audit to perform a read-only audit of database access patterns and produce prioritized findings."
+  default_prompt: "Use $database-access-audit to perform a read-only audit of database access patterns and produce prioritized findings that have survived an explicit counter-evidence / disproof pass."

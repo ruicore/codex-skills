@@ -17,6 +17,12 @@ Do not modify code unless the user explicitly asks for fixes. If fixes are allow
 - Do not review every dependency. Ignore tooling, packaging-only dependencies, formatters, simple utilities, and transitive libraries unless the user asks or the code shows architectural use.
 - Prefer automatic discovery. User-specified libraries are priority hints, not required inputs.
 
+## Review Principles
+
+- Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
+- Prefer the repository's actual library versions, local conventions, and integration tests over generic best-practice assumptions.
+- Recommend changes only when they improve correctness, maintainability, operational safety, migration safety, or safe modification enough to justify migration, review, testing, and rollback cost.
+
 ## Inputs
 
 Support these optional inputs:
@@ -95,6 +101,22 @@ Use this priority scale:
 - P2: meaningful maintainability, explicitness, testing, or migration-risk issue.
 - P3: low-risk improvement worth noting because it removes a real future trap.
 
+## Finding Disproof Pass
+
+Generate candidate findings first, then challenge each one against repository and library evidence before reporting it.
+
+For each candidate:
+
+- Search for counter-evidence in detected versions, lock files, official documentation, tests, local wrappers, lifecycle helpers, config, and established project usage.
+- Ask whether this is a true compatibility, correctness, lifecycle, or integration issue, or only optional modernization.
+- Check whether the project intentionally avoids a newer library pattern or preserves an older pattern for compatibility.
+- Verify that current library versions or official documentation support the claim before making version-sensitive recommendations.
+- Ask whether the recommendation would increase migration, review, testing, rollback, or operational cost without improving correctness or maintainability.
+- Downgrade or reject findings when counter-evidence is strong; preserve uncertainty instead of overstating best-practice claims.
+- Avoid letting the same reasoning path both create and validate the finding without challenge.
+
+When useful, list rejected candidates under "Non-Issues / Intentionally Not Flagged".
+
 ## Cross-library Patterns To Check
 
 When relevant, inspect cross-library boundaries such as:
@@ -162,3 +184,7 @@ Example:
 ```text
 Review the SQLAlchemy session lifecycle used by FastAPI dependencies and background jobs. Acceptance criterion: produce a location-backed finding list and one minimal test or documentation change proposal for any lifecycle gap.
 ```
+
+### 8. Non-Issues / Intentionally Not Flagged
+
+Use only when it adds signal. Briefly list candidate findings rejected by the disproof pass and the version, test, convention, or official-documentation evidence that invalidated them.
