@@ -5,6 +5,8 @@ description: Read-only database access audit for batch operations, looped DB I/O
 
 # Database Access Audit
 
+For fast first-pass triage, use the [Database Access Audit Quick Reference](quick-reference.md). The quick reference is only an entry point; use this full workflow for final audit reports, high-confidence findings, runtime-behavior claims, and any fix recommendations.
+
 ## 1. Skill Name And Purpose
 
 Use this skill to audit database access patterns in a repository without assuming a specific language, framework, ORM, database driver, migration tool, or database engine.

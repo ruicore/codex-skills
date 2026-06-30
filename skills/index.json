@@ -204,7 +204,9 @@
         "distinguish query, connection, transaction, round trip, statement, row mutation, flush, commit, and object mutation",
         "include disproof evidence and validation needed for findings"
       ],
-      "supporting_files": [],
+      "supporting_files": [
+        "skills/database-access-audit/quick-reference.md"
+      ],
       "agents_metadata_path": "skills/database-access-audit/agents/openai.yaml",
       "portability_notes": "Portable across stacks, but the audit must discover project-specific database primitives before applying generic search terms."
     },
