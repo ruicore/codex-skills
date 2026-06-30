@@ -74,7 +74,7 @@ Then review the copied `SKILL.md` before relying on it in another repository. So
 Each skill is self-contained:
 
 - `skills/*/SKILL.md` contains the main workflow.
-- `skills/*/agents/openai.yaml` contains optional discovery metadata.
+- `skills/*/agents/openai.yaml` contains optional discovery metadata; see [docs/agent-metadata.md](docs/agent-metadata.md).
 - `skills/*/*.md` contains supporting references, templates, or conventions.
 - `skills/*/scripts/` contains helper scripts when a workflow needs one.
 
