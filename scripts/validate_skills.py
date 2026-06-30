@@ -7,9 +7,14 @@ be a full JSON Schema, YAML, or Markdown implementation.
 
 from __future__ import annotations
 
+import ast
 import json
+import os
+import py_compile
 import re
+import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -44,11 +49,39 @@ PATH_TOKEN_RE = re.compile(
     r"scripts/[A-Za-z0-9._/-]+\.(?:py|sh|mjs|js|ps1|ts))"
 )
 LOCAL_SCHEMES = ("http:", "https:", "mailto:", "tel:", "file:", "data:")
+SIDE_EFFECTING_LEVELS = {
+    "local-files",
+    "git-working-tree",
+    "external-api-write",
+    "publish",
+    "destructive",
+}
+SAFETY_MECHANISM_RE = re.compile(
+    r"(--dry-run|\bdry[_ -]?run\b|\bpreview\b|--yes\b|\bconfirm(?:ation)?\b|"
+    r"\bpreflight\b|\brefus(?:e|ing)\b)",
+    re.IGNORECASE,
+)
+SCRIPT_SIDE_EFFECT_SIGNAL_RE = re.compile(
+    r"(\bshutil\.(?:copy|copytree|move|rmtree)\b|"
+    r"\bPath\([^)]*\)\.(?:write_text|write_bytes|unlink|rename|replace)\b|"
+    r"\.(?:write_text|write_bytes|unlink|rename)\(|"
+    r"\bopen\([^)]*['\"][wa]\b|"
+    r"\bos\.(?:remove|unlink|rename|replace|rmdir)\b|"
+    r"\bsubprocess\.(?:run|check_call|check_output|Popen)\b|"
+    r"\burllib\.request\.Request\b|"
+    r"\burlopen\(|"
+    r"\brequests\.(?:post|put|patch|delete)\b|"
+    r"\bmutation\b|"
+    r"\bmethod=['\"](?:POST|PUT|PATCH|DELETE)['\"])",
+    re.IGNORECASE,
+)
+HELP_TIMEOUT_SECONDS = 10
 
 
 @dataclass(frozen=True)
 class SkillContext:
     name: str
+    side_effect_level: str
     skill_dir: Path
     skill_md: Path
     supporting_paths: set[Path]
@@ -57,13 +90,19 @@ class SkillContext:
 class Validator:
     def __init__(self) -> None:
         self.errors: list[str] = []
+        self.warnings: list[str] = []
         self.skill_count = 0
         self.openai_metadata_count = 0
         self.markdown_link_count = 0
         self.script_reference_count = 0
+        self.python_script_count = 0
+        self.argparse_help_count = 0
 
     def error(self, message: str) -> None:
         self.errors.append(message)
+
+    def warn(self, message: str) -> None:
+        self.warnings.append(message)
 
     def run(self) -> int:
         registry = self.load_registry()
@@ -88,6 +127,7 @@ class Validator:
 
         self.validate_markdown_links(contexts)
         self.validate_script_references(contexts)
+        self.validate_python_scripts(contexts)
 
         self.skill_count = len(contexts)
         return self.finish()
@@ -134,6 +174,10 @@ class Validator:
         if not isinstance(path_value, str) or not path_value.strip():
             self.error(f"{rel(INDEX_PATH)}:{label}.path: must be a non-empty string")
             return None
+        side_effect_level = entry["side_effect_level"]
+        if not isinstance(side_effect_level, str) or not side_effect_level.strip():
+            self.error(f"{rel(INDEX_PATH)}:{label}.side_effect_level: must be a non-empty string")
+            return None
 
         skill_dir = resolve_repo_path(path_value)
         if not is_within_repo(skill_dir):
@@ -155,6 +199,7 @@ class Validator:
 
         return SkillContext(
             name=name,
+            side_effect_level=side_effect_level,
             skill_dir=skill_dir,
             skill_md=skill_md,
             supporting_paths=supporting_paths,
@@ -313,7 +358,95 @@ class Validator:
                             f"not a file: {raw_path}"
                         )
 
+    def validate_python_scripts(self, contexts: list[SkillContext]) -> None:
+        script_paths = find_python_scripts()
+        self.python_script_count = len(script_paths)
+        self.compile_python_scripts(script_paths)
+        self.validate_argparse_help(script_paths)
+        self.validate_side_effecting_script_safety(contexts)
+
+    def compile_python_scripts(self, script_paths: list[Path]) -> None:
+        with tempfile.TemporaryDirectory(prefix="codex-skills-pycompile-") as temp_dir:
+            cache_dir = Path(temp_dir)
+            for script_path in script_paths:
+                try:
+                    py_compile.compile(
+                        str(script_path),
+                        cfile=str(cache_dir / safe_pyc_name(script_path)),
+                        doraise=True,
+                    )
+                except py_compile.PyCompileError as exc:
+                    self.error(f"{rel(script_path)}: py_compile failed: {exc.msg}")
+
+    def validate_argparse_help(self, script_paths: list[Path]) -> None:
+        for script_path in script_paths:
+            try:
+                text = script_path.read_text(encoding="utf-8")
+            except UnicodeDecodeError as exc:
+                self.error(f"{rel(script_path)}: cannot read as UTF-8: {exc}")
+                continue
+
+            if not looks_like_argparse_cli(text):
+                continue
+            if not has_main_guard(text):
+                self.warn(
+                    f"{rel(script_path)}: argparse usage detected, but --help was not "
+                    "run because no __main__ guard was found."
+                )
+                continue
+
+            result = run_help(script_path)
+            if result.returncode == 0:
+                self.argparse_help_count += 1
+                continue
+
+            detail = (result.stderr or result.stdout).strip().splitlines()
+            suffix = f": {detail[0]}" if detail else ""
+            self.warn(f"{rel(script_path)}: --help probe exited {result.returncode}{suffix}")
+
+    def validate_side_effecting_script_safety(self, contexts: list[SkillContext]) -> None:
+        for context in contexts:
+            if context.side_effect_level not in SIDE_EFFECTING_LEVELS:
+                continue
+            if not context.skill_md.exists():
+                continue
+
+            try:
+                skill_text = context.skill_md.read_text(encoding="utf-8")
+            except UnicodeDecodeError as exc:
+                self.error(f"{rel(context.skill_md)}: cannot read as UTF-8: {exc}")
+                continue
+
+            documented_safety = bool(SAFETY_MECHANISM_RE.search(skill_text))
+            script_paths = set(context.supporting_paths)
+            script_paths.update(script_references_for_context(skill_text, context))
+            for script_path in sorted(script_paths):
+                if script_path.suffix != ".py" or not is_scripts_helper(script_path):
+                    continue
+                try:
+                    script_text = script_path.read_text(encoding="utf-8")
+                except UnicodeDecodeError as exc:
+                    self.error(f"{rel(script_path)}: cannot read as UTF-8: {exc}")
+                    continue
+
+                if not SCRIPT_SIDE_EFFECT_SIGNAL_RE.search(script_text):
+                    continue
+                if SAFETY_MECHANISM_RE.search(script_text) or documented_safety:
+                    continue
+
+                self.warn(
+                    f"{rel(script_path)}: referenced by side-effecting skill "
+                    f"'{context.name}' ({context.side_effect_level}), but no dry-run, "
+                    "preview, --yes, refusal, or documented confirmation mechanism "
+                    "could be proven automatically."
+                )
+
     def finish(self) -> int:
+        if self.warnings:
+            print("Skill validation warnings:")
+            for message in self.warnings:
+                print(f"- {message}")
+
         if self.errors:
             print("Skill validation failed:")
             for message in self.errors:
@@ -325,7 +458,9 @@ class Validator:
             f"{self.skill_count} skills, "
             f"{self.openai_metadata_count} agents/openai.yaml files, "
             f"{self.markdown_link_count} local Markdown links, "
-            f"{self.script_reference_count} local script references checked."
+            f"{self.script_reference_count} local script references, "
+            f"{self.python_script_count} Python helper scripts compiled, "
+            f"{self.argparse_help_count} argparse --help probes checked."
         )
         return 0
 
@@ -490,6 +625,95 @@ def unquote_scalar(value: str) -> str:
 def is_placeholder_path(target: str) -> bool:
     placeholder_markers = ("YYYY", "TODO", "<", ">", "{", "}", "...")
     return any(marker in target for marker in placeholder_markers)
+
+
+def find_python_scripts() -> list[Path]:
+    paths = set((REPO_ROOT / "scripts").glob("*.py"))
+    skills_root = REPO_ROOT / "skills"
+    if skills_root.exists():
+        paths.update(skills_root.glob("**/scripts/*.py"))
+    return sorted(path.resolve() for path in paths if path.is_file())
+
+
+def safe_pyc_name(script_path: Path) -> str:
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", rel(script_path)) + ".pyc"
+
+
+def looks_like_argparse_cli(text: str) -> bool:
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return False
+
+    imports_argparse = False
+    builds_parser = False
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imports_argparse = imports_argparse or any(alias.name == "argparse" for alias in node.names)
+        elif isinstance(node, ast.ImportFrom):
+            imports_argparse = imports_argparse or node.module == "argparse"
+        elif isinstance(node, ast.Call):
+            func = node.func
+            if (
+                isinstance(func, ast.Attribute)
+                and func.attr == "ArgumentParser"
+                and isinstance(func.value, ast.Name)
+                and func.value.id == "argparse"
+            ):
+                builds_parser = True
+            elif isinstance(func, ast.Name) and func.id == "ArgumentParser":
+                builds_parser = True
+
+    return imports_argparse and builds_parser
+
+
+def has_main_guard(text: str) -> bool:
+    return "__name__" in text and "__main__" in text
+
+
+def run_help(script_path: Path) -> subprocess.CompletedProcess[str]:
+    try:
+        return subprocess.run(
+            [sys.executable, str(script_path), "--help"],
+            cwd=REPO_ROOT,
+            env=sanitized_help_env(),
+            capture_output=True,
+            text=True,
+            timeout=HELP_TIMEOUT_SECONDS,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        return subprocess.CompletedProcess(
+            exc.cmd,
+            124,
+            output=exc.stdout or "",
+            stderr=f"--help timed out after {HELP_TIMEOUT_SECONDS} seconds",
+        )
+
+
+def sanitized_help_env() -> dict[str, str]:
+    sensitive_markers = ("KEY", "TOKEN", "SECRET", "PASSWORD", "CREDENTIAL", "AUTH")
+    env = {
+        key: value
+        for key, value in os.environ.items()
+        if not any(marker in key.upper() for marker in sensitive_markers)
+    }
+    env["NO_COLOR"] = "1"
+    return env
+
+
+def is_scripts_helper(path: Path) -> bool:
+    return any(part == "scripts" for part in path.parts)
+
+
+def script_references_for_context(text: str, context: SkillContext) -> set[Path]:
+    paths: set[Path] = set()
+    for match in PATH_TOKEN_RE.finditer(text):
+        raw_path = match.group("path").strip("'\"`")
+        resolved = resolve_script_reference(raw_path, context)
+        if resolved is not None:
+            paths.add(resolved)
+    return paths
 
 
 def main(argv: Iterable[str] | None = None) -> int:
