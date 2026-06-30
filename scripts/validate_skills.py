@@ -23,6 +23,7 @@ from urllib.parse import unquote
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 INDEX_PATH = REPO_ROOT / "skills" / "index.json"
+REGISTRY_SCHEMA_PATH = REPO_ROOT / "schemas" / "skill-registry.schema.json"
 
 REQUIRED_ENTRY_FIELDS = {
     "name",
@@ -41,6 +42,23 @@ REQUIRED_ENTRY_FIELDS = {
     "portability_notes",
 }
 
+ENUM_FIELD_TO_DEFINITION = {
+    "category": "category",
+    "maturity": "maturity",
+    "side_effect_level": "side_effect_level",
+}
+NON_EMPTY_STRING_FIELDS = (
+    "name",
+    "path",
+    "purpose",
+    "portability_notes",
+)
+NON_EMPTY_STRING_LIST_FIELDS = (
+    "triggers",
+    "do_not_use_for",
+    "primary_outputs",
+    "validation_expectations",
+)
 FRONTMATTER_BOUNDARY = "---"
 MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
 PATH_TOKEN_RE = re.compile(
@@ -108,6 +126,7 @@ class Validator:
         registry = self.load_registry()
         if registry is None:
             return self.finish()
+        allowed_enums = self.load_registry_schema_enums()
 
         skills = registry.get("skills")
         if not isinstance(skills, list):
@@ -117,9 +136,11 @@ class Validator:
         seen_names: set[str] = set()
         contexts: list[SkillContext] = []
         for index, entry in enumerate(skills):
-            context = self.validate_registry_entry(index, entry, seen_names)
+            context = self.validate_registry_entry(index, entry, seen_names, allowed_enums)
             if context is not None:
                 contexts.append(context)
+
+        self.validate_skill_directory_coverage(contexts)
 
         for context in contexts:
             self.validate_skill_markdown(context)
@@ -148,8 +169,60 @@ class Validator:
             return None
         return data
 
+    def load_registry_schema_enums(self) -> dict[str, set[str]]:
+        if not REGISTRY_SCHEMA_PATH.exists():
+            self.error(f"{rel(REGISTRY_SCHEMA_PATH)}: file does not exist")
+            return {}
+
+        try:
+            data = json.loads(REGISTRY_SCHEMA_PATH.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            self.error(
+                f"{rel(REGISTRY_SCHEMA_PATH)}:{exc.lineno}:{exc.colno}: invalid JSON: {exc.msg}"
+            )
+            return {}
+
+        if not isinstance(data, dict):
+            self.error(f"{rel(REGISTRY_SCHEMA_PATH)}: top-level JSON value must be an object")
+            return {}
+
+        definitions = data.get("definitions")
+        if not isinstance(definitions, dict):
+            self.error(f"{rel(REGISTRY_SCHEMA_PATH)}: missing object field 'definitions'")
+            return {}
+
+        allowed: dict[str, set[str]] = {}
+        for field, definition_name in ENUM_FIELD_TO_DEFINITION.items():
+            definition = definitions.get(definition_name)
+            if not isinstance(definition, dict):
+                self.error(
+                    f"{rel(REGISTRY_SCHEMA_PATH)}: missing enum definition "
+                    f"'{definition_name}' for registry field '{field}'"
+                )
+                continue
+
+            enum_values = definition.get("enum")
+            if not (
+                isinstance(enum_values, list)
+                and enum_values
+                and all(isinstance(item, str) and item for item in enum_values)
+            ):
+                self.error(
+                    f"{rel(REGISTRY_SCHEMA_PATH)}: definition '{definition_name}'.enum "
+                    "must be a non-empty list of non-empty strings"
+                )
+                continue
+
+            allowed[field] = set(enum_values)
+
+        return allowed
+
     def validate_registry_entry(
-        self, index: int, entry: object, seen_names: set[str]
+        self,
+        index: int,
+        entry: object,
+        seen_names: set[str],
+        allowed_enums: dict[str, set[str]],
     ) -> SkillContext | None:
         label = f"skills[{index}]"
         if not isinstance(entry, dict):
@@ -162,22 +235,28 @@ class Validator:
         if missing:
             return None
 
-        name = entry["name"]
-        path_value = entry["path"]
-        if not isinstance(name, str) or not name.strip():
-            self.error(f"{rel(INDEX_PATH)}:{label}.name: must be a non-empty string")
+        string_values = {
+            field: self.validate_non_empty_string_field(label, entry, field)
+            for field in NON_EMPTY_STRING_FIELDS
+        }
+        name = string_values["name"]
+        path_value = string_values["path"]
+        for field in NON_EMPTY_STRING_LIST_FIELDS:
+            self.validate_non_empty_string_list_field(label, entry, field)
+        self.validate_bool_field(label, entry, "requires_credentials")
+        self.validate_agents_metadata_path_type(label, entry)
+        for field in ENUM_FIELD_TO_DEFINITION:
+            self.validate_enum_field(label, entry, field, allowed_enums.get(field, set()))
+
+        if name is None or path_value is None:
             return None
         if name in seen_names:
             self.error(f"{rel(INDEX_PATH)}:{label}.name: duplicate skill name '{name}'")
         seen_names.add(name)
 
-        if not isinstance(path_value, str) or not path_value.strip():
-            self.error(f"{rel(INDEX_PATH)}:{label}.path: must be a non-empty string")
-            return None
         side_effect_level = entry["side_effect_level"]
-        if not isinstance(side_effect_level, str) or not side_effect_level.strip():
-            self.error(f"{rel(INDEX_PATH)}:{label}.side_effect_level: must be a non-empty string")
-            return None
+        if not isinstance(side_effect_level, str):
+            side_effect_level = ""
 
         skill_dir = resolve_repo_path(path_value)
         if not is_within_repo(skill_dir):
@@ -193,6 +272,11 @@ class Validator:
         skill_md = skill_dir / "SKILL.md"
         if not skill_md.exists():
             self.error(f"{rel(INDEX_PATH)}:{label}: missing {rel(skill_md)}")
+        if skill_dir.name != name:
+            self.error(
+                f"{rel(INDEX_PATH)}:{label}: registry name '{name}' does not match "
+                f"skill directory basename '{skill_dir.name}'"
+            )
 
         supporting_paths = self.validate_supporting_files(label, entry, skill_dir)
         self.validate_agents_metadata_path(label, entry, skill_dir)
@@ -204,6 +288,78 @@ class Validator:
             skill_md=skill_md,
             supporting_paths=supporting_paths,
         )
+
+    def validate_non_empty_string_field(
+        self, label: str, entry: dict[str, object], field: str
+    ) -> str | None:
+        value = entry[field]
+        if not isinstance(value, str) or not value.strip():
+            self.error(f"{rel(INDEX_PATH)}:{label}.{field}: must be a non-empty string")
+            return None
+        return value
+
+    def validate_non_empty_string_list_field(
+        self, label: str, entry: dict[str, object], field: str
+    ) -> None:
+        value = entry[field]
+        if not isinstance(value, list):
+            self.error(f"{rel(INDEX_PATH)}:{label}.{field}: must be a non-empty list")
+            return
+        if not value:
+            self.error(f"{rel(INDEX_PATH)}:{label}.{field}: must not be empty")
+            return
+
+        for item_index, item in enumerate(value):
+            if not isinstance(item, str) or not item.strip():
+                self.error(
+                    f"{rel(INDEX_PATH)}:{label}.{field}[{item_index}]: "
+                    "must be a non-empty string"
+                )
+
+    def validate_bool_field(self, label: str, entry: dict[str, object], field: str) -> None:
+        value = entry[field]
+        if not isinstance(value, bool):
+            self.error(f"{rel(INDEX_PATH)}:{label}.{field}: must be a boolean")
+
+    def validate_agents_metadata_path_type(
+        self, label: str, entry: dict[str, object]
+    ) -> None:
+        value = entry["agents_metadata_path"]
+        if value is None:
+            return
+        if not isinstance(value, str) or not value.strip():
+            self.error(f"{rel(INDEX_PATH)}:{label}.agents_metadata_path: must be a string or null")
+
+    def validate_enum_field(
+        self, label: str, entry: dict[str, object], field: str, allowed_values: set[str]
+    ) -> None:
+        value = entry[field]
+        if not isinstance(value, str) or not value.strip():
+            self.error(f"{rel(INDEX_PATH)}:{label}.{field}: must be a non-empty string")
+            return
+        if not allowed_values:
+            return
+        if value not in allowed_values:
+            expected = ", ".join(sorted(allowed_values))
+            self.error(
+                f"{rel(INDEX_PATH)}:{label}.{field}: invalid value '{value}'; "
+                f"expected one of: {expected}"
+            )
+
+    def validate_skill_directory_coverage(self, contexts: list[SkillContext]) -> None:
+        registered_dirs = {context.skill_dir.resolve() for context in contexts}
+        skills_root = REPO_ROOT / "skills"
+        if not skills_root.exists():
+            self.error(f"{rel(skills_root)}: directory does not exist")
+            return
+
+        for skill_md in sorted(skills_root.glob("*/SKILL.md")):
+            skill_dir = skill_md.parent.resolve()
+            if skill_dir not in registered_dirs:
+                self.error(
+                    f"{rel(skill_md)}: skill directory is missing from "
+                    f"{rel(INDEX_PATH)}"
+                )
 
     def validate_supporting_files(
         self, label: str, entry: dict[str, object], skill_dir: Path
@@ -244,7 +400,6 @@ class Validator:
         if value is None:
             return
         if not isinstance(value, str) or not value.strip():
-            self.error(f"{rel(INDEX_PATH)}:{label}.agents_metadata_path: must be a string or null")
             return
 
         path = resolve_repo_path(value)
