@@ -101,7 +101,9 @@
         "attempt to disprove each candidate finding",
         "cite concrete files, modules, docs, configs, tests, or runtime wiring"
       ],
-      "supporting_files": [],
+      "supporting_files": [
+        "skills/architecture-review/examples/notification-preferences-boundary.md"
+      ],
       "agents_metadata_path": "skills/architecture-review/agents/openai.yaml",
       "portability_notes": "Portable review workflow. It should not be used to impose a desired architecture that is not supported by the target repository's current evidence."
     },
@@ -235,7 +237,9 @@
         "inspect local evidence and existing trace conventions before choosing placement",
         "verify the trace file exists, is readable, includes concrete references, and has accurate status"
       ],
-      "supporting_files": [],
+      "supporting_files": [
+        "skills/decision-trace-writer/examples/export-idempotency-trace.md"
+      ],
       "agents_metadata_path": null,
       "portability_notes": "Personal agent-memory workflow. Placement must follow the target repository's existing durable-memory convention and should avoid committing ignored or private agent-facing traces unless explicitly requested."
     },
@@ -270,6 +274,7 @@
         "convert the minimized repro into a regression check when feasible"
       ],
       "supporting_files": [
+        "skills/diagnose/examples/intermittent-checkout-total.md",
         "skills/diagnose/scripts/hitl-loop.template.sh"
       ],
       "agents_metadata_path": "skills/diagnose/agents/openai.yaml",
@@ -523,7 +528,9 @@
         "ensure dependencies reference existing issue IDs and remain acyclic",
         "ensure each issue has acceptance criteria, verification, and realistic parallelization guidance"
       ],
-      "supporting_files": [],
+      "supporting_files": [
+        "skills/prd-to-issues/examples/team-invite-expiration.md"
+      ],
       "agents_metadata_path": "skills/prd-to-issues/agents/openai.yaml",
       "portability_notes": "Portable planning workflow. Output is a plan, not direct creation of remote GitHub or Linear issues unless another tool or user request handles that step."
     },
@@ -701,6 +708,7 @@
       ],
       "supporting_files": [
         "skills/tdd/deep-modules.md",
+        "skills/tdd/examples/saved-filter-tracer-bullet.md",
         "skills/tdd/interface-design.md",
         "skills/tdd/mocking.md",
         "skills/tdd/refactoring.md",

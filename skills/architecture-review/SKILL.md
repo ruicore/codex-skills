@@ -9,6 +9,8 @@ Review repository architecture from local evidence. The goal is to identify what
 
 Do not modify code during review unless the user explicitly asks for implementation. If the user asks for both review and changes, complete the architecture review first, then make only the agreed or clearly requested changes.
 
+Example: [notification preferences boundary review](examples/notification-preferences-boundary.md).
+
 ## Scope
 
 Architecture review is about ownership, authority, boundaries, concept consistency, architecture decisions, drift, and change surface.
