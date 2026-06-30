@@ -1,0 +1,118 @@
+name: Skill improvement
+description: Improve an existing skill while preserving its current workflow semantics.
+title: "[Skill improvement]: "
+labels:
+  - skill-improvement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for focused changes to existing skills, docs, metadata, examples, or validation. For tiny typo or link fixes, fill the affected file, problem, and validation fields, then mark other sections N/A.
+  - type: input
+    id: affected-skill
+    attributes:
+      label: Affected skill or file
+      description: Name the skill, doc, registry file, schema, or template being improved.
+      placeholder: skills/diagnose
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem the change solves
+      description: What is unclear, unsafe, stale, missing, or hard to reuse today?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Real practice or repeated workflow evidence
+      description: What existing behavior, validation failure, user request, repeated task, or public hygiene risk supports the change?
+      placeholder: "Use N/A for tiny typo, formatting, or broken-link fixes."
+  - type: checkboxes
+    id: change-type
+    attributes:
+      label: Change type
+      options:
+        - label: Behavior-preserving clarification
+        - label: Behavior change requested explicitly
+        - label: Public sanitization
+        - label: Portability note
+        - label: Example or supporting file
+        - label: Registry, schema, or metadata update
+        - label: Docs update
+        - label: Validation improvement
+        - label: Tiny typo, link, or formatting fix
+  - type: dropdown
+    id: category-impact
+    attributes:
+      label: Intended category impact
+      description: Select "no category change" unless the current taxonomy entry should change.
+      options:
+        - no category change
+        - core-engineering
+        - review-audit
+        - planning-execution
+        - agent-memory
+        - research
+        - tool-ops
+        - visual-artifacts
+        - publishing
+  - type: dropdown
+    id: maturity-impact
+    attributes:
+      label: Maturity impact
+      options:
+        - no maturity change
+        - practice-note
+        - personal-skill
+        - portable-candidate
+        - stable-workflow
+        - deprecated
+  - type: dropdown
+    id: side-effect-impact
+    attributes:
+      label: Side-effect level impact
+      options:
+        - no side-effect change
+        - none
+        - read-only
+        - local-files
+        - git-working-tree
+        - external-api-read
+        - external-api-write
+        - publish
+        - destructive
+  - type: textarea
+    id: sanitization
+    attributes:
+      label: Public sanitization considerations
+      description: What private data, URLs, raw logs, identifiers, or credential risks must be removed, avoided, or checked?
+      placeholder: "Use N/A when not applicable."
+  - type: textarea
+    id: portability
+    attributes:
+      label: Portability notes
+      description: What local or practice-derived details should be kept, classified, or explained for future adopters?
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples added or intentionally deferred
+      description: Note examples, references, scripts, templates, or why they are not needed for this change.
+  - type: textarea
+    id: repo-surface
+    attributes:
+      label: Registry, schema, and docs updates
+      description: Note expected changes to skills/index.json, schemas, README, docs, or agent metadata. Use N/A when none.
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation performed
+      description: List automated validation, manual checks, or why validation is not applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals
+      description: What should this change avoid renaming, restructuring, generalizing, or otherwise changing?
