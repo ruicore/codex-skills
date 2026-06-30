@@ -196,7 +196,7 @@ Describe the implementation shape:
 - files to change or changed
 - expected behavior before/after
 - tests or validation to add/run
-- local docs/specs to update
+- local documentation or specs to update
 
 ## 当前状态
 
