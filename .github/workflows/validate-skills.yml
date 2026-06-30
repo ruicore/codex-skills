@@ -1,0 +1,40 @@
+name: Validate skills
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate-skills:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate skill registry and files
+        run: python scripts/validate_skills.py
+
+      - name: Compile tracked Python scripts
+        run: |
+          python - <<'PY'
+          import subprocess
+          import py_compile
+
+          files = subprocess.check_output(
+              ["git", "ls-files", "*.py"],
+              text=True,
+          ).splitlines()
+
+          for file in files:
+              py_compile.compile(file, doraise=True)
+
+          print(f"Compiled {len(files)} Python files.")
+          PY
