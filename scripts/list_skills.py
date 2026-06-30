@@ -20,6 +20,7 @@ DISPLAY_FIELDS = (
     "path",
     "purpose",
 )
+SECONDARY_DISPLAY_FIELD = "secondary_categories"
 
 
 def load_skills() -> list[dict[str, object]]:
@@ -47,32 +48,38 @@ def filter_skills(
     return filtered
 
 
-def render_table(skills: list[dict[str, object]]) -> None:
+def render_table(skills: list[dict[str, object]], show_secondary: bool = False) -> None:
     if not skills:
         print("No skills matched.")
         return
 
+    display_fields = list(DISPLAY_FIELDS)
+    if show_secondary:
+        display_fields.insert(2, SECONDARY_DISPLAY_FIELD)
+
     rows = [
-        {field: stringify(skill.get(field, "")) for field in DISPLAY_FIELDS}
+        {field: stringify(skill.get(field, "")) for field in display_fields}
         for skill in skills
     ]
     widths = {
         field: max(len(field), *(len(row[field]) for row in rows))
-        for field in DISPLAY_FIELDS
+        for field in display_fields
     }
 
-    header = "  ".join(field.ljust(widths[field]) for field in DISPLAY_FIELDS)
-    separator = "  ".join("-" * widths[field] for field in DISPLAY_FIELDS)
+    header = "  ".join(field.ljust(widths[field]) for field in display_fields)
+    separator = "  ".join("-" * widths[field] for field in display_fields)
     print(header)
     print(separator)
     for row in rows:
-        print("  ".join(row[field].ljust(widths[field]) for field in DISPLAY_FIELDS))
+        print("  ".join(row[field].ljust(widths[field]) for field in display_fields))
     print(f"\n{len(rows)} skill(s) listed.")
 
 
 def stringify(value: object) -> str:
     if value is None:
         return ""
+    if isinstance(value, list):
+        return ", ".join(str(item) for item in value)
     return str(value)
 
 
@@ -82,6 +89,11 @@ def parse_args(argv: Iterable[str]) -> argparse.Namespace:
     )
     parser.add_argument("--category", help="Only show skills in this category.")
     parser.add_argument("--maturity", help="Only show skills with this maturity.")
+    parser.add_argument(
+        "--show-secondary",
+        action="store_true",
+        help="Show secondary category metadata when present.",
+    )
     return parser.parse_args(list(argv))
 
 
@@ -93,7 +105,10 @@ def main(argv: Iterable[str] | None = None) -> int:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
 
-    render_table(filter_skills(skills, args.category, args.maturity))
+    render_table(
+        filter_skills(skills, args.category, args.maturity),
+        show_secondary=args.show_secondary,
+    )
     return 0
 
 

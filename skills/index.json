@@ -5,6 +5,7 @@
       "name": "agent-legibility-review",
       "path": "skills/agent-legibility-review",
       "category": "review-audit",
+      "secondary_categories": [],
       "maturity": "portable-candidate",
       "purpose": "Reviews whether a repository is easy for future AI coding agents to find, understand, modify, and safely evolve.",
       "triggers": [
@@ -37,6 +38,9 @@
       "name": "ai-career-signal-researcher",
       "path": "skills/ai-career-signal-researcher",
       "category": "research",
+      "secondary_categories": [
+        "agent-memory"
+      ],
       "maturity": "personal-skill",
       "purpose": "Researches AI systems engineering career, market, infrastructure, and portfolio signals for a backend engineer moving into AI systems work.",
       "triggers": [
@@ -75,6 +79,7 @@
       "name": "architecture-review",
       "path": "skills/architecture-review",
       "category": "review-audit",
+      "secondary_categories": [],
       "maturity": "portable-candidate",
       "purpose": "Reviews repository architecture from local evidence, focusing on concept ownership, authority, boundaries, drift, and change surface.",
       "triggers": [
@@ -111,6 +116,9 @@
       "name": "brand-deal-researcher",
       "path": "skills/brand-deal-researcher",
       "category": "research",
+      "secondary_categories": [
+        "publishing"
+      ],
       "maturity": "personal-skill",
       "purpose": "Turns sponsorship and paid-promotion emails into researched, deduplicated, prioritized brand lead lists.",
       "triggers": [
@@ -143,6 +151,9 @@
       "name": "buffer-publisher",
       "path": "skills/buffer-publisher",
       "category": "tool-ops",
+      "secondary_categories": [
+        "publishing"
+      ],
       "maturity": "personal-skill",
       "purpose": "Operates Buffer accounts, organizations, channels, ideas, drafts, queues, scheduled posts, and post mutations through Buffer's GraphQL API.",
       "triggers": [
@@ -180,6 +191,7 @@
       "name": "database-access-audit",
       "path": "skills/database-access-audit",
       "category": "review-audit",
+      "secondary_categories": [],
       "maturity": "portable-candidate",
       "purpose": "Performs a read-only database access audit for batch operations, looped DB I/O, bulk writes, transactions, scope isolation, rowcount, constraints, and indexes.",
       "triggers": [
@@ -214,6 +226,9 @@
       "name": "decision-trace-writer",
       "path": "skills/decision-trace-writer",
       "category": "agent-memory",
+      "secondary_categories": [
+        "planning-execution"
+      ],
       "maturity": "personal-skill",
       "purpose": "Writes durable local agent-facing traces for stable engineering decisions, findings, review outcomes, and user-clarified constraints.",
       "triggers": [
@@ -249,6 +264,7 @@
       "name": "diagnose",
       "path": "skills/diagnose",
       "category": "core-engineering",
+      "secondary_categories": [],
       "maturity": "portable-candidate",
       "purpose": "Runs a disciplined diagnosis loop for hard bugs and performance regressions before fixing them.",
       "triggers": [
@@ -286,6 +302,7 @@
       "name": "excalidraw-diagrams",
       "path": "skills/excalidraw-diagrams",
       "category": "visual-artifacts",
+      "secondary_categories": [],
       "maturity": "personal-skill",
       "purpose": "Creates polished editable Excalidraw diagrams from text descriptions and can export shareable Excalidraw URLs.",
       "triggers": [
@@ -322,6 +339,9 @@
       "name": "genmedia",
       "path": "skills/genmedia",
       "category": "tool-ops",
+      "secondary_categories": [
+        "publishing"
+      ],
       "maturity": "personal-skill",
       "purpose": "Uses the genmedia CLI to discover, inspect, run, upload to, and manage fal.ai model endpoints from the terminal.",
       "triggers": [
@@ -367,6 +387,9 @@
       "name": "grill-me",
       "path": "skills/grill-me",
       "category": "review-audit",
+      "secondary_categories": [
+        "planning-execution"
+      ],
       "maturity": "portable-candidate",
       "purpose": "Pressure-tests ideas, plans, architecture, implementations, PRs, design docs, migrations, rollouts, and technical decisions with direct senior-engineer critique.",
       "triggers": [
@@ -399,6 +422,9 @@
       "name": "grill-with-docs",
       "path": "skills/grill-with-docs",
       "category": "review-audit",
+      "secondary_categories": [
+        "agent-memory"
+      ],
       "maturity": "personal-skill",
       "purpose": "Stress-tests architecture, plans, domain models, workflow semantics, or durable repo knowledge against local repository docs and conventions.",
       "triggers": [
@@ -436,6 +462,7 @@
       "name": "paper-deck-style",
       "path": "skills/paper-deck-style",
       "category": "visual-artifacts",
+      "secondary_categories": [],
       "maturity": "personal-skill",
       "purpose": "Guides creation or extension of minimal, spacious, high-end slide designs for Paper boards.",
       "triggers": [
@@ -470,6 +497,9 @@
       "name": "paper-mcp",
       "path": "skills/paper-mcp",
       "category": "tool-ops",
+      "secondary_categories": [
+        "visual-artifacts"
+      ],
       "maturity": "personal-skill",
       "purpose": "Inspects and edits open Paper boards through the local Paper MCP server instead of fragile UI automation.",
       "triggers": [
@@ -504,6 +534,7 @@
       "name": "prd-to-issues",
       "path": "skills/prd-to-issues",
       "category": "planning-execution",
+      "secondary_categories": [],
       "maturity": "portable-candidate",
       "purpose": "Converts PRDs, specs, implementation briefs, design docs, or feature plans into scoped, dependency-aware execution issues.",
       "triggers": [
@@ -540,6 +571,7 @@
       "name": "python-backend-review",
       "path": "skills/python-backend-review",
       "category": "review-audit",
+      "secondary_categories": [],
       "maturity": "portable-candidate",
       "purpose": "Reviews Python backend repositories for target-version compatibility, implementation quality, typing, async/sync correctness, configuration, logging, packaging, testing, and maintainability.",
       "triggers": [
@@ -573,6 +605,7 @@
       "name": "python-ecosystem-review",
       "path": "skills/python-ecosystem-review",
       "category": "review-audit",
+      "secondary_categories": [],
       "maturity": "portable-candidate",
       "purpose": "Reviews important Python ecosystem library usage and integration boundaries against current best practices.",
       "triggers": [
@@ -608,6 +641,9 @@
       "name": "radar-analysis",
       "path": "skills/radar-analysis",
       "category": "agent-memory",
+      "secondary_categories": [
+        "research"
+      ],
       "maturity": "personal-skill",
       "purpose": "Analyzes existing reviewed ai-signal-radar repository history for monthly reviews, quarterly synthesis, theme analysis, trend synthesis, and idea mining.",
       "triggers": [
@@ -642,6 +678,9 @@
       "name": "readwise-cli-control",
       "path": "skills/readwise-cli-control",
       "category": "tool-ops",
+      "secondary_categories": [
+        "research"
+      ],
       "maturity": "personal-skill",
       "purpose": "Controls Readwise and Reader headlessly through the official CLI for search, export, organization, and automation.",
       "triggers": [
@@ -681,6 +720,7 @@
       "name": "tdd",
       "path": "skills/tdd",
       "category": "core-engineering",
+      "secondary_categories": [],
       "maturity": "portable-candidate",
       "purpose": "Guides implementation through a behavior-focused red-green-refactor loop using public interfaces and vertical slices.",
       "triggers": [
@@ -723,6 +763,9 @@
       "name": "weekly-radar-ingestion",
       "path": "skills/weekly-radar-ingestion",
       "category": "agent-memory",
+      "secondary_categories": [
+        "research"
+      ],
       "maturity": "personal-skill",
       "purpose": "Ingests one Ray-reviewed weekly AI Systems Engineering Radar report into an ai-signal-radar repository as durable signal records and indexes.",
       "triggers": [
@@ -773,6 +816,7 @@
       "name": "write-a-prd",
       "path": "skills/write-a-prd",
       "category": "planning-execution",
+      "secondary_categories": [],
       "maturity": "portable-candidate",
       "purpose": "Turns rough ideas, feature requests, architecture proposals, product requirements, design discussions, or implementation plans into structured PRDs or specifications.",
       "triggers": [
