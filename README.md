@@ -1,12 +1,31 @@
 # Codex Skills
 
-Reusable AI-assisted engineering workflows for Codex.
+Reusable AI-assisted engineering workflows for Codex, evolving from a personal practice library toward a public reusable workflow library.
 
 This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, database access audit, test-driven development, specification writing, PRD-to-issue planning, durable decision traces, reviewed weekly radar ingestion, radar history analysis, external research, visual artifacts, publishing workflows, and tool-specific operations.
 
 The goal is to make AI-assisted engineering more reliable under real project pressure. Each skill defines a workflow that an agent can follow with local repository evidence, explicit validation, and clear boundaries.
 
+The repository should become more reusable by preserving what has worked in real practice, then adding public hygiene, classification, portability notes, examples, metadata, and validation around that behavior. Reusable does not mean universal. Do not generalize, rename, restructure, or rewrite skills just to make the repository look more polished.
+
 This is a personal skill library, not an official OpenAI project.
+
+## What This Is / What This Is Not
+
+This is:
+
+- a practice-derived library of Codex engineering workflows
+- a place for concrete operating procedures, guardrails, evidence rules, and validation paths
+- a growing public toolkit whose reuse should stay grounded in observed skill behavior
+- a repository where personal or tool-specific workflow details can remain when they are safe, classified, and useful
+
+This is not:
+
+- a prompt gallery
+- a generic framework for every possible Codex workflow
+- a marketing-polished package that hides its practice-derived origin
+- a place for secrets, credentials, private customer or project details, private URLs, raw logs, or sensitive identifiers
+- a reason to normalize every skill into the same structure before the repository has evidence that the structure fits
 
 ## Why This Exists
 
@@ -26,6 +45,18 @@ I use Codex as an engineering partner, not only as a code generator. The work th
 - operating specialized tools such as Buffer, Paper, Readwise, Excalidraw, and genmedia with repeatable guardrails
 
 The skills are intentionally written as operating procedures because the target outcome is repeatable engineering behavior, not clever wording.
+
+## Repository Guides
+
+The repository direction is captured in a small set of docs:
+
+- [docs/repository-contract.md](docs/repository-contract.md) defines the grounded evolution contract.
+- [docs/skill-taxonomy.md](docs/skill-taxonomy.md) defines category and maturity labels.
+- [docs/public-sanitization.md](docs/public-sanitization.md) defines public repository hygiene.
+- [docs/side-effect-policy.md](docs/side-effect-policy.md) defines read, write, publishing, and destructive-operation guardrails.
+- [docs/skill-authoring-guide.md](docs/skill-authoring-guide.md) explains how to turn real practice into a skill without premature generalization.
+
+Use these docs to classify, contain, and validate existing behavior. Do not use them as permission for broad directory moves or cosmetic rewrites.
 
 ## Install
 
@@ -48,6 +79,29 @@ Each skill is self-contained:
 - `skills/*/scripts/` contains helper scripts when a workflow needs one.
 
 Use a skill when the task matches the workflow, not because the skill name sounds related. For example, use `diagnose` when there is a concrete bug or performance regression; use `architecture-review` when the question is about ownership, boundaries, authority, or change surface.
+
+[skills/index.json](skills/index.json) is the machine-readable registry for skill metadata, including category, maturity, side-effect level, supporting files, validation expectations, and portability notes. It is descriptive metadata for the current skill set, not a requirement to move or rewrite directories.
+
+Run the repository validation command after skill, docs, registry, or README changes:
+
+```bash
+python scripts/validate_skills.py
+```
+
+## Skill Categories
+
+The current category map comes from [docs/skill-taxonomy.md](docs/skill-taxonomy.md) and [skills/index.json](skills/index.json). Categories describe what skills do today; they should not be used to force restructuring.
+
+| Category | Current skills | Primary use |
+|---|---|---|
+| `core-engineering` | `diagnose`, `tdd` | Implementation, debugging, testing, and feedback loops. |
+| `review-audit` | `agent-legibility-review`, `architecture-review`, `database-access-audit`, `grill-me`, `grill-with-docs`, `python-backend-review`, `python-ecosystem-review` | Evidence-first review, critique, architecture assessment, and audit work. |
+| `planning-execution` | `prd-to-issues`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts. |
+| `agent-memory` | `decision-trace-writer`, `radar-analysis`, `weekly-radar-ingestion` | Preserving durable context or analyzing stored agent-readable records. |
+| `research` | `ai-career-signal-researcher`, `brand-deal-researcher` | Gathering, evaluating, synthesizing, or prioritizing external signals. |
+| `tool-ops` | `buffer-publisher`, `genmedia`, `paper-mcp`, `readwise-cli-control` | Operating a specific external tool, local service, CLI, API, or connected account. |
+| `visual-artifacts` | `excalidraw-diagrams`, `paper-deck-style` | Creating, editing, or styling visual deliverables. |
+| `publishing` | `buffer-publisher`, `brand-deal-researcher`, `genmedia` | Preparing, scheduling, queueing, publishing, or packaging outward-facing artifacts. |
 
 ## Skills and Engineering Outcomes
 
@@ -83,6 +137,7 @@ Use a skill when the task matches the workflow, not because the skill name sound
 - **Bounded scope:** each skill should do one kind of engineering work well.
 - **Observable outcomes:** a skill should produce a review, test, issue plan, decision trace, or verified fix.
 - **Validation before confidence:** claims should be backed by tests, repro loops, source inspection, or explicit uncertainty.
+- **Practice is signal:** personal or project-derived details can encode real guardrails; sanitize, classify, or add portability notes before deleting them.
 - **Reusable but not universal:** these skills encode opinions and defaults; adapt them before using them in a different engineering culture.
 
 ## Example Workflow
@@ -114,5 +169,7 @@ This repository is versioned informally through Git history. When changing a ski
 - prefer concrete examples over broad advice
 - remove stale instructions rather than layering exceptions
 - test scripts or templates locally when they are part of the workflow
+- keep [skills/index.json](skills/index.json) aligned when public skill metadata changes
+- run `python scripts/validate_skills.py` after changes that touch skills, docs, registry metadata, or README links
 
-Because these are personal workflows, treat them as examples of agent operating design rather than universal best practices.
+Because these are practice-derived workflows, treat them as examples of agent operating design rather than universal best practices. Improve reuse incrementally: preserve behavior first, sanitize public-facing content, classify current maturity, and generalize only after repeated repository evidence supports it.
