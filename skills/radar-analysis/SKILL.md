@@ -73,3 +73,9 @@ Keep analysis anchored to repository facts:
 - Avoid claiming a trend from a single record unless labeled as an early signal.
 - Separate deterministic extraction from interpretation.
 - If producing a file, run validation after generation when practical.
+
+## Portability Notes
+
+- Specific to the author's current workflow: this assumes an `ai-signal-radar` style repository with reviewed weekly records, theme indexes, monthly reports, and Ray's reviewer framing.
+- Reusable: treat structured data as primary, use reviewed Markdown as narrative context, separate deterministic extraction from interpretation, and validate generated artifacts.
+- Adapt before reuse: replace repository paths, validator/generator commands, reviewer naming, theme/index conventions, and report periods with the target signal repository's schema.

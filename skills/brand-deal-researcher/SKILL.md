@@ -87,6 +87,12 @@ For document/DOCX requests:
 - When the user asks for "all brands," err toward recall first, then mark questionable leads as low priority instead of silently dropping them.
 - If research cannot verify a brand, keep the row but mark it clearly as unverified.
 
+## Portability Notes
+
+- Specific to the author's current workflow: the default source is Gmail or email exports for creator sponsorship and paid promotion leads.
+- Reusable: date-bounded search, paid-opportunity filtering, brand/client deduplication, official-source research, and prioritized lead-table output.
+- Adapt before reuse: replace the mailbox connector, creator niche, priority criteria, deliverable types, and artifact format with the adopting user's account and business model.
+
 ## Example Requests
 
 - "Use Gmail from the past 2 weeks and find all paid promotion offers."

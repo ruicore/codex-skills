@@ -146,6 +146,12 @@ For small requests, use a shorter version of the same structure.
 - Avoid generic career advice and vague claims like "AI is growing rapidly."
 - Always connect findings back to backend engineering, AI systems engineering, and production constraints.
 
+## Portability Notes
+
+- Specific to the author's current workflow: analysis defaults to a backend engineer with strong Python production experience moving into AI systems engineering, with extra attention to Asia-region market signals when relevant.
+- Reusable: the evidence-first signal collection, hype filtering, career relevance scoring, and portfolio/content mapping workflow.
+- Adapt before reuse: replace the career profile, target regions, preferred publishing surfaces, and available collectors or API keys with the adopting user's context.
+
 ## References
 
 - `references/source-evaluation.md` for evaluating external evidence and avoiding popularity traps.

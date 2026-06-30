@@ -81,6 +81,12 @@ python3 "$HOME/.codex/skills/buffer-publisher/scripts/buffer_cli.py" delete-post
 - Include `MutationError { message }` or equivalent error fragments in mutations.
 - Keep queries flat and paginated. Use `first` around 20-50 for list operations.
 
+## Portability Notes
+
+- Specific to the author's current workflow: the helper path, `BUFFER_API_KEY` environment variable, and optional macOS Keychain item are local setup conventions.
+- Reusable: account/channel preflight, preview-before-write behavior, UTC scheduling discipline, and explicit confirmation before publish-affecting or destructive mutations.
+- Adapt before reuse: configure the helper location, credential storage, organization/channel selection, posting defaults, and confirmation policy for the target Buffer account.
+
 ## References
 
 Read `references/buffer-api.md` when you need endpoint details, allowed enums, supported platforms, rate limits, or GraphQL input shapes.

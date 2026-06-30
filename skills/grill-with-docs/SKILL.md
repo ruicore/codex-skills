@@ -123,3 +123,9 @@ Suggest an ADR only when all are true:
 If any condition is missing, prefer a lightweight context or knowledge note.
 
 If the repo uses the bundled formats and they fit the repo convention, use [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md) or [ADR-FORMAT.md](./ADR-FORMAT.md). Otherwise follow the repo's existing format.
+
+## Portability Notes
+
+- Specific to the author's current workflow: `.manifest/` is a preferred personal agent-knowledge location only when the target repository already defines or accepts it.
+- Reusable: repo-convention discovery, evidence-backed domain pressure testing, self-challenge before preserving claims, and stable-knowledge persistence.
+- Adapt before reuse: inspect the target repository's instruction files, durable documentation locations, public/private doc boundary, and ADR or context-file conventions before writing.

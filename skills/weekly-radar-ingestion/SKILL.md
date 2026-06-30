@@ -213,6 +213,12 @@ repository workflow. Never force-push.
 9. Never fabricate themes, dates, signals, action items, or importance.
 10. Leave missing fields empty rather than guessing.
 
+## Portability Notes
+
+- Specific to the author's current workflow: this assumes Ray-reviewed AI Systems Engineering Radar reports and an `ai-signal-radar` repository with `radars/`, `data/`, `themes/`, `indexes/`, schemas, and validation scripts.
+- Reusable: approved-report preservation, deterministic date/path handling, schema-first metadata extraction, additive theme/index updates, and validation-before-commit discipline.
+- Adapt before reuse: replace reviewer naming, repository layout, schema fields, validation commands, commit policy, and theme taxonomy with the target repository's checked-in contract.
+
 ## Bundled Resources
 
 - `templates/report.md`: optional Markdown shape for normalized reports.

@@ -87,6 +87,12 @@ Make the transformation visually explicit.
 - Use screenshots when checking whether a slide is too busy or unbalanced.
 - On an existing deck, preserve finished slides unless asked to redesign them.
 
+## Portability Notes
+
+- Specific to the author's current workflow: the style language targets Paper boards and a minimal keynote-like aesthetic already used in existing decks.
+- Reusable: inspect-before-editing, one-idea-per-slide discipline, central-graphic layouts, whitespace-first composition, and screenshot-based visual QA.
+- Adapt before reuse: replace Paper-specific mutation tooling, fonts, colors, slide archetypes, and deck style assumptions with the target presentation tool and brand system.
+
 ## References
 
 Read [references/slide-patterns.md](references/slide-patterns.md) when matching or extending the current deck. It summarizes the slide archetypes already used on the Paper board.

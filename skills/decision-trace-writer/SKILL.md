@@ -75,6 +75,12 @@ Do not create or enforce repository structures just because they appear in this 
 - Prefer placeholders over concrete names in the skill itself.
 - Concrete names belong inside generated trace files for the current repository, not inside the reusable skill.
 
+## Portability Notes
+
+- Specific to the author's current workflow: generated traces are agent-facing project memory and may live in repo-local private or ignored locations.
+- Reusable: the worth-recording gate, local convention discovery, privacy redaction, create-vs-update rule, and trace-to-validation loop.
+- Adapt before reuse: choose the target repository's durable-memory location, language, review policy, and version-control rules before writing or committing traces.
+
 ## Create vs Update
 
 Update an existing trace when the same decision evolves, implementation status changes, validation results are added, or revisit triggers are clarified.
