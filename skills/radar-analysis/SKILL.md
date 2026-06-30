@@ -9,13 +9,13 @@ description: Analyze the ai-signal-radar repository history to produce monthly r
 
 Treat `data/YYYY/*.json` as the primary source, `radars/YYYY/*.md` as reviewed narrative context, and `indexes/*.json` plus `themes/README.md` as derived navigation. Do not use external sources or OpenAI API calls for repository analysis unless the user explicitly changes the contract.
 
-Before producing an analysis report, run or mentally apply the repository consistency checks:
+Before producing an analysis report, run or mentally apply the target repository's consistency checks:
 
 ```bash
 uv run python scripts/validate_content.py
 ```
 
-If indexes are stale and the user asked for a committed artifact, regenerate them first:
+If indexes are stale and the user asked for a committed artifact, regenerate them with the target repository's script first:
 
 ```bash
 uv run python scripts/update_indexes.py
@@ -25,7 +25,7 @@ Do not edit reviewed weekly source files under `data/` or `radars/` during analy
 
 ## Monthly Reviews
 
-For a deterministic monthly scaffold, use:
+For a deterministic monthly scaffold, use the target repository's generator:
 
 ```bash
 uv run python scripts/generate_monthly_review.py YYYY-MM

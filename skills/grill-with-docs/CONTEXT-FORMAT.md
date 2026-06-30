@@ -57,9 +57,9 @@ _Avoid_: Client, buyer, account
 
 ## Contexts
 
-- [Ordering](./src/ordering/CONTEXT.md) — receives and tracks customer orders
-- [Billing](./src/billing/CONTEXT.md) — generates invoices and processes payments
-- [Fulfillment](./src/fulfillment/CONTEXT.md) — manages warehouse picking and shipping
+- `src/ordering/CONTEXT.md` — Ordering receives and tracks customer orders
+- `src/billing/CONTEXT.md` — Billing generates invoices and processes payments
+- `src/fulfillment/CONTEXT.md` — Fulfillment manages warehouse picking and shipping
 
 ## Relationships
 
