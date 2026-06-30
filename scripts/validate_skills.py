@@ -34,6 +34,7 @@ REQUIRED_ENTRY_FIELDS = {
     "purpose",
     "triggers",
     "do_not_use_for",
+    "default_side_effect_level",
     "side_effect_level",
     "requires_credentials",
     "primary_outputs",
@@ -46,8 +47,19 @@ REQUIRED_ENTRY_FIELDS = {
 ENUM_FIELD_TO_DEFINITION = {
     "category": "category",
     "maturity": "maturity",
+    "default_side_effect_level": "side_effect_level",
     "side_effect_level": "side_effect_level",
 }
+SIDE_EFFECT_LEVEL_ORDER = (
+    "none",
+    "read-only",
+    "local-files",
+    "git-working-tree",
+    "external-api-read",
+    "external-api-write",
+    "publish",
+    "destructive",
+)
 NON_EMPTY_STRING_FIELDS = (
     "name",
     "path",
@@ -248,6 +260,7 @@ class Validator:
         self.validate_agents_metadata_path_type(label, entry)
         for field in ENUM_FIELD_TO_DEFINITION:
             self.validate_enum_field(label, entry, field, allowed_enums.get(field, set()))
+        self.validate_side_effect_pair(label, entry)
         self.validate_secondary_categories(
             label, entry, allowed_enums.get("category", set())
         )
@@ -381,6 +394,23 @@ class Validator:
                     f"{rel(INDEX_PATH)}:{item_label}: must not duplicate primary category "
                     f"'{primary_category}'"
                 )
+
+    def validate_side_effect_pair(self, label: str, entry: dict[str, object]) -> None:
+        default_value = entry["default_side_effect_level"]
+        maximum_value = entry["side_effect_level"]
+        if not isinstance(default_value, str) or not isinstance(maximum_value, str):
+            return
+
+        order = {level: index for index, level in enumerate(SIDE_EFFECT_LEVEL_ORDER)}
+        if default_value not in order or maximum_value not in order:
+            return
+
+        if order[default_value] > order[maximum_value]:
+            self.error(
+                f"{rel(INDEX_PATH)}:{label}.default_side_effect_level: "
+                f"default value '{default_value}' exceeds maximum normal side-effect "
+                f"level '{maximum_value}'"
+            )
 
     def validate_skill_directory_coverage(self, contexts: list[SkillContext]) -> None:
         registered_dirs = {context.skill_dir.resolve() for context in contexts}
