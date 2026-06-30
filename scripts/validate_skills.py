@@ -526,11 +526,8 @@ class Validator:
                 self.error(f"{rel(openai_yaml)}: missing interface.{field}")
 
     def validate_markdown_links(self, contexts: list[SkillContext]) -> None:
-        markdown_files = [REPO_ROOT / "README.md"]
-        markdown_files.extend(sorted((REPO_ROOT / "docs").glob("*.md")))
-        markdown_files.extend(context.skill_md for context in contexts if context.skill_md.exists())
-
-        for markdown_file in markdown_files:
+        _ = contexts
+        for markdown_file in find_markdown_files_for_link_validation():
             try:
                 text = markdown_file.read_text(encoding="utf-8")
             except UnicodeDecodeError as exc:
@@ -854,6 +851,21 @@ def find_python_scripts() -> list[Path]:
     if skills_root.exists():
         paths.update(skills_root.glob("**/scripts/*.py"))
     return sorted(path.resolve() for path in paths if path.is_file())
+
+
+def find_markdown_files_for_link_validation() -> list[Path]:
+    paths: set[Path] = set()
+    for relative_path in ("README.md", "CHANGELOG.md"):
+        path = REPO_ROOT / relative_path
+        if path.is_file():
+            paths.add(path.resolve())
+
+    for relative_dir in ("docs", "templates", ".github", "skills"):
+        root = REPO_ROOT / relative_dir
+        if root.exists():
+            paths.update(path.resolve() for path in root.glob("**/*.md") if path.is_file())
+
+    return sorted(paths, key=rel)
 
 
 def safe_pyc_name(script_path: Path) -> str:
