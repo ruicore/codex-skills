@@ -108,6 +108,15 @@
           "description": "Primary category from docs/skill-taxonomy.md.",
           "$ref": "#/definitions/category"
         },
+        "secondary_categories": {
+          "description": "Optional secondary categories from docs/skill-taxonomy.md. Use [] when no secondary category applies.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/category"
+          },
+          "default": [],
+          "uniqueItems": true
+        },
         "maturity": {
           "description": "Current maturity level from docs/skill-taxonomy.md.",
           "$ref": "#/definitions/maturity"

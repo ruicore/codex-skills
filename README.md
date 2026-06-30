@@ -75,6 +75,7 @@ Optional registry-based tooling is available for listing and copying skills from
 python scripts/list_skills.py
 python scripts/list_skills.py --category review-audit
 python scripts/list_skills.py --maturity portable-candidate
+python scripts/list_skills.py --show-secondary
 
 python scripts/install_skill.py diagnose --dry-run
 python scripts/install_skill.py diagnose
@@ -105,6 +106,7 @@ python scripts/validate_skills.py
 ## Skill Categories
 
 The current category map comes from [docs/skill-taxonomy.md](docs/skill-taxonomy.md) and [skills/index.json](skills/index.json). Categories describe what skills do today; they should not be used to force restructuring.
+Some category memberships are secondary; the registry records those in `secondary_categories`.
 
 | Category | Current skills | Primary use |
 |---|---|---|

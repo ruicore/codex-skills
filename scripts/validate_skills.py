@@ -29,6 +29,7 @@ REQUIRED_ENTRY_FIELDS = {
     "name",
     "path",
     "category",
+    "secondary_categories",
     "maturity",
     "purpose",
     "triggers",
@@ -247,6 +248,9 @@ class Validator:
         self.validate_agents_metadata_path_type(label, entry)
         for field in ENUM_FIELD_TO_DEFINITION:
             self.validate_enum_field(label, entry, field, allowed_enums.get(field, set()))
+        self.validate_secondary_categories(
+            label, entry, allowed_enums.get("category", set())
+        )
 
         if name is None or path_value is None:
             return None
@@ -345,6 +349,38 @@ class Validator:
                 f"{rel(INDEX_PATH)}:{label}.{field}: invalid value '{value}'; "
                 f"expected one of: {expected}"
             )
+
+    def validate_secondary_categories(
+        self, label: str, entry: dict[str, object], allowed_values: set[str]
+    ) -> None:
+        value = entry["secondary_categories"]
+        if not isinstance(value, list):
+            self.error(f"{rel(INDEX_PATH)}:{label}.secondary_categories: must be a list")
+            return
+
+        seen: set[str] = set()
+        primary_category = entry.get("category")
+        for item_index, item in enumerate(value):
+            item_label = f"{label}.secondary_categories[{item_index}]"
+            if not isinstance(item, str) or not item.strip():
+                self.error(f"{rel(INDEX_PATH)}:{item_label}: must be a non-empty string")
+                continue
+            if allowed_values and item not in allowed_values:
+                expected = ", ".join(sorted(allowed_values))
+                self.error(
+                    f"{rel(INDEX_PATH)}:{item_label}: invalid value '{item}'; "
+                    f"expected one of: {expected}"
+                )
+            if item in seen:
+                self.error(
+                    f"{rel(INDEX_PATH)}:{item_label}: duplicate secondary category '{item}'"
+                )
+            seen.add(item)
+            if isinstance(primary_category, str) and item == primary_category:
+                self.error(
+                    f"{rel(INDEX_PATH)}:{item_label}: must not duplicate primary category "
+                    f"'{primary_category}'"
+                )
 
     def validate_skill_directory_coverage(self, contexts: list[SkillContext]) -> None:
         registered_dirs = {context.skill_dir.resolve() for context in contexts}
