@@ -69,6 +69,20 @@ cp -R skills/diagnose ~/.codex/skills/
 
 Then review the copied `SKILL.md` before relying on it in another repository. Some skills include supporting notes or scripts; keep those files with the skill directory.
 
+Optional registry-based tooling is available for listing and copying skills from [skills/index.json](skills/index.json):
+
+```bash
+python scripts/list_skills.py
+python scripts/list_skills.py --category review-audit
+python scripts/list_skills.py --maturity portable-candidate
+
+python scripts/install_skill.py diagnose --dry-run
+python scripts/install_skill.py diagnose
+python scripts/install_skill.py --category review-audit --target ~/.codex/skills --dry-run
+```
+
+`install_skill.py` copies the full skill directory, including supporting files and scripts. Existing destination directories are left untouched unless `--overwrite` is passed explicitly.
+
 ## Use
 
 Each skill is self-contained:
