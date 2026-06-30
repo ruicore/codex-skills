@@ -51,3 +51,9 @@ The reusable CLI wrapper is:
 - Do not use Computer Use for Paper board edits when this MCP server is reachable.
 - Do not expose raw node IDs in final user-facing replies.
 - Deleting Paper nodes changes board data; confirm with the user immediately before deletion.
+
+## Portability Notes
+
+- Specific to the author's current workflow: the Paper desktop app exposes a local MCP server at `http://127.0.0.1:29979/mcp`, and the wrapper lives under `$HOME/.codex/tools/`.
+- Reusable: prefer structured MCP operations over fragile UI automation, inspect board state before edits, verify with screenshots, and finish node work explicitly.
+- Adapt before reuse: update the local server URL, wrapper path, asset URL convention, board-selection workflow, and deletion-confirmation policy for the target Paper setup.

@@ -259,3 +259,9 @@ For large diagrams:
   - a clickable file path to the preview image
   - the excalidraw.com share/open URL
 - If the user asks for a sequence diagram, Gantt chart, pie chart, or bar chart, say this tool is a poor fit and suggest Mermaid instead.
+
+## Portability Notes
+
+- Specific to the author's current workflow: previews prefer macOS Quick Look when available, and default output includes an excalidraw.com share URL.
+- Reusable: the JSON-elements workflow, multi-panel canvas convention, styling defaults, artifact expectations, and "Excalidraw is the source of truth" rule.
+- Adapt before reuse: replace preview generation, share-link policy, scratch/output paths, and any platform-specific tooling with what the target environment supports.

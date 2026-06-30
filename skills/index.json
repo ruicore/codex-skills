@@ -627,7 +627,7 @@
       ],
       "supporting_files": [],
       "agents_metadata_path": "skills/radar-analysis/agents/openai.yaml",
-      "portability_notes": "Project-specific to ai-signal-radar style repositories with data, radars, indexes, themes, and reports conventions."
+      "portability_notes": "Project-specific to ai-signal-radar style repositories with data, radars, indexes, themes, reports conventions, and reviewer-framing assumptions that adopters should replace with their own."
     },
     {
       "name": "readwise-cli-control",
@@ -757,7 +757,7 @@
         "skills/weekly-radar-ingestion/templates/themes-index.json"
       ],
       "agents_metadata_path": "skills/weekly-radar-ingestion/agents/openai.yaml",
-      "portability_notes": "Project-specific to Ray-reviewed AI Systems Engineering Radar ingestion and ai-signal-radar repository conventions. Adapt only after inspecting the target repository schema and scripts."
+      "portability_notes": "Project-specific to Ray-reviewed AI Systems Engineering Radar ingestion and ai-signal-radar repository conventions. Adapt reviewer naming, schema fields, paths, and scripts only after inspecting the target repository contract."
     },
     {
       "name": "write-a-prd",

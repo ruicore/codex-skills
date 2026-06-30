@@ -30,7 +30,7 @@ If you need the official rationale or URLs, read [references/official-notes.md](
 1. Ensure the CLI is installed and authenticated with a token:
 
 ```bash
-READWISE_ACCESS_TOKEN='...'
+READWISE_ACCESS_TOKEN='<token>'
 "$HOME/.codex/skills/readwise-cli-control/scripts/setup-readwise-cli.sh" --readonly false
 ```
 
@@ -43,7 +43,7 @@ READWISE_ACCESS_TOKEN='...'
 3. For read-only sessions:
 
 ```bash
-READWISE_ACCESS_TOKEN='...'
+READWISE_ACCESS_TOKEN='<token>'
 "$HOME/.codex/skills/readwise-cli-control/scripts/setup-readwise-cli.sh" --readonly true
 ```
 
@@ -106,3 +106,9 @@ readwise --help
   Installs the official CLI if needed, authenticates with `READWISE_ACCESS_TOKEN`, and sets readonly mode.
 - `scripts/readwise-json.sh`
   Runs the official CLI with `--json`. If `READWISE_ACCESS_TOKEN` is set, it refreshes auth first.
+
+## Portability Notes
+
+- Specific to the author's current workflow: this prefers the official Readwise CLI and local skill scripts over browser OAuth or remote MCP usage.
+- Reusable: token-in-environment authentication, readonly setup for analysis, JSON command output, original-source-link discipline, and confirmation before write operations.
+- Adapt before reuse: configure the CLI install path, token storage, readonly default, allowed write operations, and source-link fields for the target Readwise account and CLI version.

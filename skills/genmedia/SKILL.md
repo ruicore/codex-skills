@@ -123,3 +123,9 @@ genmedia setup --non-interactive --api-key "$FAL_KEY"
 ```
 
 For full setup details (output modes, auto-update, `.env` loading) see [full-reference.md](references/full-reference.md).
+
+## Portability Notes
+
+- Specific to the author's current workflow: optional mini app handoff uses local `[YOUR_MINI_APP_DIR]` and `[YOUR_MINI_APP_URL]` placeholders plus the bundled import helper.
+- Reusable: schema-first endpoint execution, JSON output for agents, async polling, authenticated downloads, and credential non-disclosure rules.
+- Adapt before reuse: configure genmedia installation, fal credentials, output directories, optional app import paths, and any local media-inspection workflow.
