@@ -1,0 +1,171 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ruicore/codex-skills/schemas/skill-registry.schema.json",
+  "title": "Codex Skills Registry",
+  "description": "Validates the future skills/index.json registry for this repository.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "skills"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Optional registry schema version used by maintainers.",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "skills": {
+      "type": "array",
+      "description": "Skill metadata entries.",
+      "items": {
+        "$ref": "#/definitions/skill"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "definitions": {
+    "category": {
+      "type": "string",
+      "enum": [
+        "core-engineering",
+        "review-audit",
+        "planning-execution",
+        "agent-memory",
+        "research",
+        "tool-ops",
+        "visual-artifacts",
+        "publishing"
+      ]
+    },
+    "maturity": {
+      "type": "string",
+      "enum": [
+        "practice-note",
+        "personal-skill",
+        "portable-candidate",
+        "stable-workflow",
+        "deprecated"
+      ]
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._/-]+$"
+    },
+    "side_effect_level": {
+      "type": "string",
+      "enum": [
+        "none",
+        "read-only",
+        "local-files",
+        "git-working-tree",
+        "external-api-read",
+        "external-api-write",
+        "publish",
+        "destructive"
+      ]
+    },
+    "non_empty_string_list": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "path",
+        "category",
+        "maturity",
+        "purpose",
+        "triggers",
+        "do_not_use_for",
+        "side_effect_level",
+        "requires_credentials",
+        "primary_outputs",
+        "validation_expectations",
+        "supporting_files",
+        "agents_metadata_path",
+        "portability_notes"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Directory-style skill name.",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "path": {
+          "description": "Repository-relative path to the skill directory.",
+          "$ref": "#/definitions/path"
+        },
+        "category": {
+          "description": "Primary category from docs/skill-taxonomy.md.",
+          "$ref": "#/definitions/category"
+        },
+        "maturity": {
+          "description": "Current maturity level from docs/skill-taxonomy.md.",
+          "$ref": "#/definitions/maturity"
+        },
+        "purpose": {
+          "type": "string",
+          "description": "Concise statement of the workflow's practical purpose.",
+          "minLength": 1
+        },
+        "triggers": {
+          "description": "User asks or task shapes that should activate the skill.",
+          "$ref": "#/definitions/non_empty_string_list"
+        },
+        "do_not_use_for": {
+          "description": "Non-goals and task shapes that should not activate the skill.",
+          "$ref": "#/definitions/non_empty_string_list"
+        },
+        "side_effect_level": {
+          "description": "Highest normal side-effect level from docs/side-effect-policy.md.",
+          "$ref": "#/definitions/side_effect_level"
+        },
+        "requires_credentials": {
+          "type": "boolean",
+          "description": "Whether normal use needs credentials, connector auth, or account setup."
+        },
+        "primary_outputs": {
+          "description": "Main artifacts, decisions, reports, edits, or remote objects produced by the skill.",
+          "$ref": "#/definitions/non_empty_string_list"
+        },
+        "validation_expectations": {
+          "description": "Expected validation path, including manual checks when no automated validation exists.",
+          "$ref": "#/definitions/non_empty_string_list"
+        },
+        "supporting_files": {
+          "description": "Repository-relative supporting files such as agents, scripts, examples, references, or templates.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/path"
+          },
+          "uniqueItems": true
+        },
+        "agents_metadata_path": {
+          "description": "Repository-relative path to agent metadata for the skill, or null when no agents/openai.yaml exists.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/path"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "portability_notes": {
+          "type": "string",
+          "description": "Notes about local assumptions, credentials, account setup, or adaptation needed for public reuse.",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

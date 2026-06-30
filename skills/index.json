@@ -1,0 +1,798 @@
+{
+  "schema_version": "0.1.0",
+  "skills": [
+    {
+      "name": "agent-legibility-review",
+      "path": "skills/agent-legibility-review",
+      "category": "review-audit",
+      "maturity": "portable-candidate",
+      "purpose": "Reviews whether a repository is easy for future AI coding agents to find, understand, modify, and safely evolve.",
+      "triggers": [
+        "review a repository for agent navigability",
+        "find hidden conventions, duplicated authority, ambiguous ownership, or agent risk hotspots",
+        "evaluate whether future Codex work can safely modify a repository"
+      ],
+      "do_not_use_for": [
+        "ordinary code-style review",
+        "framework-specific review",
+        "bug, performance, security, clean-code, maintainability, or generic architecture review unless agent legibility is explicitly requested"
+      ],
+      "side_effect_level": "read-only",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "agent-legibility findings",
+        "repository navigation and risk assessment",
+        "counter-evidence checked recommendations"
+      ],
+      "validation_expectations": [
+        "inspect repository evidence before reporting findings",
+        "run a disproof pass against candidate findings",
+        "cite concrete files, modules, docs, tests, or repo-wide structure"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/agent-legibility-review/agents/openai.yaml",
+      "portability_notes": "Portable review workflow, but findings must stay grounded in the target repository's actual docs, tests, code, and conventions."
+    },
+    {
+      "name": "ai-career-signal-researcher",
+      "path": "skills/ai-career-signal-researcher",
+      "category": "research",
+      "maturity": "personal-skill",
+      "purpose": "Researches AI systems engineering career, market, infrastructure, and portfolio signals for a backend engineer moving into AI systems work.",
+      "triggers": [
+        "research AI systems engineering trends",
+        "compare AI infrastructure, agents, RAG, evals, MCP, or observability demand",
+        "find AI engineering career signals or content opportunities"
+      ],
+      "do_not_use_for": [
+        "generic career advice detached from evidence",
+        "popularity-only YouTube or social trend summaries",
+        "recommendations that do not connect back to backend engineering or production AI systems"
+      ],
+      "side_effect_level": "external-api-read",
+      "requires_credentials": true,
+      "primary_outputs": [
+        "AI career signal report",
+        "skill demand map",
+        "portfolio and content opportunity recommendations",
+        "watchlist and deprioritized topics"
+      ],
+      "validation_expectations": [
+        "verify live sources when current market data matters",
+        "separate evidence strength from interpretation",
+        "use transcripts or substantive technical evidence instead of popularity metrics when assessing engineering depth"
+      ],
+      "supporting_files": [
+        "skills/ai-career-signal-researcher/references/api-notes.md",
+        "skills/ai-career-signal-researcher/references/sample-ai-career-signal-report.md",
+        "skills/ai-career-signal-researcher/references/source-evaluation.md",
+        "skills/ai-career-signal-researcher/scripts/youtube_research.py"
+      ],
+      "agents_metadata_path": "skills/ai-career-signal-researcher/agents/openai.yaml",
+      "portability_notes": "Personal-skill framing is optimized for a backend engineer moving into AI systems engineering. The YouTube collector requires SERPAPI_KEY and SUPADATA_API_KEY, while other research can use whatever live sources are available."
+    },
+    {
+      "name": "architecture-review",
+      "path": "skills/architecture-review",
+      "category": "review-audit",
+      "maturity": "portable-candidate",
+      "purpose": "Reviews repository architecture from local evidence, focusing on concept ownership, authority, boundaries, drift, and change surface.",
+      "triggers": [
+        "assess concept ownership or authoritative sources",
+        "review module boundaries, architecture decisions, or architecture drift",
+        "plan phased architecture refactors grounded in local evidence"
+      ],
+      "do_not_use_for": [
+        "ordinary code review",
+        "testing review",
+        "implementation review",
+        "framework or style review",
+        "narrow bug diagnosis unless architecture assessment is explicitly requested"
+      ],
+      "side_effect_level": "read-only",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "prioritized architecture findings",
+        "concept ownership and authority assessment",
+        "phased improvement recommendations"
+      ],
+      "validation_expectations": [
+        "map architecture evidence before recommendations",
+        "attempt to disprove each candidate finding",
+        "cite concrete files, modules, docs, configs, tests, or runtime wiring"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/architecture-review/agents/openai.yaml",
+      "portability_notes": "Portable review workflow. It should not be used to impose a desired architecture that is not supported by the target repository's current evidence."
+    },
+    {
+      "name": "brand-deal-researcher",
+      "path": "skills/brand-deal-researcher",
+      "category": "research",
+      "maturity": "personal-skill",
+      "purpose": "Turns sponsorship and paid-promotion emails into researched, deduplicated, prioritized brand lead lists.",
+      "triggers": [
+        "scan Gmail or email exports for paid promotion offers",
+        "research sponsorship, brand deal, creator partnership, affiliate, or paid collaboration leads",
+        "create a table, spreadsheet, or document of brand leads"
+      ],
+      "do_not_use_for": [
+        "newsletters, generic product marketing, recruiting, support, or PR-only emails with no paid angle",
+        "emails asking the creator or company to pay for promotion",
+        "raw private email dumps"
+      ],
+      "side_effect_level": "external-api-read",
+      "requires_credentials": true,
+      "primary_outputs": [
+        "prioritized Markdown lead table",
+        "brand research notes",
+        "spreadsheet or document artifact when requested"
+      ],
+      "validation_expectations": [
+        "state the exact email date range and keyword families searched",
+        "research shortlisted brands using official or credible current sources",
+        "mark uncertain brands as unclear or needing verification"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/brand-deal-researcher/agents/openai.yaml",
+      "portability_notes": "Personal workflow depends on access to the user's Gmail or email exports and should avoid copying private email text beyond short evidence snippets."
+    },
+    {
+      "name": "buffer-publisher",
+      "path": "skills/buffer-publisher",
+      "category": "tool-ops",
+      "maturity": "personal-skill",
+      "purpose": "Operates Buffer accounts, organizations, channels, ideas, drafts, queues, scheduled posts, and post mutations through Buffer's GraphQL API.",
+      "triggers": [
+        "draft, schedule, queue, publish, edit, delete, review, list, or manage Buffer social posts",
+        "inspect connected Buffer account, organization, channel, queue, post, or daily-limit state",
+        "save social content as a Buffer Idea or draft"
+      ],
+      "do_not_use_for": [
+        "immediate publishing without explicit user request",
+        "custom scheduling before converting the requested local time to UTC",
+        "direct local media upload because Buffer post assets require reachable URLs",
+        "editing or deleting posts without repeating the target post ID and receiving confirmation"
+      ],
+      "side_effect_level": "destructive",
+      "requires_credentials": true,
+      "primary_outputs": [
+        "Buffer account and channel summaries",
+        "Buffer Ideas",
+        "draft, queued, scheduled, or published posts",
+        "preflight summaries for publish-affecting actions"
+      ],
+      "validation_expectations": [
+        "confirm account, organization, and channel before writes",
+        "run preview-post before post creation unless the user explicitly asked for immediate creation",
+        "show preflight details and require explicit confirmation for publish-affecting or destructive actions"
+      ],
+      "supporting_files": [
+        "skills/buffer-publisher/references/buffer-api.md",
+        "skills/buffer-publisher/scripts/buffer_cli.py"
+      ],
+      "agents_metadata_path": "skills/buffer-publisher/agents/openai.yaml",
+      "portability_notes": "Tool-specific personal workflow. Requires BUFFER_API_KEY or the configured local keychain item and must never print or commit the API key."
+    },
+    {
+      "name": "database-access-audit",
+      "path": "skills/database-access-audit",
+      "category": "review-audit",
+      "maturity": "portable-candidate",
+      "purpose": "Performs a read-only database access audit for batch operations, looped DB I/O, bulk writes, transactions, scope isolation, rowcount, constraints, and indexes.",
+      "triggers": [
+        "audit database access patterns",
+        "review batch operations, N+1 queries, bulk writes, attach/detach logic, transactions, or scope predicates",
+        "check rowcount, concurrency, constraint, or index risks across a stack"
+      ],
+      "do_not_use_for": [
+        "production database connections",
+        "migrations, destructive commands, write scripts, data repair scripts, benchmark jobs, load tests, or backfills without explicit authorization",
+        "broad DAL or repository rewrites unless explicitly requested"
+      ],
+      "side_effect_level": "read-only",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "read-only database access audit report",
+        "prioritized findings",
+        "counter-evidence and validation-needed notes"
+      ],
+      "validation_expectations": [
+        "default to static, read-only repository inspection",
+        "distinguish query, connection, transaction, round trip, statement, row mutation, flush, commit, and object mutation",
+        "include disproof evidence and validation needed for findings"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/database-access-audit/agents/openai.yaml",
+      "portability_notes": "Portable across stacks, but the audit must discover project-specific database primitives before applying generic search terms."
+    },
+    {
+      "name": "decision-trace-writer",
+      "path": "skills/decision-trace-writer",
+      "category": "agent-memory",
+      "maturity": "personal-skill",
+      "purpose": "Writes durable local agent-facing traces for stable engineering decisions, findings, review outcomes, and user-clarified constraints.",
+      "triggers": [
+        "preserve stable engineering decision context for future Codex runs",
+        "record architecture tradeoffs, debugging findings, review outcomes, or clarified constraints",
+        "update an existing decision trace after implementation or validation changes"
+      ],
+      "do_not_use_for": [
+        "routine implementation details with no reusable decision",
+        "transient task plans, TODO lists, meeting notes, brainstorming artifacts, or chat recaps",
+        "unresolved investigations where facts are still changing",
+        "formal ADRs intended for human readers"
+      ],
+      "side_effect_level": "local-files",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "local durable decision trace",
+        "updated trace with current status and validation",
+        "small decision record when a compact trace is enough"
+      ],
+      "validation_expectations": [
+        "apply the worth-recording gate before writing",
+        "inspect local evidence and existing trace conventions before choosing placement",
+        "verify the trace file exists, is readable, includes concrete references, and has accurate status"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": null,
+      "portability_notes": "Personal agent-memory workflow. Placement must follow the target repository's existing durable-memory convention and should avoid committing ignored or private agent-facing traces unless explicitly requested."
+    },
+    {
+      "name": "diagnose",
+      "path": "skills/diagnose",
+      "category": "core-engineering",
+      "maturity": "portable-candidate",
+      "purpose": "Runs a disciplined diagnosis loop for hard bugs and performance regressions before fixing them.",
+      "triggers": [
+        "diagnose this",
+        "debug this",
+        "a bug is broken, throwing, failing, or regressing",
+        "performance regression investigation"
+      ],
+      "do_not_use_for": [
+        "speculative fixes without reproduction",
+        "routine implementation that does not require diagnosis",
+        "broad refactors before the failure mode is understood"
+      ],
+      "side_effect_level": "git-working-tree",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "reproduction or failing test",
+        "ranked hypotheses",
+        "targeted instrumentation",
+        "fix and regression validation when requested"
+      ],
+      "validation_expectations": [
+        "reproduce or bound the failure before fixing",
+        "test hypotheses one at a time",
+        "convert the minimized repro into a regression check when feasible"
+      ],
+      "supporting_files": [
+        "skills/diagnose/scripts/hitl-loop.template.sh"
+      ],
+      "agents_metadata_path": "skills/diagnose/agents/openai.yaml",
+      "portability_notes": "Portable diagnosis loop, but concrete commands, fixtures, and test seams must be discovered from the target repository."
+    },
+    {
+      "name": "excalidraw-diagrams",
+      "path": "skills/excalidraw-diagrams",
+      "category": "visual-artifacts",
+      "maturity": "personal-skill",
+      "purpose": "Creates polished editable Excalidraw diagrams from text descriptions and can export shareable Excalidraw URLs.",
+      "triggers": [
+        "create a diagram, flowchart, architecture diagram, decision tree, process flow, data flow, or system overview",
+        "draw this",
+        "diagram this",
+        "visualize this",
+        "make a chart"
+      ],
+      "do_not_use_for": [
+        "Mermaid input passed directly to excalidraw-cli",
+        "sequence diagrams, Gantt charts, pie charts, or bar charts where Mermaid or another charting tool is a better fit",
+        "deleting generated files unless the user asks or the work is in a temporary scratch location"
+      ],
+      "side_effect_level": "publish",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "elements JSON",
+        "editable .excalidraw file",
+        "preview image when available",
+        "excalidraw.com share URL",
+        "Markdown index for multi-file outputs when useful"
+      ],
+      "validation_expectations": [
+        "inspect excalidraw-cli supported fields when exact element properties matter",
+        "generate the .excalidraw artifact from JSON elements",
+        "produce or report preview status and return the share URL when exported"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/excalidraw-diagrams/agents/openai.yaml",
+      "portability_notes": "Tool-specific workflow that assumes excalidraw-cli is installed and, for local previews, may depend on platform-specific preview tooling."
+    },
+    {
+      "name": "genmedia",
+      "path": "skills/genmedia",
+      "category": "tool-ops",
+      "maturity": "personal-skill",
+      "purpose": "Uses the genmedia CLI to discover, inspect, run, upload to, and manage fal.ai model endpoints from the terminal.",
+      "triggers": [
+        "genmedia",
+        "fal CLI",
+        "search models",
+        "run a model",
+        "fetch schema",
+        "check pricing",
+        "upload to fal",
+        "queue async job",
+        "track request",
+        "direct interaction with the fal.ai endpoint catalog"
+      ],
+      "do_not_use_for": [
+        "inventing endpoint IDs",
+        "running endpoints before inspecting schema",
+        "saving credentials in skill files, scripts, logs, generated docs, or final answers",
+        "using pretty output where an agent needs structured JSON"
+      ],
+      "side_effect_level": "external-api-write",
+      "requires_credentials": true,
+      "primary_outputs": [
+        "fal.ai model search and schema results",
+        "downloaded generated media",
+        "JSON receipts",
+        "async job status or result data",
+        "optional mini app imports"
+      ],
+      "validation_expectations": [
+        "verify endpoint IDs with genmedia models",
+        "inspect schema before running unfamiliar endpoints",
+        "use --json for agent-readable output and --download for generated media"
+      ],
+      "supporting_files": [
+        "skills/genmedia/references/full-reference.md",
+        "skills/genmedia/scripts/import-to-mini-app.mjs"
+      ],
+      "agents_metadata_path": "skills/genmedia/agents/openai.yaml",
+      "portability_notes": "Personal tool workflow requiring genmedia setup and fal credentials via genmedia setup, FAL_KEY, or local environment. Optional mini app paths are placeholders that must be adapted locally."
+    },
+    {
+      "name": "grill-me",
+      "path": "skills/grill-me",
+      "category": "review-audit",
+      "maturity": "portable-candidate",
+      "purpose": "Pressure-tests ideas, plans, architecture, implementations, PRs, design docs, migrations, rollouts, and technical decisions with direct senior-engineer critique.",
+      "triggers": [
+        "challenge, critique, review, pressure-test, or grill an idea",
+        "stress-test a plan, architecture, implementation, PR, design doc, migration, rollout, or technical decision",
+        "identify weak assumptions, tradeoffs, risks, and concrete next actions"
+      ],
+      "do_not_use_for": [
+        "simple factual questions",
+        "ordinary code explanation",
+        "tasks where the user clearly wants direct implementation instead of critique"
+      ],
+      "side_effect_level": "read-only",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "surviving objections",
+        "risk and tradeoff critique",
+        "concrete next actions"
+      ],
+      "validation_expectations": [
+        "ground critique in available evidence when evidence exists",
+        "attempt to disprove objections before presenting them",
+        "avoid manufacturing criticism when the plan is supported"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/grill-me/agents/openai.yaml",
+      "portability_notes": "Portable critique workflow. It may operate from user-provided context alone or from repository evidence when available."
+    },
+    {
+      "name": "grill-with-docs",
+      "path": "skills/grill-with-docs",
+      "category": "review-audit",
+      "maturity": "personal-skill",
+      "purpose": "Stress-tests architecture, plans, domain models, workflow semantics, or durable repo knowledge against local repository docs and conventions.",
+      "triggers": [
+        "pressure-test a plan against repository docs",
+        "challenge architecture, domain model, workflow semantics, or durable repo knowledge",
+        "update repo-local context such as .manifest files, CONTEXT files, or ADRs after stable findings"
+      ],
+      "do_not_use_for": [
+        "ordinary bug fixes",
+        "small code edits",
+        "routine PR review",
+        "one-off code tracing unless architectural pressure-testing is explicitly requested",
+        "public product docs when the knowledge is only personal agent context"
+      ],
+      "side_effect_level": "local-files",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "repo-grounded critique",
+        "validated objections",
+        "updated repo-local context, CONTEXT files, or ADR-shaped notes when appropriate"
+      ],
+      "validation_expectations": [
+        "read local docs and implementation evidence before preserving claims",
+        "downgrade or remove objections invalidated by repository evidence",
+        "persist only stable, validated knowledge"
+      ],
+      "supporting_files": [
+        "skills/grill-with-docs/ADR-FORMAT.md",
+        "skills/grill-with-docs/CONTEXT-FORMAT.md"
+      ],
+      "agents_metadata_path": "skills/grill-with-docs/agents/openai.yaml",
+      "portability_notes": "Personal repository-knowledge workflow. It should discover local documentation conventions instead of assuming .manifest, CONTEXT, or ADR paths."
+    },
+    {
+      "name": "paper-deck-style",
+      "path": "skills/paper-deck-style",
+      "category": "visual-artifacts",
+      "maturity": "personal-skill",
+      "purpose": "Guides creation or extension of minimal, spacious, high-end slide designs for Paper boards.",
+      "triggers": [
+        "create or extend a Paper slide deck",
+        "make a Paper presentation feel minimal, spacious, premium, and keynote-like",
+        "match or refine Paper slide visual hierarchy"
+      ],
+      "do_not_use_for": [
+        "crowded text-heavy slide layouts",
+        "inventing a new deck style without inspecting surrounding slides",
+        "redesigning finished slides unless asked"
+      ],
+      "side_effect_level": "read-only",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "slide design guidance",
+        "Paper slide layout recommendations",
+        "visual hierarchy and spacing decisions"
+      ],
+      "validation_expectations": [
+        "inspect surrounding slides and at least one representative screenshot before editing or adding slides",
+        "match current spacing, title scale, footer behavior, and section visual language",
+        "use screenshots to check whether a slide is too busy or unbalanced"
+      ],
+      "supporting_files": [
+        "skills/paper-deck-style/references/slide-patterns.md"
+      ],
+      "agents_metadata_path": "skills/paper-deck-style/agents/openai.yaml",
+      "portability_notes": "Personal visual-style workflow tied to Paper deck conventions. Actual board mutation should be handled by an appropriate Paper editing workflow."
+    },
+    {
+      "name": "paper-mcp",
+      "path": "skills/paper-mcp",
+      "category": "tool-ops",
+      "maturity": "personal-skill",
+      "purpose": "Inspects and edits open Paper boards through the local Paper MCP server instead of fragile UI automation.",
+      "triggers": [
+        "edit an open Paper board through the local Paper MCP server",
+        "read or write Paper canvas content, place images, write HTML, inspect nodes, take screenshots, or export through Paper MCP",
+        "avoid Computer Use for Paper board edits when MCP is reachable"
+      ],
+      "do_not_use_for": [
+        "Computer Use based Paper edits when the MCP server is reachable",
+        "exposing raw node IDs in final user-facing replies",
+        "deleting Paper nodes without immediate user confirmation"
+      ],
+      "side_effect_level": "destructive",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "Paper board inspection results",
+        "Paper board edits",
+        "image placements",
+        "screenshots",
+        "exports"
+      ],
+      "validation_expectations": [
+        "load the Paper MCP guide once per session",
+        "inspect board info and selection before editing",
+        "verify meaningful changes with get_screenshot and finish working on nodes"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/paper-mcp/agents/openai.yaml",
+      "portability_notes": "Personal tool workflow requiring a reachable local Paper MCP server and an open Paper board. The local server URL is an environment assumption, not a public service."
+    },
+    {
+      "name": "prd-to-issues",
+      "path": "skills/prd-to-issues",
+      "category": "planning-execution",
+      "maturity": "portable-candidate",
+      "purpose": "Converts PRDs, specs, implementation briefs, design docs, or feature plans into scoped, dependency-aware execution issues.",
+      "triggers": [
+        "convert a PRD, product spec, implementation brief, design doc, feature plan, or requirements document into issues",
+        "break work into vertical slices, milestones, dependencies, or agent-ready tasks",
+        "produce JSON issue plans for Codex, GitHub issues, Linear, or harness-based execution systems"
+      ],
+      "do_not_use_for": [
+        "one issue per file or layer",
+        "broad polish, cleanup, or final QA issues without specific acceptance criteria",
+        "inventing features to make the plan look fuller",
+        "silently converting blocking open questions into assumptions"
+      ],
+      "side_effect_level": "none",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "valid JSON issue plan",
+        "dependency graph",
+        "acceptance criteria and verification steps",
+        "recommended execution sequence"
+      ],
+      "validation_expectations": [
+        "ensure output is valid JSON",
+        "ensure dependencies reference existing issue IDs and remain acyclic",
+        "ensure each issue has acceptance criteria, verification, and realistic parallelization guidance"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/prd-to-issues/agents/openai.yaml",
+      "portability_notes": "Portable planning workflow. Output is a plan, not direct creation of remote GitHub or Linear issues unless another tool or user request handles that step."
+    },
+    {
+      "name": "python-backend-review",
+      "path": "skills/python-backend-review",
+      "category": "review-audit",
+      "maturity": "portable-candidate",
+      "purpose": "Reviews Python backend repositories for target-version compatibility, implementation quality, typing, async/sync correctness, configuration, logging, packaging, testing, and maintainability.",
+      "triggers": [
+        "perform a version-aware Python backend fundamentals review",
+        "review Python implementation quality, type clarity, async/sync behavior, configuration, logging, packaging, or tests",
+        "assess a backend repository against a user-specified or inferred Python version"
+      ],
+      "do_not_use_for": [
+        "architecture review",
+        "deep agent-legibility review",
+        "framework-specific FastAPI, SQLAlchemy, Pydantic, or Django review",
+        "security audit, performance deep dive, onboarding review, or business-domain review unless explicitly requested"
+      ],
+      "side_effect_level": "read-only",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "prioritized Python backend review findings",
+        "target Python version assessment",
+        "validation and modernization recommendations"
+      ],
+      "validation_expectations": [
+        "determine or state uncertainty about the target Python version",
+        "review local config, code, tests, packaging, and runtime assumptions",
+        "attempt to disprove each candidate finding before reporting"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/python-backend-review/agents/openai.yaml",
+      "portability_notes": "Portable review workflow. It should not drift into architecture, framework, security, performance, or business-domain review unless the user expands scope."
+    },
+    {
+      "name": "python-ecosystem-review",
+      "path": "skills/python-ecosystem-review",
+      "category": "review-audit",
+      "maturity": "portable-candidate",
+      "purpose": "Reviews important Python ecosystem library usage and integration boundaries against current best practices.",
+      "triggers": [
+        "review Python framework, validation, ORM, migration, dependency injection, async, background job, HTTP client, testing, LLM or agent, observability, or runtime-library integration points",
+        "discover important ecosystem libraries and evaluate concrete usage",
+        "check version-sensitive library patterns with official sources when needed"
+      ],
+      "do_not_use_for": [
+        "broad architecture review",
+        "generic Python style review",
+        "full agent-legibility review",
+        "security or performance review",
+        "framework-only reviews unless library usage is the focus",
+        "reviewing every dependency including tooling, formatters, simple utilities, or transitive libraries"
+      ],
+      "side_effect_level": "read-only",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "prioritized ecosystem-library findings",
+        "cross-library integration risk notes",
+        "version-sensitive recommendations grounded in official docs when needed"
+      ],
+      "validation_expectations": [
+        "discover important libraries before reviewing usage",
+        "inspect imports, setup, lifecycle hooks, schemas, repositories, clients, tasks, tests, and configuration",
+        "check official docs or changelogs for version-sensitive claims when model knowledge may be stale"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/python-ecosystem-review/agents/openai.yaml",
+      "portability_notes": "Portable review workflow, but current best-practice claims may require live official documentation checks for the target dependency versions."
+    },
+    {
+      "name": "radar-analysis",
+      "path": "skills/radar-analysis",
+      "category": "agent-memory",
+      "maturity": "personal-skill",
+      "purpose": "Analyzes existing reviewed ai-signal-radar repository history for monthly reviews, quarterly synthesis, theme analysis, trend synthesis, and idea mining.",
+      "triggers": [
+        "mine AI signal radar history",
+        "summarize a month or quarter of reviewed radar records",
+        "identify recurring themes, compare periods, or draft reports from data, radars, indexes, and reports"
+      ],
+      "do_not_use_for": [
+        "ingesting new weekly reports",
+        "external sources or OpenAI API calls unless the user changes the contract",
+        "editing reviewed weekly source files under data or radars",
+        "creating or updating ideas files unless explicitly requested"
+      ],
+      "side_effect_level": "read-only",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "monthly or quarterly radar analysis",
+        "theme synthesis",
+        "idea-mining report",
+        "grounded trend interpretation"
+      ],
+      "validation_expectations": [
+        "treat data JSON as primary source and radars Markdown as reviewed narrative context",
+        "run or mentally apply repository consistency checks before reporting",
+        "cite dates and file paths and separate deterministic extraction from interpretation"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/radar-analysis/agents/openai.yaml",
+      "portability_notes": "Project-specific to ai-signal-radar style repositories with data, radars, indexes, themes, and reports conventions."
+    },
+    {
+      "name": "readwise-cli-control",
+      "path": "skills/readwise-cli-control",
+      "category": "tool-ops",
+      "maturity": "personal-skill",
+      "purpose": "Controls Readwise and Reader headlessly through the official CLI for search, export, organization, and automation.",
+      "triggers": [
+        "search Readwise highlights or Reader documents from Codex",
+        "export or summarize saved articles, PDFs, newsletters, tweets, or highlights",
+        "organize Reader items by location, tags, shortlist, archive state, or highlights",
+        "authenticate Readwise with an access token instead of browser auth"
+      ],
+      "do_not_use_for": [
+        "assuming the remote MCP server accepts token-based auth",
+        "falling back to browser auth when token auth is needed",
+        "omitting original source links when Readwise has them",
+        "write operations without clear user intent"
+      ],
+      "side_effect_level": "external-api-write",
+      "requires_credentials": true,
+      "primary_outputs": [
+        "JSON Readwise or Reader command results",
+        "summaries with original source links",
+        "Reader document organization changes when requested",
+        "exports"
+      ],
+      "validation_expectations": [
+        "prefer readwise --json output",
+        "fetch details or export metadata when search results lack original source links",
+        "confirm intent before write operations if the user has not clearly asked to modify the library"
+      ],
+      "supporting_files": [
+        "skills/readwise-cli-control/references/official-notes.md",
+        "skills/readwise-cli-control/scripts/readwise-json.sh",
+        "skills/readwise-cli-control/scripts/setup-readwise-cli.sh"
+      ],
+      "agents_metadata_path": "skills/readwise-cli-control/agents/openai.yaml",
+      "portability_notes": "Tool-specific personal workflow requiring READWISE_ACCESS_TOKEN and the official Readwise CLI setup. Token values must stay in the environment or local auth, not repository files."
+    },
+    {
+      "name": "tdd",
+      "path": "skills/tdd",
+      "category": "core-engineering",
+      "maturity": "portable-candidate",
+      "purpose": "Guides implementation through a behavior-focused red-green-refactor loop using public interfaces and vertical slices.",
+      "triggers": [
+        "build features or fix bugs using TDD",
+        "red-green-refactor",
+        "integration tests",
+        "test-first development"
+      ],
+      "do_not_use_for": [
+        "writing all tests first and then all implementation",
+        "implementation-coupled tests",
+        "mocking internal collaborators without a behavioral reason",
+        "speculative features beyond the current test"
+      ],
+      "side_effect_level": "git-working-tree",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "one behavior test at a time",
+        "minimal implementation for each test",
+        "refactored code after green tests",
+        "behavior-focused verification"
+      ],
+      "validation_expectations": [
+        "confirm interface and behavior priorities before coding",
+        "keep each cycle to one failing test and one minimal implementation",
+        "run tests after each red-green-refactor cycle and after refactors"
+      ],
+      "supporting_files": [
+        "skills/tdd/deep-modules.md",
+        "skills/tdd/interface-design.md",
+        "skills/tdd/mocking.md",
+        "skills/tdd/refactoring.md",
+        "skills/tdd/tests.md"
+      ],
+      "agents_metadata_path": "skills/tdd/agents/openai.yaml",
+      "portability_notes": "Portable engineering workflow, but the public interface, test runner, and behavior priorities must come from the target project and user."
+    },
+    {
+      "name": "weekly-radar-ingestion",
+      "path": "skills/weekly-radar-ingestion",
+      "category": "agent-memory",
+      "maturity": "personal-skill",
+      "purpose": "Ingests one Ray-reviewed weekly AI Systems Engineering Radar report into an ai-signal-radar repository as durable signal records and indexes.",
+      "triggers": [
+        "ingest this weekly radar",
+        "add this reviewed report",
+        "import this week's signal report",
+        "store this AI radar",
+        "archive this reviewed report",
+        "turn an approved weekly AI systems report into radars, data, themes, indexes, and a commit"
+      ],
+      "do_not_use_for": [
+        "unreviewed draft reports",
+        "fabricating dates, themes, signals, action items, or importance",
+        "rewriting the reviewed report as a summary",
+        "adding unsupported schema fields unless the schema is intentionally updated"
+      ],
+      "side_effect_level": "git-working-tree",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "stored reviewed radar Markdown report",
+        "structured metadata JSON",
+        "theme files",
+        "updated indexes",
+        "validation result",
+        "ingestion commit when appropriate"
+      ],
+      "validation_expectations": [
+        "inspect the target repository README, schemas, radar/data/theme/index structure, scripts, and git status before editing",
+        "prefer checked-in schemas and scripts when they exist",
+        "run validate_ingestion.py or repository validation and fix failures before committing"
+      ],
+      "supporting_files": [
+        "skills/weekly-radar-ingestion/examples/example-a-weekly-radar-report.md",
+        "skills/weekly-radar-ingestion/examples/example-b-missing-explicit-themes.md",
+        "skills/weekly-radar-ingestion/examples/example-c-new-theme-report.md",
+        "skills/weekly-radar-ingestion/references/repository-contract.md",
+        "skills/weekly-radar-ingestion/scripts/validate_ingestion.py",
+        "skills/weekly-radar-ingestion/templates/metadata.json",
+        "skills/weekly-radar-ingestion/templates/report.md",
+        "skills/weekly-radar-ingestion/templates/reports-index.json",
+        "skills/weekly-radar-ingestion/templates/theme.md",
+        "skills/weekly-radar-ingestion/templates/themes-index.json"
+      ],
+      "agents_metadata_path": "skills/weekly-radar-ingestion/agents/openai.yaml",
+      "portability_notes": "Project-specific to Ray-reviewed AI Systems Engineering Radar ingestion and ai-signal-radar repository conventions. Adapt only after inspecting the target repository schema and scripts."
+    },
+    {
+      "name": "write-a-prd",
+      "path": "skills/write-a-prd",
+      "category": "planning-execution",
+      "maturity": "portable-candidate",
+      "purpose": "Turns rough ideas, feature requests, architecture proposals, product requirements, design discussions, or implementation plans into structured PRDs or specifications.",
+      "triggers": [
+        "write a PRD, feature spec, requirements document, or acceptance criteria",
+        "turn an idea, vague engineering request, design discussion, or rough implementation plan into an implementation-ready brief",
+        "define scope boundaries, user workflows, non-goals, risks, and open questions"
+      ],
+      "do_not_use_for": [
+        "jumping directly into code",
+        "expanding scope because adjacent features are tempting",
+        "including changelogs, README text, or meta commentary in PRD output",
+        "full issue breakdown when a separate issue-breakdown workflow should handle it"
+      ],
+      "side_effect_level": "none",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "structured PRD",
+        "goals and non-goals",
+        "functional and non-functional requirements",
+        "acceptance criteria",
+        "implementation outline and open questions"
+      ],
+      "validation_expectations": [
+        "preserve user intent and state assumptions explicitly",
+        "make requirements specific, testable, scoped, prioritized, and traceable",
+        "label open questions as blocking or non-blocking"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/write-a-prd/agents/openai.yaml",
+      "portability_notes": "Portable planning workflow. It should produce a PRD or specification, not execute implementation or issue creation unless the user separately asks."
+    }
+  ]
+}
