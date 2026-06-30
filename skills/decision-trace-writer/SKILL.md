@@ -9,6 +9,8 @@ Write a local, durable decision trace that lets a future Codex instance understa
 
 The trace is not a public user document. Treat it as agent-facing project memory. Follow the current repository's durable-memory convention instead of assuming one.
 
+Example: [export idempotency decision trace](examples/export-idempotency-trace.md).
+
 ## Worth Recording Gate
 
 When this skill is invoked, first decide whether a durable trace is worth writing or updating. Do not create a trace only because the skill triggered.
