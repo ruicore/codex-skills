@@ -13,12 +13,13 @@ from typing import Iterable
 REPO_ROOT = Path(__file__).resolve().parents[1]
 INDEX_PATH = REPO_ROOT / "skills" / "index.json"
 DISPLAY_FIELDS = (
-    "name",
-    "category",
-    "maturity",
-    "side_effect_level",
-    "path",
-    "purpose",
+    ("name", "name"),
+    ("category", "category"),
+    ("maturity", "maturity"),
+    ("default_side_effect_level", "default_side_effect"),
+    ("side_effect_level", "max_side_effect"),
+    ("path", "path"),
+    ("purpose", "purpose"),
 )
 SECONDARY_DISPLAY_FIELD = "secondary_categories"
 
@@ -55,23 +56,24 @@ def render_table(skills: list[dict[str, object]], show_secondary: bool = False) 
 
     display_fields = list(DISPLAY_FIELDS)
     if show_secondary:
-        display_fields.insert(2, SECONDARY_DISPLAY_FIELD)
+        display_fields.insert(2, (SECONDARY_DISPLAY_FIELD, "secondary_categories"))
 
     rows = [
-        {field: stringify(skill.get(field, "")) for field in display_fields}
+        {label: stringify(skill.get(field, "")) for field, label in display_fields}
         for skill in skills
     ]
+    labels = [label for _, label in display_fields]
     widths = {
-        field: max(len(field), *(len(row[field]) for row in rows))
-        for field in display_fields
+        label: max(len(label), *(len(row[label]) for row in rows))
+        for label in labels
     }
 
-    header = "  ".join(field.ljust(widths[field]) for field in display_fields)
-    separator = "  ".join("-" * widths[field] for field in display_fields)
+    header = "  ".join(label.ljust(widths[label]) for label in labels)
+    separator = "  ".join("-" * widths[label] for label in labels)
     print(header)
     print(separator)
     for row in rows:
-        print("  ".join(row[field].ljust(widths[field]) for field in display_fields))
+        print("  ".join(row[label].ljust(widths[label]) for label in labels))
     print(f"\n{len(rows)} skill(s) listed.")
 
 

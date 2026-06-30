@@ -95,7 +95,7 @@ Each skill is self-contained:
 
 Use a skill when the task matches the workflow, not because the skill name sounds related. For example, use `diagnose` when there is a concrete bug or performance regression; use `architecture-review` when the question is about ownership, boundaries, authority, or change surface.
 
-[skills/index.json](skills/index.json) is the machine-readable registry for skill metadata, including category, maturity, side-effect level, supporting files, validation expectations, and portability notes. It is descriptive metadata for the current skill set, not a requirement to move or rewrite directories.
+[skills/index.json](skills/index.json) is the machine-readable registry for skill metadata, including category, maturity, default and maximum normal side-effect levels, supporting files, validation expectations, and portability notes. The historical `side_effect_level` field remains the maximum normal side-effect level for backward compatibility. It is descriptive metadata for the current skill set, not a requirement to move or rewrite directories.
 
 Run the repository validation command after skill, docs, registry, or README changes:
 

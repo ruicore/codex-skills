@@ -18,6 +18,7 @@
         "framework-specific review",
         "bug, performance, security, clean-code, maintainability, or generic architecture review unless agent legibility is explicitly requested"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
       "requires_credentials": false,
       "primary_outputs": [
@@ -53,6 +54,7 @@
         "popularity-only YouTube or social trend summaries",
         "recommendations that do not connect back to backend engineering or production AI systems"
       ],
+      "default_side_effect_level": "external-api-read",
       "side_effect_level": "external-api-read",
       "requires_credentials": true,
       "primary_outputs": [
@@ -94,6 +96,7 @@
         "framework or style review",
         "narrow bug diagnosis unless architecture assessment is explicitly requested"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
       "requires_credentials": false,
       "primary_outputs": [
@@ -131,6 +134,7 @@
         "emails asking the creator or company to pay for promotion",
         "raw private email dumps"
       ],
+      "default_side_effect_level": "external-api-read",
       "side_effect_level": "external-api-read",
       "requires_credentials": true,
       "primary_outputs": [
@@ -167,6 +171,7 @@
         "direct local media upload because Buffer post assets require reachable URLs",
         "editing or deleting posts without repeating the target post ID and receiving confirmation"
       ],
+      "default_side_effect_level": "external-api-write",
       "side_effect_level": "destructive",
       "requires_credentials": true,
       "primary_outputs": [
@@ -185,7 +190,7 @@
         "skills/buffer-publisher/scripts/buffer_cli.py"
       ],
       "agents_metadata_path": "skills/buffer-publisher/agents/openai.yaml",
-      "portability_notes": "Tool-specific personal workflow. Requires BUFFER_API_KEY or the configured local keychain item and must never print or commit the API key."
+      "portability_notes": "Tool-specific personal workflow. Requires BUFFER_API_KEY or the configured local keychain item and must never print or commit the API key. Default save requests create Buffer Ideas, while publish-affecting and destructive post mutations require stronger confirmation."
     },
     {
       "name": "database-access-audit",
@@ -204,6 +209,7 @@
         "migrations, destructive commands, write scripts, data repair scripts, benchmark jobs, load tests, or backfills without explicit authorization",
         "broad DAL or repository rewrites unless explicitly requested"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
       "requires_credentials": false,
       "primary_outputs": [
@@ -242,6 +248,7 @@
         "unresolved investigations where facts are still changing",
         "formal ADRs intended for human readers"
       ],
+      "default_side_effect_level": "local-files",
       "side_effect_level": "local-files",
       "requires_credentials": false,
       "primary_outputs": [
@@ -278,6 +285,7 @@
         "routine implementation that does not require diagnosis",
         "broad refactors before the failure mode is understood"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "git-working-tree",
       "requires_credentials": false,
       "primary_outputs": [
@@ -296,7 +304,7 @@
         "skills/diagnose/scripts/hitl-loop.template.sh"
       ],
       "agents_metadata_path": "skills/diagnose/agents/openai.yaml",
-      "portability_notes": "Portable diagnosis loop, but concrete commands, fixtures, and test seams must be discovered from the target repository."
+      "portability_notes": "Portable diagnosis loop, but concrete commands, fixtures, and test seams must be discovered from the target repository. Default diagnosis starts with reproduction and evidence gathering; fix mode escalates to working-tree changes when the user asks for repair."
     },
     {
       "name": "excalidraw-diagrams",
@@ -317,6 +325,7 @@
         "sequence diagrams, Gantt charts, pie charts, or bar charts where Mermaid or another charting tool is a better fit",
         "deleting generated files unless the user asks or the work is in a temporary scratch location"
       ],
+      "default_side_effect_level": "publish",
       "side_effect_level": "publish",
       "requires_credentials": false,
       "primary_outputs": [
@@ -362,6 +371,7 @@
         "saving credentials in skill files, scripts, logs, generated docs, or final answers",
         "using pretty output where an agent needs structured JSON"
       ],
+      "default_side_effect_level": "external-api-write",
       "side_effect_level": "external-api-write",
       "requires_credentials": true,
       "primary_outputs": [
@@ -402,6 +412,7 @@
         "ordinary code explanation",
         "tasks where the user clearly wants direct implementation instead of critique"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
       "requires_credentials": false,
       "primary_outputs": [
@@ -439,6 +450,7 @@
         "one-off code tracing unless architectural pressure-testing is explicitly requested",
         "public product docs when the knowledge is only personal agent context"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "local-files",
       "requires_credentials": false,
       "primary_outputs": [
@@ -475,6 +487,7 @@
         "inventing a new deck style without inspecting surrounding slides",
         "redesigning finished slides unless asked"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
       "requires_credentials": false,
       "primary_outputs": [
@@ -512,6 +525,7 @@
         "exposing raw node IDs in final user-facing replies",
         "deleting Paper nodes without immediate user confirmation"
       ],
+      "default_side_effect_level": "external-api-write",
       "side_effect_level": "destructive",
       "requires_credentials": false,
       "primary_outputs": [
@@ -548,6 +562,7 @@
         "inventing features to make the plan look fuller",
         "silently converting blocking open questions into assumptions"
       ],
+      "default_side_effect_level": "none",
       "side_effect_level": "none",
       "requires_credentials": false,
       "primary_outputs": [
@@ -585,6 +600,7 @@
         "framework-specific FastAPI, SQLAlchemy, Pydantic, or Django review",
         "security audit, performance deep dive, onboarding review, or business-domain review unless explicitly requested"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
       "requires_credentials": false,
       "primary_outputs": [
@@ -621,6 +637,7 @@
         "framework-only reviews unless library usage is the focus",
         "reviewing every dependency including tooling, formatters, simple utilities, or transitive libraries"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
       "requires_credentials": false,
       "primary_outputs": [
@@ -657,6 +674,7 @@
         "editing reviewed weekly source files under data or radars",
         "creating or updating ideas files unless explicitly requested"
       ],
+      "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
       "requires_credentials": false,
       "primary_outputs": [
@@ -695,6 +713,7 @@
         "omitting original source links when Readwise has them",
         "write operations without clear user intent"
       ],
+      "default_side_effect_level": "external-api-read",
       "side_effect_level": "external-api-write",
       "requires_credentials": true,
       "primary_outputs": [
@@ -735,6 +754,7 @@
         "mocking internal collaborators without a behavioral reason",
         "speculative features beyond the current test"
       ],
+      "default_side_effect_level": "git-working-tree",
       "side_effect_level": "git-working-tree",
       "requires_credentials": false,
       "primary_outputs": [
@@ -782,6 +802,7 @@
         "rewriting the reviewed report as a summary",
         "adding unsupported schema fields unless the schema is intentionally updated"
       ],
+      "default_side_effect_level": "git-working-tree",
       "side_effect_level": "git-working-tree",
       "requires_credentials": false,
       "primary_outputs": [
@@ -830,6 +851,7 @@
         "including changelogs, README text, or meta commentary in PRD output",
         "full issue breakdown when a separate issue-breakdown workflow should handle it"
       ],
+      "default_side_effect_level": "none",
       "side_effect_level": "none",
       "requires_credentials": false,
       "primary_outputs": [
