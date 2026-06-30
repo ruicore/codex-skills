@@ -1,0 +1,111 @@
+name: Skill proposal
+description: Propose a grounded Codex skill from real practice or a repeated workflow.
+title: "[Skill proposal]: "
+labels:
+  - skill-proposal
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for new or extracted skills. Keep it concise and grounded in observed work, not imagined future polish.
+  - type: input
+    id: proposed-skill
+    attributes:
+      label: Proposed skill
+      description: Working name or skill directory name, if known.
+      placeholder: diagnose-api-regression
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Real practice or repeated workflow evidence
+      description: What task, repeated workflow, failure mode, or prior use shows this should become a skill?
+      placeholder: "Observed in: ... / repeated because: ..."
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem the skill solves
+      description: What concrete work should Codex perform, and what failure does the workflow prevent?
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Intended category
+      description: Use the current taxonomy; pick the closest fit.
+      options:
+        - core-engineering
+        - review-audit
+        - planning-execution
+        - agent-memory
+        - research
+        - tool-ops
+        - visual-artifacts
+        - publishing
+    validations:
+      required: true
+  - type: dropdown
+    id: maturity
+    attributes:
+      label: Maturity level
+      options:
+        - practice-note
+        - personal-skill
+        - portable-candidate
+        - stable-workflow
+        - deprecated
+    validations:
+      required: true
+  - type: dropdown
+    id: side-effect-level
+    attributes:
+      label: Highest normal side-effect level
+      options:
+        - none
+        - read-only
+        - local-files
+        - git-working-tree
+        - external-api-read
+        - external-api-write
+        - publish
+        - destructive
+    validations:
+      required: true
+  - type: textarea
+    id: sanitization
+    attributes:
+      label: Public sanitization considerations
+      description: Note any private names, URLs, raw logs, account data, credentials, or identifiers that must be removed or replaced.
+      placeholder: "Use placeholders for: ..."
+    validations:
+      required: true
+  - type: textarea
+    id: portability
+    attributes:
+      label: Portability notes
+      description: Which details are local or practice-derived, and what should future adopters substitute?
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation performed or planned
+      description: Include automated checks, manual checks, dry-runs, examples, or why validation is deferred.
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples added or intentionally deferred
+      description: What examples, references, scripts, templates, or fixtures should accompany this skill?
+  - type: textarea
+    id: repo-surface
+    attributes:
+      label: Registry, schema, and docs updates
+      description: Note expected changes to skills/index.json, schemas, README, docs, or agent metadata. Use N/A when none.
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals
+      description: What should this proposal explicitly avoid changing or generalizing?
+    validations:
+      required: true
