@@ -21,3 +21,15 @@ jobs:
 
       - name: Validate skill registry and files
         run: python scripts/validate_skills.py
+
+      - name: List all skills
+        run: python scripts/list_skills.py
+
+      - name: List review and audit skills
+        run: python scripts/list_skills.py --category review-audit
+
+      - name: Smoke test single-skill install plan
+        run: python scripts/install_skill.py diagnose --dry-run
+
+      - name: Smoke test category install plan
+        run: python scripts/install_skill.py --category core-engineering --target /tmp/codex-skills-install --dry-run
