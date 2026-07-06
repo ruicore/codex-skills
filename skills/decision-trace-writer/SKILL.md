@@ -1,6 +1,6 @@
 ---
 name: decision-trace-writer
-description: Preserve stable engineering decisions as agent-facing traces, including architecture tradeoffs, debugging findings, review outcomes, and user-clarified constraints.
+description: Preserve stable engineering decisions as agent-facing traces, including architecture tradeoffs, debugging findings, review outcomes, user-clarified constraints, and SkillOpt-ready extraction metadata.
 ---
 
 # Decision Trace Writer
@@ -8,6 +8,8 @@ description: Preserve stable engineering decisions as agent-facing traces, inclu
 Write a local, durable decision trace that lets a future Codex instance understand what happened, why it mattered, what constraints were clarified, what decision was made, and what work remains.
 
 The trace is not a public user document. Treat it as agent-facing project memory. Follow the current repository's durable-memory convention instead of assuming one.
+
+When a trace is worth preserving, also make it useful as future skill-improvement data: include enough structured signals for later extraction into a task, eval case, benchmark fixture, or SkillOpt-style training example. Do not create a trace only to produce training data.
 
 Example: [export idempotency decision trace](examples/export-idempotency-trace.md).
 
@@ -22,6 +24,7 @@ Record a durable trace when at least one of these is true:
 - the decision rejects an obvious alternative that a future agent might otherwise reintroduce
 - the decision affects architecture boundaries, integration contracts, user-facing behavior, correctness, data integrity, migrations, evaluations, or cross-surface behavior
 - implementation or validation changed the status of an existing decision trace
+- the session revealed a reusable agent-workflow signal, such as a repeated failure mode, missing validation gate, better decomposition boundary, or corrected skill behavior
 
 Do not write a durable trace when the work is only:
 - a routine implementation detail with no new reusable decision
@@ -29,6 +32,7 @@ Do not write a durable trace when the work is only:
 - an unresolved investigation where the facts are still changing
 - a duplicate of an existing trace with no changed decision, status, validation, or revisit trigger
 - something a final response, inline code comment, active issue, or ordinary project document can capture more clearly
+- raw training data, raw transcript archival, or unreviewed conversation dumping
 
 If the answer is "not worth recording," stop using this skill for the task and briefly state why no durable trace was created. If the answer is borderline in an interactive session, explain the tradeoff and ask or propose before creating a new trace.
 
@@ -41,6 +45,8 @@ Do not use this skill for:
 - brainstorming artifacts
 - tech debt registries
 - unresolved investigations
+- raw Codex transcript dumps
+- benchmark datasets without a stable decision, finding, or reusable workflow signal
 
 Use this skill only when a decision, finding, or constraint is stable enough to preserve. If the investigation is still open, record what is known in the active work context instead of creating a durable decision trace.
 
@@ -57,7 +63,7 @@ Before choosing a trace location or format, inspect the current repository for l
 - `.agents/`
 - `.codex/`
 - `.manifest/`
-- existing decision, finding, trace, architecture, or agent-memory directories
+- existing decision, finding, trace, architecture, benchmark, eval, or agent-memory directories
 
 Choose placement in this order:
 
@@ -76,16 +82,17 @@ Do not create or enforce repository structures just because they appear in this 
 - Do not turn one repository's convention into a global rule.
 - Prefer placeholders over concrete names in the skill itself.
 - Concrete names belong inside generated trace files for the current repository, not inside the reusable skill.
+- SkillOpt-oriented metadata must describe reusable task/eval signals without leaking private repository specifics beyond the trace location's privacy boundary.
 
 ## Portability Notes
 
 - Specific to the author's current workflow: generated traces are agent-facing project memory and may live in repo-local private or ignored locations.
-- Reusable: the worth-recording gate, local convention discovery, privacy redaction, create-vs-update rule, and trace-to-validation loop.
-- Adapt before reuse: choose the target repository's durable-memory location, language, review policy, and version-control rules before writing or committing traces.
+- Reusable: the worth-recording gate, local convention discovery, privacy redaction, create-vs-update rule, trace-to-validation loop, and SkillOpt-ready extraction block.
+- Adapt before reuse: choose the target repository's durable-memory location, language, review policy, version-control rules, benchmark policy, and train/validation/test split rules before writing or committing traces.
 
 ## Create vs Update
 
-Update an existing trace when the same decision evolves, implementation status changes, validation results are added, or revisit triggers are clarified.
+Update an existing trace when the same decision evolves, implementation status changes, validation results are added, revisit triggers are clarified, or the SkillOpt extraction signal becomes more precise.
 
 Create a new trace when the problem, decision axis, affected surface, or stable constraint is materially different.
 
@@ -98,6 +105,8 @@ Do not create duplicate traces for the same decision just because a later Codex 
 - Redact identifiers unless they are necessary for reproducibility.
 - Prefer stable technical facts over raw conversation excerpts.
 - If a trace location is version-controlled, be especially conservative.
+- Do not store raw Codex session transcripts in the trace. Store compact summaries and stable evidence references instead.
+- If a future benchmark or SkillOpt task would require private fixtures, mark it as private-only and do not imply it can be published.
 
 ## Core Workflow
 
@@ -129,11 +138,15 @@ Do not create duplicate traces for the same decision just because a later Codex 
    - operational cost
    - test-vs-business-code boundary
    - whether correctness, recoverability, observability, or simplicity is the priority
+   - whether the case exposes a reusable skill failure, eval gap, or benchmark candidate
 
 4. Make the trace actionable.
    The trace must let a future agent implement or continue the work without re-litigating the same decision. Include concrete files, behavior boundaries, rejected alternatives, validation expectations, and current status.
 
-5. Respect repository privacy and version-control rules.
+5. Add SkillOpt-ready extraction metadata when the trace can become future skill-improvement data.
+   The metadata should be compact, redacted, and machine-readable enough for later mining. It should not replace the human-readable trace.
+
+6. Respect repository privacy and version-control rules.
    If the chosen trace location is ignored, private, or agent-facing, do not stage or commit it unless the user explicitly asks. Mention this distinction when relevant.
 
 ## What To Capture
@@ -220,6 +233,52 @@ Include validation results if already run.
 ## 后续边界
 
 Record future triggers that would justify revisiting the decision.
+
+## SkillOpt 数据捕获
+
+```yaml
+schema_version: codex_skills.trace.v1
+trace_kind: <decision|debugging|review_outcome|implementation_outcome|validation_outcome|architecture_boundary>
+source_session:
+  raw_transcript_stored: false
+  summary_only: true
+  privacy_level: <public_safe|repo_private|sensitive_private>
+  redaction_notes:
+    - <what was summarized or redacted>
+candidate_skills:
+  - <skill name likely to benefit from this trace, or unknown>
+triggering_signal:
+  kind: <user_correction|review_claim|bug_hypothesis|failed_validation|architecture_drift|implementation_result|operational_constraint>
+  summary: <one-sentence signal>
+reusable_lesson: <what future agents should learn>
+affected_surfaces:
+  - <code/doc/test/config surface or placeholder>
+required_behavior:
+  - <behavior future agents must preserve>
+prohibited_behavior:
+  - <behavior future agents must not reintroduce>
+validation:
+  performed:
+    - command_or_check: <exact command/check/review, or none>
+      result: <passed|failed|not_run|blocked|manual_confirmed>
+  not_performed:
+    - <important validation not run and why>
+evaluator_signals:
+  deterministic_checks:
+    - <test/schema/static check/manual reproduction candidate>
+  human_review_signals:
+    - <user clarification/reviewer outcome, if any>
+  llm_judge_allowed: <false|true_with_human_review>
+benchmark_candidate:
+  usable_as_eval_case: <true|false|needs_fixture>
+  suggested_split: <train_candidate|validation_candidate|test_candidate|do_not_use>
+  fixture_requirements:
+    - <repo state/input files/mocks/data needed to replay>
+  success_criteria:
+    - <objective check for task success>
+  failure_modes_to_test:
+    - <regression or bad behavior this case should catch>
+```
 ```
 
 ## Small Decision Mode
@@ -231,8 +290,46 @@ For small fixes or low-impact decisions, write a compact trace instead of expand
 - final decision
 - validation
 - revisit trigger
+- compact SkillOpt data capture block, only if the trace exposes a reusable skill/eval signal
 
 Use this mode when the decision is narrow, the evidence is simple, and an expanded trace would add noise. When a decision can be captured in fewer than 10 bullets, prefer Small Decision Mode. Do not use it when the decision affects architecture boundaries, user-facing behavior, integration contracts, high-risk correctness, data integrity, migration behavior, evaluation meaning, or cross-surface contracts.
+
+Compact SkillOpt block for Small Decision Mode:
+
+```yaml
+skillopt_signal:
+  schema_version: codex_skills.trace.v1
+  candidate_skills: [<skill or unknown>]
+  triggering_signal: <one-line signal>
+  reusable_lesson: <one-line lesson>
+  validation_gate: <test/check/review that proved or should prove it>
+  usable_as_eval_case: <true|false|needs_fixture>
+  suggested_split: <train_candidate|validation_candidate|test_candidate|do_not_use>
+  privacy_level: <public_safe|repo_private|sensitive_private>
+```
+
+## SkillOpt Dataset Capture Rules
+
+SkillOpt-ready metadata is a structured footer for future extraction. It is not itself the dataset.
+
+Use the metadata to make later mining possible:
+- `candidate_skills` identifies which skill might learn from the trace, such as `diagnose`, `tdd`, `architecture-review`, `database-access-audit`, or `decision-trace-writer`.
+- `triggering_signal` records what made the trace useful: user correction, review finding, failed validation, architecture drift, implementation result, or operational constraint.
+- `required_behavior` and `prohibited_behavior` become candidate instructions or regression assertions.
+- `validation.performed` records what actually ran. Never upgrade planned validation into performed validation.
+- `evaluator_signals` describes how a future eval could judge success. Prefer deterministic checks over LLM judging.
+- `benchmark_candidate.usable_as_eval_case` should be `true` only when the trace contains enough replayable evidence to build a task item.
+- `suggested_split` is only a suggestion. Default to `train_candidate` unless a human deliberately curates the case for validation or test.
+- `test_candidate` should be rare. Do not assign a case to test just because it is high quality; held-out test cases must be curated and protected from repeated optimizer exposure.
+- `fixture_requirements` should say what must exist to replay the case: repo snapshot, branch, failing test, input file, mock API, local data fixture, or manual reproduction steps.
+
+Do not let SkillOpt metadata corrupt trace quality:
+- Do not add fake precision to make a trace look benchmark-ready.
+- Do not create raw transcript archives.
+- Do not copy private production data into fixtures.
+- Do not make every trace an eval case. Some traces are only agent memory.
+- Do not mark a case as objective if it depends only on subjective preference or unverified reasoning.
+- Do not make an optimizer-facing lesson stronger than the evidence supports.
 
 ## Quality Bar
 
@@ -245,10 +342,14 @@ A good trace is specific enough that a future agent can answer:
 - What behavior must not be reintroduced?
 - What tests or validation define success?
 - What remains unresolved?
+- Which skill, if any, could learn from this trace?
+- Could this become a deterministic eval case, or is it only agent memory?
 
 Avoid generic summaries like "we decided to improve reliability." Write the concrete contract: "`<affected behavior>` must preserve the existing `<behavior boundary>`; validation should use a fake, fixture, harness, benchmark, or review path that respects that boundary instead of adding a runtime-only bypass."
 
-## Trace -> Task -> Validation Loop
+For SkillOpt metadata, avoid vague labels like "good for training." Write the extraction signal: "This case can become a `diagnose` eval because the future agent must reproduce before fixing, add a regression check, and avoid reintroducing `<bad behavior>`; success can be checked by `<test command>` and absence of `<forbidden diff/log/config>`."
+
+## Trace -> Task -> Validation -> Skill Loop
 
 Use traces as structured improvement artifacts, not passive documentation. The reusable self-improvement loop is:
 
@@ -270,16 +371,23 @@ Use traces as structured improvement artifacts, not passive documentation. The r
 6. Validation or eval.
    Validate with the mechanism appropriate for the repository and affected surface. Validation may be automated tests, evals, type checks, build checks, manual reproduction, benchmark comparison, migration dry-run, preview inspection, documentation review, or reviewer confirmation. State exactly which validation was performed and which validation was not performed. If validation is skipped or blocked, record that honestly.
 
-7. Updated durable trace.
-   After implementation or a changed decision, update the trace with current status, validation results, and any new revisit triggers.
+7. Dataset extraction.
+   If the trace has enough replayable signal, convert it later into a task item, fixture requirement, expected behavior, and evaluator signal. Keep this extraction separate from the trace file unless the repository has an explicit benchmark convention.
+
+8. Skill update.
+   Use the extracted pattern to propose a bounded skill edit. Accept the edit only if it improves or preserves the relevant validation gate.
+
+9. Updated durable trace.
+   After implementation, validation, or a changed decision, update the trace with current status, validation results, any new revisit triggers, and any changed SkillOpt metadata.
 
 Apply the same idea locally:
 - user correction or review finding becomes the signal
 - the chosen `<trace directory>` preserves evidence and decision context
 - `<validation mechanism>` or repository-appropriate checks become the validation gate
-- ambiguous product choices route back to the user instead of being forced into code
+- SkillOpt metadata preserves the future extraction interface
+- ambiguous product choices route back to the user instead of being forced into code or training data
 
-The trace is useful only when it can become input to a scoped future task with validation gates. If it cannot guide future work or validation, prefer a shorter note or no durable trace.
+The trace is useful only when it can become input to a scoped future task with validation gates. If it cannot guide future work, validation, or skill improvement, prefer a shorter note or no durable trace.
 
 ## Trace Placement
 
@@ -302,3 +410,5 @@ Verify:
 - code/spec/test references are concrete
 - current status matches reality
 - ignored files are not accidentally staged
+- SkillOpt metadata, if present, is compact, parseable, redacted, and does not claim validation that was not performed
+- `suggested_split` is conservative and does not treat ordinary session-derived data as held-out test data without curation
