@@ -30,6 +30,7 @@ execution loops.
 
 Current skills:
 
+- `agentic-repository-execution` (secondary)
 - `diagnose`
 - `repository-layout-refactor`
 - `tdd`
@@ -57,6 +58,7 @@ plans into scoped execution artifacts.
 
 Current skills:
 
+- `agentic-repository-execution`
 - `prd-to-issues`
 - `repository-layout-refactor` (secondary)
 - `write-a-prd`
@@ -321,6 +323,7 @@ only when a concrete change improves or reduces a skill's public readiness.
 | Skill | Primary category | Secondary category | Current maturity |
 |---|---|---|---|
 | `agent-legibility-review` | `review-audit` |  | `portable-candidate` |
+| `agentic-repository-execution` | `planning-execution` | `core-engineering` | `portable-candidate` |
 | `ai-career-signal-researcher` | `research` | `agent-memory` | `personal-skill` |
 | `architecture-review` | `review-audit` |  | `portable-candidate` |
 | `brand-deal-researcher` | `research` | `publishing` | `personal-skill` |

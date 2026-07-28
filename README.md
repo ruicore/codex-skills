@@ -2,7 +2,7 @@
 
 Reusable AI-assisted engineering workflows for Codex, evolving from a personal practice library toward a public reusable workflow library.
 
-This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, database access audit, test-driven development, specification writing, PRD-to-issue planning, durable decision traces, reviewed weekly radar ingestion, radar history analysis, external research, visual artifacts, publishing workflows, and tool-specific operations.
+This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, database access audit, test-driven development, specification writing, PRD-to-issue planning, delegated repository execution, durable decision traces, reviewed weekly radar ingestion, radar history analysis, external research, visual artifacts, publishing workflows, and tool-specific operations.
 
 The goal is to make AI-assisted engineering more reliable under real project pressure. Each skill defines a workflow that an agent can follow with local repository evidence, explicit validation, and clear boundaries.
 
@@ -38,6 +38,7 @@ I use Codex as an engineering partner, not only as a code generator. The work th
 - preserving decisions so future work does not rediscover the same constraints
 - keeping TDD practical and behavior-focused
 - converting product or engineering briefs into executable issue plans
+- coordinating master/sub-agent repository work through ownership, handoffs, and validation gates
 - ingesting reviewed AI systems radar reports into durable agent-readable memory
 - analyzing reviewed radar history for monthly, quarterly, theme, and idea-mining reports
 - researching current AI engineering career signals and content opportunities
@@ -110,9 +111,9 @@ Some category memberships are secondary; the registry records those in `secondar
 
 | Category | Current skills | Primary use |
 |---|---|---|
-| `core-engineering` | `diagnose`, `repository-layout-refactor`, `tdd` | Implementation, debugging, testing, refactoring, and feedback loops. |
+| `core-engineering` | `agentic-repository-execution`, `diagnose`, `repository-layout-refactor`, `tdd` | Implementation, debugging, testing, refactoring, and feedback loops. |
 | `review-audit` | `agent-legibility-review`, `architecture-review`, `database-access-audit`, `grill-me`, `grill-with-docs`, `python-backend-review`, `python-ecosystem-review` | Evidence-first review, critique, architecture assessment, and audit work. |
-| `planning-execution` | `prd-to-issues`, `repository-layout-refactor`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts and migration slices. |
+| `planning-execution` | `agentic-repository-execution`, `prd-to-issues`, `repository-layout-refactor`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts and migration slices. |
 | `agent-memory` | `decision-trace-writer`, `radar-analysis`, `weekly-radar-ingestion` | Preserving durable context or analyzing stored agent-readable records. |
 | `research` | `ai-career-signal-researcher`, `brand-deal-researcher` | Gathering, evaluating, synthesizing, or prioritizing external signals. |
 | `tool-ops` | `buffer-publisher`, `genmedia`, `paper-mcp`, `readwise-cli-control` | Operating a specific external tool, local service, CLI, API, or connected account. |
@@ -128,6 +129,7 @@ Some category memberships are secondary; the registry records those in `secondar
 | <nobr><code>architecture&#8209;review</code></nobr> | Reviews ownership, authority, boundaries, drift, change surface, and architecturally important future-agent edit paths. | Scattered rules, duplicated concepts, unclear module responsibility. |
 | <nobr><code>database&#8209;access&#8209;audit</code></nobr> | Reviews database access patterns across stacks with read-only, evidence-first scope control. | Looped DB I/O, unsafe bulk writes, N+1 queries, missing scope predicates, transaction drift, and unverified rowcount assumptions. |
 | <nobr><code>agent&#8209;legibility&#8209;review</code></nobr> | Finds repository navigation risks for future coding agents. | Hidden conventions, conflicting docs, ambiguous task entry points. |
+| <nobr><code>agentic&#8209;repository&#8209;execution</code></nobr> | Coordinates delegated repository changes through scoped ownership, durable handoffs, and evidence gates. | Master-agent implementation drift, oversized assignments, conflicting edits, lost phase context, and unsupported completion claims. |
 | <nobr><code>repository&#8209;layout&#8209;refactor</code></nobr> | Migrates working repositories to concept-owned packages with behavior-preserving cutover and cleanup. | LOC-only splitting, folder proliferation, duplicate ownership, permanent wrappers. |
 | <nobr><code>grill&#8209;me</code></nobr> | Applies direct senior-engineer critique to plans and implementation choices. | Weak assumptions, vague tradeoffs, under-specified risks. |
 | <nobr><code>grill&#8209;with&#8209;docs</code></nobr> | Grounds critique in local repository docs and decision records. | Generic advice that ignores project-specific constraints. |

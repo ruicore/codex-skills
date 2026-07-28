@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Repository Execution"
+  short_description: "Delegate repository work through evidence gates"
+  default_prompt: "Use $agentic-repository-execution to coordinate delegated repository work with explicit handoffs and validation gates."

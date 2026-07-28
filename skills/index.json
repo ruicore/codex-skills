@@ -37,6 +37,48 @@
       "portability_notes": "Portable review workflow, but findings must stay grounded in the target repository's actual docs, tests, code, and conventions."
     },
     {
+      "name": "agentic-repository-execution",
+      "path": "skills/agentic-repository-execution",
+      "category": "planning-execution",
+      "secondary_categories": [
+        "core-engineering"
+      ],
+      "maturity": "portable-candidate",
+      "purpose": "Coordinates repository implementation through a master agent that delegates production-file changes, manages ownership and handoffs, and closes evidence-based validation gates.",
+      "triggers": [
+        "coordinate delegated or multi-agent repository implementation",
+        "run a master and sub-agent workflow with persistent plans and handoffs",
+        "execute staged or parallel repository work with conflict control and independent review"
+      ],
+      "do_not_use_for": [
+        "simple answers, translations, or isolated read-only questions",
+        "creating multiple assignments when one bounded implementation agent is sufficient",
+        "letting the master agent edit production files or take over after a sub-agent failure",
+        "claiming delegated execution when the runtime cannot start sub-agents"
+      ],
+      "default_side_effect_level": "read-only",
+      "side_effect_level": "git-working-tree",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "persisted execution plan and task graph",
+        "bounded sub-agent dispatch contracts",
+        "serial phase handoffs and validation gate records",
+        "master integrated review and completion report"
+      ],
+      "validation_expectations": [
+        "inspect repository rules, current capabilities, skills, worktree state, and validation entry points before dispatch",
+        "keep gates closed until required artifacts and credible validation evidence are inspected",
+        "review the integrated diff, scope, sanitization, side effects, and repository-native checks before completion"
+      ],
+      "supporting_files": [
+        "skills/agentic-repository-execution/references/execution-templates.md",
+        "skills/agentic-repository-execution/references/model-and-effort-routing.md",
+        "skills/agentic-repository-execution/references/task-decomposition-and-handoffs.md"
+      ],
+      "agents_metadata_path": "skills/agentic-repository-execution/agents/openai.yaml",
+      "portability_notes": "Portable coordination workflow that must adapt to the target repository's governance, durable-memory convention, available sub-agent controls, current models and reasoning efforts, and validation commands. If sub-agents are unavailable, production-changing work is blocked rather than reassigned to the master."
+    },
+    {
       "name": "ai-career-signal-researcher",
       "path": "skills/ai-career-signal-researcher",
       "category": "research",
