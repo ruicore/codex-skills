@@ -7,7 +7,7 @@
       "category": "review-audit",
       "secondary_categories": [],
       "maturity": "portable-candidate",
-      "purpose": "Reviews whether a repository is easy for future AI coding agents to find, understand, modify, and safely evolve.",
+      "purpose": "Reviews whether a repository is easy for future AI coding agents to find, understand, modify, and safely evolve without replacing architecture ownership or boundary decisions.",
       "triggers": [
         "review a repository for agent navigability",
         "find hidden conventions, duplicated authority, ambiguous ownership, or agent risk hotspots",
@@ -16,7 +16,8 @@
       "do_not_use_for": [
         "ordinary code-style review",
         "framework-specific review",
-        "bug, performance, security, clean-code, maintainability, or generic architecture review unless agent legibility is explicitly requested"
+        "bug, performance, security, clean-code, maintainability, or generic architecture review unless agent legibility is explicitly requested",
+        "deciding or redesigning architectural ownership and boundaries; use architecture-review"
       ],
       "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
@@ -83,11 +84,12 @@
       "category": "review-audit",
       "secondary_categories": [],
       "maturity": "portable-candidate",
-      "purpose": "Reviews repository architecture from local evidence, focusing on concept ownership, authority, boundaries, drift, and change surface.",
+      "purpose": "Reviews repository architecture from local evidence, focusing on concept ownership, authority, boundaries, drift, change surface, and how architecture exposes edit paths to future coding agents.",
       "triggers": [
         "assess concept ownership or authoritative sources",
         "review module boundaries, architecture decisions, or architecture drift",
-        "plan phased architecture refactors grounded in local evidence"
+        "plan phased architecture refactors grounded in local evidence",
+        "assess whether architecture exposes clear ownership and change boundaries to future coding agents"
       ],
       "do_not_use_for": [
         "ordinary code review",
@@ -110,7 +112,8 @@
         "cite concrete files, modules, docs, configs, tests, or runtime wiring"
       ],
       "supporting_files": [
-        "skills/architecture-review/examples/notification-preferences-boundary.md"
+        "skills/architecture-review/examples/notification-preferences-boundary.md",
+        "skills/architecture-review/examples/repository-layout-ownership.md"
       ],
       "agents_metadata_path": "skills/architecture-review/agents/openai.yaml",
       "portability_notes": "Portable review workflow. It should not be used to impose a desired architecture that is not supported by the target repository's current evidence."
@@ -736,17 +739,59 @@
       "portability_notes": "Tool-specific personal workflow requiring READWISE_ACCESS_TOKEN and the official Readwise CLI setup. Token values must stay in the environment or local auth, not repository files."
     },
     {
+      "name": "repository-layout-refactor",
+      "path": "skills/repository-layout-refactor",
+      "category": "core-engineering",
+      "secondary_categories": [
+        "planning-execution"
+      ],
+      "maturity": "personal-skill",
+      "purpose": "Refactors working repositories around authoritative concept ownership, localized change surfaces, complete cutover, and preserved public behavior.",
+      "triggers": [
+        "refactor large or flat mixed-responsibility modules into concept-owned packages",
+        "reduce recurring repository hotspots and ambiguous ownership while preserving behavior",
+        "reorganize source or tests around localized capability boundaries"
+      ],
+      "do_not_use_for": [
+        "LOC-only file splitting or folder proliferation",
+        "formatting, naming cleanup, or a narrow bug fix",
+        "greenfield architecture design",
+        "read-only architecture or agent-legibility review"
+      ],
+      "default_side_effect_level": "git-working-tree",
+      "side_effect_level": "git-working-tree",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "current and target ownership maps",
+        "behavior-preserving vertical migration slices",
+        "completed package cutover with old ownership removed",
+        "focused and full validation results"
+      ],
+      "validation_expectations": [
+        "record the existing behavior and test baseline before moving code",
+        "run focused tests after each responsibility cutover",
+        "run full relevant tests and repository quality checks",
+        "verify that no duplicate implementation, generic dumping ground, or unjustified compatibility wrapper remains"
+      ],
+      "supporting_files": [
+        "skills/repository-layout-refactor/examples/concept-owned-package-migration.md"
+      ],
+      "agents_metadata_path": "skills/repository-layout-refactor/agents/openai.yaml",
+      "portability_notes": "Practice-derived from repeated concept migrations in one backend refactor. Adapt public contracts, test commands, package conventions, and validation surfaces to the target repository."
+    },
+    {
       "name": "tdd",
       "path": "skills/tdd",
       "category": "core-engineering",
       "secondary_categories": [],
       "maturity": "portable-candidate",
-      "purpose": "Guides implementation through a behavior-focused red-green-refactor loop using public interfaces and vertical slices.",
+      "purpose": "Guides feature implementation through behavior-focused red-green-refactor slices and structural changes through behavior-preserving green-to-green refactor slices.",
       "triggers": [
         "build features or fix bugs using TDD",
         "red-green-refactor",
         "integration tests",
-        "test-first development"
+        "test-first development",
+        "restructure code without changing public behavior"
       ],
       "do_not_use_for": [
         "writing all tests first and then all implementation",
@@ -761,12 +806,14 @@
         "one behavior test at a time",
         "minimal implementation for each test",
         "refactored code after green tests",
+        "behavior-preserving responsibility migration",
         "behavior-focused verification"
       ],
       "validation_expectations": [
         "confirm interface and behavior priorities before coding",
         "keep each cycle to one failing test and one minimal implementation",
-        "run tests after each red-green-refactor cycle and after refactors"
+        "freeze material public behavior before a structural refactor",
+        "run focused tests after each red-green or green-to-green slice and full relevant checks after refactors"
       ],
       "supporting_files": [
         "skills/tdd/deep-modules.md",

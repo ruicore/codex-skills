@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
+description: Test-driven development with red-green-refactor and behavior-preserving refactor loops. Use when the user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests or test-first development, or asks to restructure code without changing public behavior.
 ---
 
 # Test-Driven Development
@@ -97,6 +97,62 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 - [ ] Run tests after each refactor step
 
 **Never refactor while RED.** Get to GREEN first.
+
+## Behavior-Preserving Refactor Mode
+
+Use this mode when the requested outcome is a new internal structure with the
+same externally observable behavior. Unlike feature work, a safe refactor may
+start and remain GREEN; do not manufacture a failing test merely to satisfy the
+RED step.
+
+### 1. Freeze The Current Contract
+
+Before moving code:
+
+- run the relevant existing tests and record the baseline
+- identify public APIs, return values, exceptions, side effects, persistence,
+  events, serialization, and ordering guarantees that must remain stable
+- distinguish public import paths from incidental internal imports
+- add a characterization test only when material current behavior lacks a
+  reliable public test anchor
+- if the baseline already fails, record the pre-existing failure and do not
+  attribute it to the refactor
+
+### 2. Move One Responsibility Green-To-Green
+
+For each slice:
+
+1. Select one coherent responsibility and its real consumers.
+2. Move or extract that responsibility without changing its public behavior.
+3. Update callers and imports.
+4. Run the narrowest relevant tests.
+5. Remove the old implementation or delegation once callers have cut over.
+6. Run the same tests again before selecting the next responsibility.
+
+Keep the slice vertical by capability or concept. Do not split all declarations
+first and reconnect behavior later.
+
+### 3. Preserve Behavior, Not The Old Shape
+
+- Test through public behavior rather than new module names or private helpers.
+- Preserve an old import path only when it is a real public contract or a
+  verified consumer requires a transition.
+- Do not keep dual implementations, permanent compatibility wrappers, or empty
+  facades merely to make the move look safer.
+- Do not turn characterization tests into approval of accidental behavior
+  without checking whether the repository treats that behavior as a contract.
+
+### 4. Complete The Cutover
+
+The refactor is not complete until:
+
+- one concept has one clear owner
+- obsolete code and dead imports are removed
+- focused tests remain GREEN
+- the full relevant test suite and project quality checks pass
+- skipped or unavailable checks are reported
+
+See [refactoring.md](refactoring.md) for the refactor-mode checklist.
 
 ## Checklist Per Cycle
 

@@ -1,6 +1,6 @@
 ---
 name: agent-legibility-review
-description: Framework-agnostic repository review from the perspective of a future AI coding agent. Use when Codex needs to evaluate whether a repo is easy for agents to find, understand, modify, and safely evolve with minimal ambiguity; find discoverability problems, missing or duplicated authoritative locations, hidden conventions, cross-file invariants, ambiguous ownership, scattered change surfaces, unpredictable impact, and agent risk hotspots. Do not use as an ordinary code-style, framework-specific, bug, performance, security, clean-code, maintainability, or generic architecture review unless the user explicitly asks for agent-legibility.
+description: Framework-agnostic repository review from the perspective of a future AI coding agent. Use when Codex needs to evaluate whether a repo is easy for agents to find, understand, modify, and safely evolve with minimal ambiguity; find discoverability problems, missing or duplicated authoritative locations, hidden conventions, cross-file invariants, ambiguous ownership, scattered change surfaces, unpredictable impact, and agent risk hotspots. This skill evaluates the agent interaction surface; use architecture-review to decide or redesign architectural ownership and boundaries. Do not use as an ordinary code-style, framework-specific, bug, performance, security, clean-code, maintainability, or generic architecture review unless the user explicitly asks for agent-legibility.
 ---
 
 # Agent Legibility Review
@@ -22,6 +22,24 @@ A repository is agent-legible when:
 - Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
 
 This is not a code-style review, framework review, idiom review, performance review, security review, clean-code review, maintainability review, or generic architecture review. Discuss structure only when it directly affects finding code, discovering rules, identifying ownership, predicting impact, or making safe modifications.
+
+## Relationship With Architecture Review
+
+Keep the two review scopes distinct:
+
+- Use `architecture-review` to decide where responsibility and authority should
+  live, evaluate lifecycle and module boundaries, or design a structural
+  refactor.
+- Use `agent-legibility-review` to evaluate whether future agents can find the
+  right edit point, recognize the authoritative source, discover hidden rules,
+  select relevant context, and predict impact in the current repository.
+
+An agent-legibility finding may reveal an architecture problem, but this skill
+should report the future-agent failure mode rather than silently redesign the
+architecture. When a recommendation requires new ownership or boundary
+decisions, hand that decision to `architecture-review`. When both skills are
+used, avoid duplicate findings: architecture owns the boundary decision;
+legibility owns the navigation and modification consequence.
 
 ## Review Process
 
@@ -192,6 +210,7 @@ Use only when it adds signal. Briefly list candidate findings rejected by the di
 - Each issue must have one primary output section.
 - Findings must survive the Finding Disproof Pass and include a concrete agent failure mode.
 - Separate agent-legibility risk from style, taste, maintainability, framework practice, and generic architecture preference.
+- Do not use file length or folder count as a finding without a concrete discoverability, authority, context-selection, locality, or impact-prediction failure mode.
 - Do not recommend new abstraction unless it reduces real ambiguity, duplicated authority, missing authority, or scattered change surface.
 - Do not flag naming, structure, responsibility, or documentation concerns unless they affect findability, rule discovery, ownership clarity, change locality, or impact prediction.
 - Treat tests as legibility anchors only when they expose or fail to expose rules an agent needs for safe modification.

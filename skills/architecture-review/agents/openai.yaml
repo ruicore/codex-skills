@@ -1,4 +1,4 @@
 interface:
   display_name: "Architecture Review"
   short_description: "Review architecture boundaries and ownership"
-  default_prompt: "Use $architecture-review to review this repository's architecture and produce prioritized findings that have survived an explicit counter-evidence / disproof pass."
+  default_prompt: "Use $architecture-review to review ownership and boundaries, including architecturally important future-agent edit paths, and report only findings that survive a counter-evidence pass."

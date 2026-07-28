@@ -93,7 +93,7 @@ Each skill is self-contained:
 - `skills/*/*.md` contains supporting references, templates, or conventions.
 - `skills/*/scripts/` contains helper scripts when a workflow needs one.
 
-Use a skill when the task matches the workflow, not because the skill name sounds related. For example, use `diagnose` when there is a concrete bug or performance regression; use `architecture-review` when the question is about ownership, boundaries, authority, or change surface.
+Use a skill when the task matches the workflow, not because the skill name sounds related. For example, use `diagnose` when there is a concrete bug or performance regression; use `architecture-review` when the question is where ownership, authority, or boundaries should live; use `agent-legibility-review` when the question is whether a future agent can find and safely modify the current repository; use `repository-layout-refactor` when the user wants to implement a behavior-preserving ownership and package migration.
 
 [skills/index.json](skills/index.json) is the machine-readable registry for skill metadata, including category, maturity, default and maximum normal side-effect levels, supporting files, validation expectations, and portability notes. The historical `side_effect_level` field remains the maximum normal side-effect level for backward compatibility. It is descriptive metadata for the current skill set, not a requirement to move or rewrite directories.
 
@@ -110,9 +110,9 @@ Some category memberships are secondary; the registry records those in `secondar
 
 | Category | Current skills | Primary use |
 |---|---|---|
-| `core-engineering` | `diagnose`, `tdd` | Implementation, debugging, testing, and feedback loops. |
+| `core-engineering` | `diagnose`, `repository-layout-refactor`, `tdd` | Implementation, debugging, testing, refactoring, and feedback loops. |
 | `review-audit` | `agent-legibility-review`, `architecture-review`, `database-access-audit`, `grill-me`, `grill-with-docs`, `python-backend-review`, `python-ecosystem-review` | Evidence-first review, critique, architecture assessment, and audit work. |
-| `planning-execution` | `prd-to-issues`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts. |
+| `planning-execution` | `prd-to-issues`, `repository-layout-refactor`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts and migration slices. |
 | `agent-memory` | `decision-trace-writer`, `radar-analysis`, `weekly-radar-ingestion` | Preserving durable context or analyzing stored agent-readable records. |
 | `research` | `ai-career-signal-researcher`, `brand-deal-researcher` | Gathering, evaluating, synthesizing, or prioritizing external signals. |
 | `tool-ops` | `buffer-publisher`, `genmedia`, `paper-mcp`, `readwise-cli-control` | Operating a specific external tool, local service, CLI, API, or connected account. |
@@ -124,10 +124,11 @@ Some category memberships are secondary; the registry records those in `secondar
 | Skill | Engineering outcome | What it protects against |
 |---|---|---|
 | <nobr><code>diagnose</code></nobr> | Builds a fast feedback loop before fixing bugs. | Guessing, unverified fixes, missing regression tests. |
-| <nobr><code>tdd</code></nobr> | Drives implementation through behavior-focused red-green-refactor slices. | Brittle tests, implementation-coupled tests, speculative code. |
-| <nobr><code>architecture&#8209;review</code></nobr> | Reviews ownership, authority, boundaries, drift, and change surface. | Scattered rules, duplicated concepts, unclear module responsibility. |
+| <nobr><code>tdd</code></nobr> | Drives feature work through red-green-refactor slices and structural changes through behavior-preserving green-to-green slices. | Brittle tests, implementation-coupled tests, speculative code, unsafe structural cutovers. |
+| <nobr><code>architecture&#8209;review</code></nobr> | Reviews ownership, authority, boundaries, drift, change surface, and architecturally important future-agent edit paths. | Scattered rules, duplicated concepts, unclear module responsibility. |
 | <nobr><code>database&#8209;access&#8209;audit</code></nobr> | Reviews database access patterns across stacks with read-only, evidence-first scope control. | Looped DB I/O, unsafe bulk writes, N+1 queries, missing scope predicates, transaction drift, and unverified rowcount assumptions. |
 | <nobr><code>agent&#8209;legibility&#8209;review</code></nobr> | Finds repository navigation risks for future coding agents. | Hidden conventions, conflicting docs, ambiguous task entry points. |
+| <nobr><code>repository&#8209;layout&#8209;refactor</code></nobr> | Migrates working repositories to concept-owned packages with behavior-preserving cutover and cleanup. | LOC-only splitting, folder proliferation, duplicate ownership, permanent wrappers. |
 | <nobr><code>grill&#8209;me</code></nobr> | Applies direct senior-engineer critique to plans and implementation choices. | Weak assumptions, vague tradeoffs, under-specified risks. |
 | <nobr><code>grill&#8209;with&#8209;docs</code></nobr> | Grounds critique in local repository docs and decision records. | Generic advice that ignores project-specific constraints. |
 | <nobr><code>python&#8209;backend&#8209;review</code></nobr> | Reviews Python backend fundamentals across typing, async, config, logging, packaging, and tests. | Backend regressions caused by ecosystem or maintainability blind spots. |
@@ -171,8 +172,9 @@ Repeatable skill-driven flow:
 5. Convert the minimized repro into a regression test at the correct seam.
 6. Fix the bug and rerun both the regression test and the original repro.
 7. If the bug exposed unclear ownership or poor test seams, use `architecture-review` to identify the smallest boundary improvement.
-8. If the fix requires a broader change, use `prd-to-issues` to split follow-up work into verifiable slices.
-9. Use `decision-trace-writer` when an important tradeoff or constraint needs to be preserved.
+8. If the user asks to implement a broader layout change, use `repository-layout-refactor` to migrate one concept at a time while preserving behavior.
+9. If the work needs a durable issue plan, use `prd-to-issues` to split follow-up work into verifiable slices.
+10. Use `decision-trace-writer` when an important tradeoff or constraint needs to be preserved.
 
 The value is not that the agent receives a better phrase. The value is that the work becomes inspectable, repeatable, and easier to resume later.
 

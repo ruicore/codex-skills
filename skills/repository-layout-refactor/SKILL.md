@@ -1,0 +1,227 @@
+---
+name: repository-layout-refactor
+description: Refactor a working repository from broad, weakly owned modules into concept-owned packages and localized change surfaces while preserving behavior. Use when large or flat modules contain multiple independent responsibilities, agents repeatedly edit the same hotspots, ownership is ambiguous, or the user asks to redesign and implement the source or test layout. Do not use for LOC-only cleanup, formatting, a narrow bug, a greenfield package layout, or a read-only architecture review.
+---
+
+# Repository Layout Refactor
+
+Refactor repository structure around authoritative concept ownership. The goal
+is not more folders or shorter files; it is a repository where future changes
+have an obvious owner, bounded context, predictable impact, and verified
+behavior.
+
+Example: [concept-owned package migration](examples/concept-owned-package-migration.md).
+
+## When To Use
+
+Use this skill when:
+
+- a working repository has broad modules with several independent reasons to
+  change
+- one file or directory has become the default edit point for unrelated work
+- concept ownership is ambiguous or scattered across layers
+- common changes require loading or touching unrelated behavior
+- source or test layout no longer exposes clear capability boundaries
+- the user asks to implement a behavior-preserving package or module refactor
+
+## When Not To Use
+
+Do not use this skill for:
+
+- splitting a file only because it crosses a line-count threshold
+- adding folder depth without a clearer owner or change boundary
+- formatting, naming cleanup, or a narrow bug fix
+- greenfield architecture design without an existing behavior baseline
+- a read-only ownership or boundary assessment; use `architecture-review`
+- a standalone future-agent navigation audit; use `agent-legibility-review`
+- a broad rewrite that intentionally changes product behavior
+
+If the user asks only for evaluation or a plan, complete discovery and target
+design but do not edit code.
+
+## Inputs To Infer Or Request
+
+Infer from repository evidence when possible:
+
+- requested repository and scope
+- local instructions and protected or generated areas
+- current branch, revision, and working-tree state
+- public APIs, import surfaces, schemas, migrations, serialized shapes, events,
+  and other contracts
+- test, lint, type-check, build, and packaging commands
+- current concepts, owners, consumers, and hotspot modules
+
+Stop or narrow the task when the target behavior, public contract, ownership
+authority, or allowed mutation scope cannot be established safely from local
+evidence and the user's request.
+
+## Evidence Hierarchy
+
+Use this order when sources conflict:
+
+1. User's latest explicit scope and behavior requirements.
+2. Local repository instructions and protected-surface rules.
+3. Actual code paths, callers, schemas, migrations, runtime wiring, and public
+   interfaces.
+4. Passing tests and reproducible runtime behavior.
+5. Architecture docs, ADRs, specifications, examples, and comments.
+6. Naming, line count, directory depth, and architectural inference.
+
+Do not let a target tree, style preference, or line-count goal outrank observed
+behavior and real consumers.
+
+## Workflow
+
+### 1. Establish The Baseline
+
+- Read repository instructions and inspect the worktree before editing.
+- Map the current package tree, entrypoints, public contracts, tests, generated
+  areas, persistence registration, and runtime/bootstrap imports relevant to the
+  scope.
+- Run focused baseline tests and record pre-existing failures.
+- Treat large files, flat layout, and repeated edits as investigation signals,
+  not conclusions.
+
+### 2. Build The Ownership Map
+
+For each hotspot, record:
+
+- concepts and capabilities it currently owns
+- independent reasons it changes
+- authoritative rules and lifecycle decisions
+- callers, consumers, side effects, and validation anchors
+- whether responsibility is cohesive or only colocated
+
+Use `architecture-review` when ownership or boundary decisions are unresolved.
+Use `agent-legibility-review` when the key question is whether future agents can
+discover the owner, relevant context, hidden rules, or impact surface.
+
+### 3. Design The Target Ownership
+
+Define a target package tree and ownership matrix. Each proposed module or
+package must have:
+
+- one primary concept or capability owner
+- a clear reason to change
+- explicit inbound and outbound dependencies
+- contract-preservation requirements
+- a cutover and deletion condition
+- focused validation
+
+Preserve the existing top-level architecture unless evidence supports changing
+it. Prefer concept-owned packages inside established layers over a big-bang
+architectural rewrite.
+
+Reject a target layout when it merely:
+
+- splits by arbitrary line ranges
+- produces `service1.py`, `service2.py`, or similarly meaningless names
+- introduces generic `utils.py`, `common.py`, or `helpers.py` dumping grounds
+- adds re-exports or facades while the old monolith remains the real owner
+- creates many shallow modules with hidden shared state
+
+### 4. Plan Vertical Migration Slices
+
+Sequence work by concept or capability, not by file type:
+
+1. Freeze the public behavior and import contract for the slice.
+2. Move one coherent responsibility and its tests or validation anchors.
+3. Cut real consumers over.
+4. Remove old ownership.
+5. Run focused validation.
+
+Each slice must be reviewable, reversible, and leave the repository in a
+working state. Use `prd-to-issues` when the user wants a durable,
+dependency-aware implementation issue set.
+
+### 5. Migrate Green-To-Green
+
+Use the `tdd` Behavior-Preserving Refactor Mode:
+
+- add characterization tests only for material behavior that lacks coverage
+- move one responsibility at a time
+- test through public behavior, not the proposed internal layout
+- update imports, registries, bootstrap paths, and generated discovery surfaces
+  together
+- remove the old implementation before starting the next slice
+- preserve compatibility only for verified public consumers or rollout
+  constraints, with a retirement condition
+
+Do not maintain duplicate implementations as a safety strategy.
+
+### 6. Complete The Cutover
+
+Verify that:
+
+- the old hotspot is deleted or materially reduced to a justified stable facade
+- every moved concept has one authoritative owner
+- dead imports, obsolete tests, temporary adapters, and unused exports are
+  removed
+- tests are organized around public capabilities rather than private module
+  layout
+- documentation and navigation entrypoints point to the new owner when needed
+
+### 7. Validate The Repository
+
+Run the strongest checks available for the changed surface:
+
+- focused tests after each slice
+- full relevant test suite
+- lint, formatting, type checking, build, and packaging checks
+- import-cycle or dependency-boundary checks
+- API/OpenAPI, serialization, schema, migration discovery, or metadata checks
+  when those contracts are in scope
+- repository diff checks
+
+Report skipped, unavailable, or inconclusive checks. Do not claim improved
+maintainability, speed, token use, or model accuracy without measurements.
+
+## Validation Requirements
+
+Before claiming completion:
+
+- behavior is preserved at the public interface
+- baseline failures are distinguished from new failures
+- the old owner no longer contains duplicate active behavior
+- the target ownership map matches the implementation
+- no generic dumping ground or unjustified wrapper was introduced
+- focused and full available checks pass
+- the final diff contains real cutover and cleanup, not only new facades
+
+## Output Contract
+
+Report:
+
+1. scope and baseline state
+2. current and target ownership maps
+3. migration slices completed
+4. old files or ownership removed
+5. public contracts intentionally preserved
+6. exact validation commands and results
+7. remaining debt, skipped checks, and unresolved risks
+
+## Side-Effect Policy
+
+Default and maximum normal level: `git-working-tree`.
+
+- User intent to refactor or implement authorizes scoped working-tree edits.
+- A review-only or planning request remains read-only.
+- Do not stage, commit, push, create branches, or publish without explicit user
+  instruction or an already established repository workflow.
+- Preserve unrelated user changes and avoid destructive Git operations.
+- Use the diff and validation output as the normal post-edit review surface.
+
+## Failure Modes
+
+- **Baseline tests fail:** record the existing failure, narrow validation where
+  possible, and do not claim the refactor caused or fixed it without evidence.
+- **Public contract is unclear:** pause that slice or preserve the current
+  surface until real consumers and repository guidance establish authority.
+- **Target layout adds indirection without ownership:** reject or redesign it.
+- **Circular dependencies appear:** move the boundary or extract a true
+  contract owner; do not hide the cycle behind dynamic imports.
+- **Compatibility cannot be retired:** identify the real consumer and record a
+  bounded transition instead of leaving an unowned wrapper.
+- **The task requires behavior change:** separate that change from the
+  behavior-preserving refactor and obtain the appropriate product decision or
+  test contract.

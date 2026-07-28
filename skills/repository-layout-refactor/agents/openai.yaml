@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repository Layout Refactor"
+  short_description: "Refactor repositories around clear concept ownership"
+  default_prompt: "Use $repository-layout-refactor to restructure this working repository around clear ownership while preserving behavior."

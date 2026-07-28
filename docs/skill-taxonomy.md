@@ -31,6 +31,7 @@ execution loops.
 Current skills:
 
 - `diagnose`
+- `repository-layout-refactor`
 - `tdd`
 
 ### review-audit
@@ -57,6 +58,7 @@ plans into scoped execution artifacts.
 Current skills:
 
 - `prd-to-issues`
+- `repository-layout-refactor` (secondary)
 - `write-a-prd`
 
 ### agent-memory
@@ -337,6 +339,7 @@ only when a concrete change improves or reduces a skill's public readiness.
 | `python-ecosystem-review` | `review-audit` |  | `portable-candidate` |
 | `radar-analysis` | `agent-memory` | `research` | `personal-skill` |
 | `readwise-cli-control` | `tool-ops` | `research` | `personal-skill` |
+| `repository-layout-refactor` | `core-engineering` | `planning-execution` | `personal-skill` |
 | `tdd` | `core-engineering` |  | `portable-candidate` |
 | `weekly-radar-ingestion` | `agent-memory` | `research` | `personal-skill` |
 | `write-a-prd` | `planning-execution` |  | `portable-candidate` |

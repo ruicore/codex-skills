@@ -1,6 +1,6 @@
 ---
 name: architecture-review
-description: General-purpose architecture review for any code repository. Use when Codex needs to assess concept ownership, authoritative sources, module boundaries, architecture decisions, architecture drift, duplicated concepts, scattered rules, hidden assumptions, over-engineering, architectural change surface, or phased refactor planning. Do not use for ordinary code review, testing review, implementation review, framework review, style review, or narrow bug diagnosis unless the user explicitly asks for architecture assessment.
+description: General-purpose architecture review for any code repository. Use when Codex needs to assess concept ownership, authoritative sources, module boundaries, architecture decisions, architecture drift, duplicated concepts, scattered rules, hidden assumptions, over-engineering, architectural change surface, phased refactor planning, or how architecture exposes ownership and change boundaries to future coding agents. Do not use for ordinary code review, testing review, implementation review, framework review, style review, narrow bug diagnosis, or a standalone agent-legibility audit unless the user explicitly asks for architecture assessment.
 ---
 
 # Architecture Review
@@ -9,7 +9,10 @@ Review repository architecture from local evidence. The goal is to identify what
 
 Do not modify code during review unless the user explicitly asks for implementation. If the user asks for both review and changes, complete the architecture review first, then make only the agreed or clearly requested changes.
 
-Example: [notification preferences boundary review](examples/notification-preferences-boundary.md).
+Examples:
+
+- [notification preferences boundary review](examples/notification-preferences-boundary.md)
+- [repository layout ownership review](examples/repository-layout-ownership.md)
 
 ## Scope
 
@@ -38,6 +41,33 @@ It is not:
 - Prefer local evidence over intended architecture: inspect code, docs, configs, generated artifacts, runtime wiring, validation signals, and recent diffs when relevant.
 - Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
 
+## Agent Legibility As An Architecture Concern
+
+Architecture is also consumed by future coding agents. Clear ownership and
+boundaries should make it possible for an agent to identify the authoritative
+owner of a concept, select the smallest useful context, localize a change, and
+discover likely downstream effects.
+
+Treat agent legibility as a consequence of architecture quality, not as a
+replacement for architecture review:
+
+- `architecture-review` asks where authority and responsibility should live,
+  whether the current boundary is coherent, and how a structural change should
+  be sequenced.
+- `agent-legibility-review` asks whether a future agent can discover, interpret,
+  and safely modify the repository as it exists.
+
+Use the standalone legibility skill when the primary question is navigation,
+hidden conventions, or future-agent modification risk rather than an
+architecture decision.
+
+Do not infer architecture quality from file length or folder count alone. A
+large cohesive module can be a valid deep module; many small files can still
+hide authority behind indirection. File size and flat layout are investigation
+signals only. Report an architecture finding when evidence shows mixed reasons
+to change, ambiguous authority, fragmented lifecycle ownership, or a broad
+change surface.
+
 ## Review Process
 
 Follow this order. Do not jump to recommendations before building the architecture map.
@@ -50,6 +80,7 @@ Follow this order. Do not jump to recommendations before building the architectu
 2. Build a concise architecture map.
    - Identify major modules, what each appears to own, and which boundaries separate transport, persistence, orchestration, domain rules, presentation, infrastructure, policy, and external integrations.
    - Record main data/control flow only where it explains ownership or boundaries.
+   - For important concepts, record the likely future-agent edit path: where an agent would start, which owner it should trust, and which consumers it must discover. Keep this architectural; use `agent-legibility-review` for a full navigation audit.
 
 3. Identify important concepts and authorities.
    - List recurring domain nouns, state concepts, lifecycle concepts, external actors, resources, policies, and data shapes.
@@ -96,6 +127,7 @@ Use these checks to decide whether something is an architecture finding:
 - Change surface: Would one concept change require broad edits because ownership is fragmented?
 - Abstraction fit: Does an abstraction clarify ownership or hide it?
 - Debt lifecycle: Is a known architecture compromise documented with rationale and a retirement condition?
+- Agent-facing boundary: Can a future agent identify the concept owner and expected impact surface from the architecture, or must it infer authority from unrelated files?
 
 Avoid turning local implementation concerns into architecture findings unless they affect ownership, authority, boundaries, concept lifecycle, architecture drift, or change surface.
 
@@ -140,6 +172,7 @@ Use this structure unless the user asks for a different format. Keep it concise;
 - authoritative sources
 - important boundaries
 - major architecture decisions and drift, if any
+- future-agent edit paths for architecturally important concepts, when relevant
 
 ### Findings
 
@@ -194,3 +227,4 @@ For each phase, name expected blast radius, validation needs, and rollback shape
 - Do not recommend compatibility aliases, re-exports, adapters, or migration layers unless real consumers or rollout constraints justify them.
 - Do not include technology-specific rules unless they come from the current repository's own docs or code.
 - For non-trivial recommendations, identify likely owner, expected blast radius, validation needs, and rollback shape.
+- Do not recommend splitting a large file or adding directories unless the new boundary gives a concept a clearer owner or materially narrows its change surface.
