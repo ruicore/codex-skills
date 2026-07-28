@@ -23,6 +23,8 @@ complex hierarchy merely to host templates.
 - Repository rules: <paths inspected>
 - Current state: <branch, dirty files, relevant versions>
 - Available capabilities: <sub-agents, tools, skills, validation>
+- Risk classification: <Low|Medium|High|Critical and why>
+- Authority boundary: <worker/master limits>
 
 ## Gate states
 - `NOT RUN`: not attempted; do not start dependent work.
@@ -47,7 +49,7 @@ Only `PASS` permits dependent work to start.
 | G1 | <command/check and expected result> | <agent/master> | NOT RUN |
 
 ## Risks and stop conditions
-- <risk, mitigation, and condition that blocks progress>
+- <risk, mitigation, affected gate, and branch/whole-task stop condition>
 ```
 
 ## Sub-agent Dispatch
@@ -83,6 +85,12 @@ Dependencies and inputs:
 Side-effect limit:
 <read-only/local-files/git-working-tree; explicitly excluded higher actions>
 
+Risk and authority:
+- Risk: <Low|Medium|High|Critical with consequence>
+- Worker may decide: <routine choices inside the assignment>
+- Must escalate: <material decisions or surfaces outside worker authority>
+- Stop condition and scope: <condition; branch|whole task>
+
 Recommended execution:
 - Capability class: <frontier high-reasoning|balanced engineering|fast deterministic>
 - Model: <runtime-advertised model|runtime default (selection unavailable)>
@@ -113,6 +121,9 @@ Handoff:
 ## Decisions
 - <decision, evidence, and downstream constraint>
 
+## Decision requests and stops
+- <Decision Request or Stop Record path, affected gate, and current scope>
+
 ## Validation
 - `<command or check>`: NOT RUN|PASS|FAIL|BLOCKED
   - Evidence: <result or artifact>
@@ -130,6 +141,59 @@ Handoff:
 2. Own <bounded surface>.
 3. Preserve <invariant/non-goal>.
 4. Run <validation>.
+```
+
+## Decision Request
+
+Use this when a worker encounters material uncertainty. Keep the affected slice
+paused until the master records a bounded resolution or applies the stop
+protocol.
+
+```markdown
+# Decision Request <ID>: <short title>
+
+- Decision needed: <the exact choice>
+- Why unresolved: <why current evidence does not establish a routine choice>
+- Evidence checked: <files, tests, schemas, runtime output, or rules>
+- Options and risks:
+  1. <option and consequence>
+  2. <option and consequence>
+- Recommendation: <preferred option, evidence, and residual uncertainty>
+- Authority required: <existing authority that covers it, or missing authority>
+- Affected gate: <gate ID and current state>
+- Stop scope while pending: <slice|dependency branch|whole task and why>
+- Safe independent work: <bounded work that may continue, or none>
+- Human question if master cannot resolve: <one concrete question>
+
+## Master resolution
+
+- Decision: <selected option, or unresolved>
+- Evidence and authority: <why the master may decide, or what remains missing>
+- Constraints and re-dispatch: <updated boundary and assignment, or none>
+- Gate update: <NOT RUN|PASS|FAIL|BLOCKED and reason>
+```
+
+## Stop Record
+
+Use this only after the master cannot resolve material uncertainty from
+available evidence within existing authority.
+
+```markdown
+# Stop Record <ID>: <short title>
+
+- Blocking decision: <the exact unresolved decision>
+- Why unresolved: <missing evidence or authority>
+- Evidence checked: <sources inspected by worker and master>
+- Options and risks: <remaining options and consequences>
+- Recommendation: <safest supported path, or none>
+- Authority required: <specific missing authority, or evidence owner>
+- Affected gate: <gate ID set to BLOCKED>
+- Stop scope: <dependency branch|whole task>
+- Dependent work stopped: <task IDs or surfaces>
+- Safe independent work: <task IDs and why they remain independent, or none>
+- Persisted artifacts: <plan, Decision Request, logs, or evidence paths>
+- Human question: <single concrete clarification required to resume>
+- Resume condition: <answer/evidence plus plan, dispatch, and gate updates>
 ```
 
 ## Gate Record

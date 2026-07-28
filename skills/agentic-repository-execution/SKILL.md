@@ -1,6 +1,6 @@
 ---
 name: agentic-repository-execution
-description: Coordinate repository implementation through a master agent that discovers local rules, persists a scoped plan, delegates every production-file change to sub-agents, manages ownership and handoffs, and closes evidence-based validation gates. Use when the user asks for delegated or multi-agent repository execution, a master/sub-agent workflow, staged autonomous implementation, parallel work with conflict control, or strict independent review of agent-written changes.
+description: Coordinate repository implementation through a master agent that discovers local rules, persists a scoped plan, delegates every production-file change to sub-agents, enforces authority boundaries, escalates material uncertainty, and closes evidence-based validation gates. Use when the user asks for delegated or multi-agent repository execution, a master/sub-agent workflow, staged autonomous implementation, parallel work with conflict control, or strict independent review of agent-written changes.
 ---
 
 # Agentic Repository Execution
@@ -33,6 +33,8 @@ and a master silently taking over implementation.
   Report `BLOCKED` instead of letting the master implement as a fallback.
 - Do not treat this skill as permission to commit, push, publish, deploy, or
   perform destructive actions. Require the authority applicable to each action.
+- Do not let a worker or the master expand scope, compatibility, data,
+  security, infrastructure, or side-effect authority merely to finish.
 
 ## Inputs
 
@@ -70,6 +72,53 @@ Resolve conflicts in this order:
 Never let a stale plan, old handoff, model assumption, or remembered skill name
 outrank inspected current state.
 
+## Decision Escalation And Stop Contract
+
+Classify risk and uncertainty before dispatch and whenever new evidence changes
+the task:
+
+- Resolve **routine uncertainty** from current evidence, repository convention,
+  and existing authority when the choice is reliable, reversible, and
+  low-impact. Continue without approval; record the choice when it constrains
+  later work.
+- For **material uncertainty**, make the worker pause the affected slice and
+  complete the linked Decision Request. Before treating the escalation as raised
+  or ready for master review, require the worker to emit or persist every field
+  of that form. Use a safe coordination location when available; otherwise
+  output the complete record in the worker response. Merely saying a record
+  should be created is incomplete, and the affected slice remains paused. Do not
+  silently choose among reasonable options that affect ownership, public
+  behavior or compatibility, data integrity or migration, security or trust,
+  external side effects, irreversible behavior, or the assignment boundary.
+- Make the master apply the Evidence Hierarchy and decide only within the user's
+  original authority. Do not widen scope or authority, or choose an arbitrary
+  assumption because of time pressure or a desire to finish.
+- When a material decision still lacks evidence or authority, require the master
+  to emit or persist every field of the linked Stop Record before treating the
+  decision-related gate as `BLOCKED`. Persist it at a safe coordination location
+  readable by the next agent when available; otherwise output the complete
+  record in the master response. Merely saying a Stop Record should be created
+  does not close the gate or stop path. Then stop dependent work and ask the
+  human one concrete question.
+- Stop the whole task when the blocker affects the root objective, a shared
+  authoritative contract, data integrity, security or trust, irreversible
+  behavior, or assumptions that would contaminate every branch. Otherwise stop
+  only the affected dependency branch; independent safe work may continue.
+
+Treat human escalation and Evidence Gates as different paths. An Evidence Gate
+means execute-and-prove under existing authority; it is not default
+ask-first approval. Risk level controls decomposition, routing, review, and stop
+intensity, but never grants authority; a Low-risk action may still be
+unauthorized.
+
+Read
+[escalation-and-stop-policy.md](references/escalation-and-stop-policy.md)
+before classifying non-routine uncertainty, assigning Medium, High, or Critical
+risk, or resolving a Decision Request. Use the Decision Request and Stop Record
+forms in [execution-templates.md](references/execution-templates.md).
+Require these forms only for material or blocking decision escalation, not for
+routine uncertainty or an ordinary validation `FAIL`.
+
 ## Master Contract
 
 Keep these responsibilities with the master:
@@ -79,6 +128,7 @@ Keep these responsibilities with the master:
 - persist and update the execution plan;
 - choose task boundaries, order, ownership, and gates;
 - dispatch bounded work with complete contracts;
+- resolve worker Decision Requests only within existing authority, or escalate;
 - inspect returned artifacts, diffs, and validation evidence;
 - re-dispatch missing or insufficient work;
 - perform the final integrated review and report status.
@@ -114,8 +164,9 @@ tracked, prohibited, or conflicts with local governance, use the existing
 agent-memory or task convention instead.
 
 Record goal, scope, non-goals, expected artifacts, task graph, ownership,
-validation gates, side-effect boundaries, and current status. Use the plan form
-in [execution-templates.md](references/execution-templates.md).
+validation gates, risk classification, authority and side-effect boundaries,
+stop conditions, and current status. Use the plan form in
+[execution-templates.md](references/execution-templates.md).
 
 ### 3. Size And Decompose The Work
 
@@ -132,6 +183,11 @@ integration coupling, file overlap, and side effects.
 Do not split by file count alone. Do not give one agent a broad instruction such
 as "implement the whole feature" when the work crosses unclear responsibilities
 or validation domains.
+
+Classify each assignment as Low, Medium, High, or Critical using
+[escalation-and-stop-policy.md](references/escalation-and-stop-policy.md).
+Use the level to strengthen decomposition, routing, review, and stop gates, not
+to infer permission.
 
 Read [task-decomposition-and-handoffs.md](references/task-decomposition-and-handoffs.md)
 before dispatching medium, large, serial, or parallel work.
@@ -150,7 +206,8 @@ For every assignment, state:
 - recommended skills
 
 Also state owned files or surfaces, dependencies, required inputs, side-effect
-limits, and the handoff path when relevant.
+limits, risk level, authority boundary, escalation path, and the handoff path
+when relevant.
 
 Read [model-and-effort-routing.md](references/model-and-effort-routing.md) before
 recommending execution settings. Name only models and effort values advertised
@@ -176,6 +233,13 @@ next instructions.
 
 Do not use chat memory as the only handoff for durable multi-stage work.
 
+Accept a worker Decision Request only after every field of the linked form has
+been emitted or persisted. Keep the affected slice paused while the record is
+incomplete and while the master inspects its cited evidence. Record the master's
+bounded resolution and rationale, then re-dispatch. If the master cannot resolve
+it within current evidence and authority, apply the stop contract instead of
+guessing.
+
 ### 6. Hold Evidence Gates
 
 Use exactly four gate states:
@@ -195,6 +259,11 @@ Apply this model to every gate in the linked references and templates. Choose
 the required evidence cannot be obtained or verified. Do not introduce another
 gate state. Inspect the actual files and diff; do not accept a completion claim
 by itself.
+
+Do not mark a gate `BLOCKED` merely because a routine engineering judgment was
+needed. Use `BLOCKED` for a material decision that the master cannot resolve
+from available evidence within existing authority, or for another missing
+required capability, input, or proof.
 
 If an agent does not return, returns partial work, crosses scope, or supplies
 insufficient evidence:
@@ -281,8 +350,9 @@ reports.
 - **No safe coordination location:** use the existing repository convention or
   ask when placement materially affects version control or privacy. Record
   `BLOCKED` when no safe location can be resolved.
-- **Ambiguous target or authority:** record `BLOCKED`, stop before mutation, and
-  request the missing decision.
+- **Ambiguous target or authority:** resolve routine ambiguity from stronger
+  evidence; for material ambiguity, request a master decision. Record `BLOCKED`
+  and ask the human only when the master still lacks evidence or authority.
 - **Unavailable recommended model, effort, skill, or tool:** reroute using only
   current capabilities and record the substitution. Record `BLOCKED` if no
   adequate capability remains.
@@ -297,5 +367,6 @@ reports.
   rerun the failed and integration checks.
 - **Private data in artifacts:** stop publication or registration, sanitize the
   public surface, record the affected gate as `FAIL`, and revalidate.
-- **Scope expansion discovered:** preserve completed in-scope work, record
-  `BLOCKED`, and ask for new authority before expanding.
+- **Scope expansion discovered:** preserve completed in-scope work, pause the
+  affected slice, and send a Decision Request. Because the master cannot grant
+  new authority, record `BLOCKED` and ask the human before expanding.

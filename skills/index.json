@@ -44,7 +44,7 @@
         "core-engineering"
       ],
       "maturity": "portable-candidate",
-      "purpose": "Coordinates repository implementation through a master agent that delegates production-file changes, manages ownership and handoffs, and closes evidence-based validation gates.",
+      "purpose": "Coordinates repository implementation through a master agent that delegates production-file changes, manages ownership and handoffs, escalates material decisions without expanding authority, and closes evidence-based validation gates.",
       "triggers": [
         "coordinate delegated or multi-agent repository implementation",
         "run a master and sub-agent workflow with persistent plans and handoffs",
@@ -62,21 +62,24 @@
       "primary_outputs": [
         "persisted execution plan and task graph",
         "bounded sub-agent dispatch contracts",
+        "decision requests and stop records for unresolved material uncertainty",
         "serial phase handoffs and validation gate records",
         "master integrated review and completion report"
       ],
       "validation_expectations": [
         "inspect repository rules, current capabilities, skills, worktree state, and validation entry points before dispatch",
+        "resolve routine uncertainty without approval while escalating unresolved material decisions within the user's original authority",
         "keep gates closed until required artifacts and credible validation evidence are inspected",
         "review the integrated diff, scope, sanitization, side effects, and repository-native checks before completion"
       ],
       "supporting_files": [
+        "skills/agentic-repository-execution/references/escalation-and-stop-policy.md",
         "skills/agentic-repository-execution/references/execution-templates.md",
         "skills/agentic-repository-execution/references/model-and-effort-routing.md",
         "skills/agentic-repository-execution/references/task-decomposition-and-handoffs.md"
       ],
       "agents_metadata_path": "skills/agentic-repository-execution/agents/openai.yaml",
-      "portability_notes": "Portable coordination workflow that must adapt to the target repository's governance, durable-memory convention, available sub-agent controls, current models and reasoning efforts, and validation commands. If sub-agents are unavailable, production-changing work is blocked rather than reassigned to the master."
+      "portability_notes": "Portable coordination workflow that must adapt to the target repository's governance, durable-memory convention, available sub-agent controls, current models and reasoning efforts, validation commands, and user-authorized side effects. Risk classification never grants authority; unresolved material decisions are stopped and escalated rather than guessed."
     },
     {
       "name": "ai-career-signal-researcher",
