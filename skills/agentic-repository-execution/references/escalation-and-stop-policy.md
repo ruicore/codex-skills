@@ -78,10 +78,10 @@ authorized and adequately controlled.
 
 | Level | Typical examples | Required execution intensity |
 |---|---|---|
-| Low | Localized test, internal refactor with established behavior, narrow docs or metadata edit | One bounded owner, focused validation, master diff review |
-| Medium | Multi-file behavior change, shared configuration, non-public integration seam, dependency update within an existing policy | Explicit contract and rollback, stronger tests, serial ownership for shared files, independent review when semantics are not obvious |
-| High | Public API or compatibility, schema or migration, authentication or permissions, external writes, concurrency or data-integrity behavior | Discovery or contract phase first, strongest suitable reasoning, independent specialist review, explicit stop conditions, layered validation |
-| Critical | Destructive or irreversible mutation, production migration or deletion, trust-boundary redesign, credential or key handling, change whose failure can corrupt shared state broadly | Whole-task preflight, explicit human authority where required, isolated execution, rollback or recovery proof, independent review and validation before dependent work |
+| Low | Localized test, internal refactor with established behavior, narrow docs or metadata edit | One bounded owner, focused author checks, independent Validation, master diff review; normally no reviewer |
+| Medium | Multi-file behavior change, shared configuration, non-public integration seam, dependency update within an existing policy | Explicit contract and rollback, stronger author checks, serial ownership for shared files, Independent Review then Validation by default; use only the documented waiver or merge |
+| High | Public API or compatibility, schema or migration, authentication or permissions, external writes, concurrency or data-integrity behavior | Discovery or contract phase first, strongest suitable reasoning, independent specialist Review and separate Validation, explicit stop conditions, layered evidence |
+| Critical | Destructive or irreversible mutation, production migration or deletion, trust-boundary redesign, credential or key handling, change whose failure can corrupt shared state broadly | Whole-task preflight, existing explicit authority where required, isolated execution, rollback or recovery proof, separate Independent Review and Validation before dependent work |
 
 Raise the level when uncertainty, blast radius, irreversibility, or validation
 difficulty increases. Use the level to:
@@ -94,6 +94,11 @@ difficulty increases. Use the level to:
 
 Do not lower the level because a preferred model, reviewer, test environment, or
 deadline is unavailable. Reduce scope or record `BLOCKED` instead.
+
+Use
+[independent-review-policy.md](independent-review-policy.md)
+for assurance ownership, the five-condition Medium waiver, the Medium role
+merge rule, and the prohibition on High/Critical waiver or merge.
 
 ## Authority Boundary
 

@@ -4,6 +4,18 @@ Copy and adapt only the forms needed by the repository. Keep them in an existing
 coordination convention or a simple ignored task directory; do not create a
 complex hierarchy merely to host templates.
 
+## Contents
+
+- [Execution Plan](#execution-plan)
+- [Sub-agent Dispatch](#sub-agent-dispatch)
+- [Delegation Request](#delegation-request)
+- [Phase Handoff](#phase-handoff)
+- [Decision Request](#decision-request)
+- [Stop Record](#stop-record)
+- [Gate Record](#gate-record)
+- [Routing Substitution](#routing-substitution)
+- [Master Final Review](#master-final-review)
+
 ## Execution Plan
 
 ```markdown
@@ -25,6 +37,10 @@ complex hierarchy merely to host templates.
 - Available capabilities: <sub-agents, tools, skills, validation>
 - Risk classification: <Low|Medium|High|Critical and why>
 - Authority boundary: <worker/master limits>
+- Assurance path: <Implementation -> Validation|Implementation -> Independent Review -> Validation>
+- Reviewer: <agent or omitted with Low-risk/Medium-waiver evidence>
+- Validator: <independent agent or eligible Low-risk Root Master>
+- Exception evidence: <all Medium waiver/merge conditions, or none>
 
 ## Gate states
 - `NOT RUN`: not attempted; do not start dependent work.
@@ -69,7 +85,8 @@ Non-goals:
 Expected artifacts:
 - <exact files, outputs, or findings>
 
-Validation:
+Required evidence:
+- Assurance role: <implementer author checks|Independent Review|Validation>
 - <exact commands or manual checks>
 - <evidence the agent must return>
 
@@ -106,6 +123,18 @@ Recommended execution:
 - Reasoning effort: <supported value|runtime default>
 - Skills: <verified available skills or none>
 - Rationale: <one sentence>
+
+Fallback and recovery:
+- Adequate fallback ladder: <verified same class -> verified stronger class ->
+  genuinely narrower independently verifiable slice -> Root re-dispatch ->
+  BLOCKED>
+- Required skills/tools and equivalent evidence: <verified capability or none;
+  equivalence condition>
+- Timeout/silence/partial-evidence handling: <preserve evidence; Root Master
+  narrows/re-dispatches; rerun named gate>
+- Cost constraint: <none or bounded constraint; never weakens risk, acceptance,
+  independence, authority, side effects, or proof>
+- Substitution record path/response contract: <path or complete record>
 
 Handoff:
 - Write to: <path or response contract>
@@ -175,7 +204,8 @@ responsibility is a necessary dependency.
 ## Decision requests and stops
 - <Decision Request or Stop Record path, affected gate, and current scope>
 
-## Validation
+## Checks and evidence
+- Assurance role: <author checks|Independent Review|Validation>
 - `<command or check>`: NOT RUN|PASS|FAIL|BLOCKED
   - Evidence: <result or artifact>
 
@@ -187,12 +217,20 @@ responsibility is a necessary dependency.
 ## Risks
 - <remaining uncertainty>
 
+## Confidence
+- Level: high|medium|low
+- Basis: <verified evidence and exact remaining gaps>
+
 ## Next agent instructions
 1. Read <required files>.
 2. Own <bounded surface>.
 3. Preserve <invariant/non-goal>.
 4. Run <validation>.
 ```
+
+Confidence is navigation metadata only. It is not evidence, assignment state,
+an Evidence Gate, or permission for dependent work. Do not put it in
+execution-state.
 
 ## Decision Request
 
@@ -253,12 +291,33 @@ available evidence within existing authority.
 ## Gate <ID>: <name>
 
 - Owner: <agent or master>
+- Assurance role: <author check|Independent Review|Validation|other evidence>
 - Expected evidence: <artifact and result>
 - Validation: `<command>` or <manual check>
 - Status: NOT RUN|PASS|FAIL|BLOCKED
 - Observed result: <concise evidence>
 - Remaining uncertainty: <none or explicit gap>
 - Follow-up dispatch: <ID or none>
+```
+
+## Routing Substitution
+
+Use this when a preferred setting cannot be used or observed degradation causes
+re-routing. The Root Master owns re-dispatch.
+
+```markdown
+## Routing Substitution <ID>
+
+- Assignment / affected gate: <task and gate ID>
+- Trigger: <unavailable model|effort|skill|tool failure|timeout|silence|partial evidence|degraded capability|cost pressure>
+- Original required class and setting: <capability class and advertised preference>
+- Runtime evidence: <how availability or inadequacy was observed>
+- Replacement or narrowed scope: <advertised setting, equivalent tool/skill, or bounded slice>
+- Adequacy rationale: <why original risk, acceptance, independence, and validation remain satisfied>
+- Preserved constraints: <risk, authority, side effect, assurance independence, proof>
+- Evidence preserved: <artifact, diff, or output paths>
+- Dispatch / validation action: <Root Master re-dispatch and gates to rerun>
+- Gate state and next condition: <NOT RUN|PASS|FAIL|BLOCKED and exact condition>
 ```
 
 ## Master Final Review

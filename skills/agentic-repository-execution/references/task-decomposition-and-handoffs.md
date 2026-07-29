@@ -3,6 +3,15 @@
 Use this reference for medium or large tasks, parallel assignments, serial
 phases, or any task whose ownership is unclear.
 
+## Contents
+
+- [Size the task](#size-the-task)
+- [Define a good assignment](#define-a-good-assignment)
+- [Control ownership](#control-ownership)
+- [Build the task graph](#build-the-task-graph)
+- [Require handoffs](#require-handoffs)
+- [Recover from failure](#recover-from-failure)
+
 ## Size The Task
 
 Score the work qualitatively across these axes:
@@ -17,13 +26,16 @@ Score the work qualitatively across these axes:
 
 Use the smallest structure that keeps ownership and validation credible:
 
-- **Small:** one implementation agent plus master review.
+- **Small:** one coherent implementation owner, independent Validation, and
+  master review; normally no separate reviewer.
 - **Medium:** a few responsibility-based assignments, parallel only where
-  ownership is disjoint.
+  ownership is disjoint, with the assurance path selected from
+  [independent-review-policy.md](independent-review-policy.md).
 - **Large:** explicit discovery or contract phase, bounded implementation
   slices, integration, and independent validation.
 
-Do not create assignments merely to increase agent count.
+Do not create assignments merely to increase agent count or because several
+files are involved.
 
 ## Define A Good Assignment
 
@@ -44,7 +56,17 @@ Do not split when:
 - two agents would edit the same file or authoritative schema concurrently;
 - one change is too small to justify a handoff;
 - a horizontal split would obscure end-to-end behavior;
+- source and tests belong to one coherent behavior owner and should be
+  author-checked together;
+- the desired file count, agent count, or parallelism is the only reason;
 - the second assignment exists only to restate or format the first.
+
+Implementer checks are author checks or implementation evidence. They do not
+satisfy independent Validation. Do not assign Review or Validation to the
+implementer, and do not let the Master's final integrated review stand in for a
+required peer Review. Apply the risk paths, Medium waiver and merge rules, and
+revision/remediation rules in
+[independent-review-policy.md](independent-review-policy.md).
 
 ## Control Ownership
 
@@ -100,6 +122,9 @@ Require the handoff to include:
 Treat the handoff as a navigation aid, not as stronger evidence than the actual
 files, diff, and validation output.
 
+Optionally add `Confidence: Level/Basis` for navigation. Confidence is not
+evidence, assignment state, a gate, or permission to start dependent work.
+
 ## Recover From Failure
 
 If an assignment times out, goes silent, or returns weak evidence:
@@ -113,3 +138,8 @@ If an assignment times out, goes silent, or returns weak evidence:
 
 Do not ask one replacement agent to redo every completed assignment unless the
 evidence proves the prior outputs unusable.
+
+When an optional execution-state snapshot is active, have the Root Master
+reconcile it against the plan and actual evidence before re-dispatch. Follow
+[execution-state-and-recovery.md](execution-state-and-recovery.md); never treat
+an `active` or `complete` assignment label as a `PASS`.

@@ -26,6 +26,8 @@ and a master silently taking over implementation.
   delegation.
 - Do not replace the repository's `AGENTS.md`, task graph, issue tracker,
   durable-memory convention, or user-specified coordination location.
+- Keep this a repository execution protocol. Do not turn it into an Agent
+  Operating System, workflow engine, scheduler, or persistent runtime service.
 - Do not let the master edit code, tests, configuration, migrations, public
   documentation, or other production deliverables. Allow the master to write
   only coordination artifacts in an approved local convention.
@@ -208,6 +210,12 @@ validation gates, risk classification, authority and side-effect boundaries,
 stop conditions, and current status. Use the plan form in
 [execution-templates.md](references/execution-templates.md).
 
+For non-trivial serial or recovery-prone work, the Root Master may also maintain
+one replaceable `<coordination-root>/execution-state.json` snapshot. Keep it
+optional for small coherent tasks. Read
+[execution-state-and-recovery.md](references/execution-state-and-recovery.md)
+before creating, updating, reconstructing, or resuming from that snapshot.
+
 ### 3. Size And Decompose The Work
 
 Choose the fewest assignments that preserve clear responsibility and
@@ -232,6 +240,14 @@ to infer permission.
 Read [task-decomposition-and-handoffs.md](references/task-decomposition-and-handoffs.md)
 before dispatching medium, large, serial, or parallel work.
 
+Treat implementer-run checks as author checks or implementation evidence, not
+independent Validation. Read
+[independent-review-policy.md](references/independent-review-policy.md) before
+choosing an assurance path or dispatching Review or Validation. Low risk
+normally uses independent Validation without a reviewer; Medium defaults to
+Independent Review then Validation; High and Critical require different peers
+for those two assurance roles.
+
 ### 4. Route And Dispatch
 
 For every assignment, state:
@@ -253,8 +269,10 @@ Delegation Request.
 
 Read [model-and-effort-routing.md](references/model-and-effort-routing.md) before
 recommending execution settings. Name only models and effort values advertised
-by the current runtime. If selection is unavailable, record the runtime default
-instead of inventing a value.
+by the current runtime. If a preferred setting is unavailable or inadequate,
+apply the linked fallback ladder and record the substitution. Never let
+fallback weaken risk, acceptance, authority, side effects, assurance
+independence, or required proof.
 
 Use the dispatch form in
 [execution-templates.md](references/execution-templates.md). Treat the
@@ -272,6 +290,10 @@ Require a handoff at every serial phase boundary. Make the next agent read the
 previous handoff before starting. Require each handoff to list completed work,
 changed artifacts, decisions, validation results, remaining risks, and exact
 next instructions.
+
+A handoff may include `Confidence: Level/Basis` as navigation metadata. It is
+not evidence, assignment state, an Evidence Gate, or permission for dependent
+work.
 
 Do not use chat memory as the only handoff for durable multi-stage work.
 
@@ -327,6 +349,10 @@ insufficient evidence:
 Never count absent evidence as success. Never widen a re-dispatch merely to
 avoid another coordination step.
 
+When execution-state is active, reconcile it against the plan, current
+worktree, artifacts, diffs, and evidence before resuming. Treat `active` or
+`complete` as lifecycle history, never as gate success or proof of liveness.
+
 ### 7. Perform The Master Final Review
 
 After every assignment gate is `PASS`, inspect the integrated working tree and
@@ -345,11 +371,21 @@ verify:
 Keep the final gate closed when integrated evidence is incomplete, even if every
 individual agent reported success.
 
+The Master final integrated review closes the control plane. It does not replace
+a required peer Independent Review.
+
 ## Validation
 
 Define observable gates before implementation starts. Use repository-native
 tests, linting, type checks, builds, schema validation, dry-runs, rendered
 previews, or manual inspection appropriate to each artifact.
+
+Keep implementer author checks in implementation evidence. Assign independent
+Validation to a different owner, except that the Root Master may perform
+eligible read-only, reproducible Low-risk Validation under the linked policy.
+If a reviewer or validator edits a production artifact, that peer becomes an
+implementer for the new revision and another eligible peer must rerun affected
+assurance gates.
 
 Require each gate record to contain:
 
@@ -403,9 +439,10 @@ reports.
 - **Ambiguous target or authority:** resolve routine ambiguity from stronger
   evidence; for material ambiguity, request a master decision. Record `BLOCKED`
   and ask the human only when the master still lacks evidence or authority.
-- **Unavailable recommended model, effort, skill, or tool:** reroute using only
-  current capabilities and record the substitution. Record `BLOCKED` if no
-  adequate capability remains.
+- **Unavailable or inadequate model, effort, skill, or tool:** apply the linked
+  fallback ladder, use an equivalent only when it produces the same evidence
+  without broader side effects, and record the substitution. Record `BLOCKED`
+  if no adequate capability remains.
 - **Overlapping parallel ownership:** pause the conflicting assignment, inspect
   the shared state, record the affected gate as `BLOCKED`, then serialize or
   redefine ownership.

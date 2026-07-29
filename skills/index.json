@@ -75,7 +75,9 @@
       "supporting_files": [
         "skills/agentic-repository-execution/references/agent-hierarchy-policy.md",
         "skills/agentic-repository-execution/references/escalation-and-stop-policy.md",
+        "skills/agentic-repository-execution/references/execution-state-and-recovery.md",
         "skills/agentic-repository-execution/references/execution-templates.md",
+        "skills/agentic-repository-execution/references/independent-review-policy.md",
         "skills/agentic-repository-execution/references/model-and-effort-routing.md",
         "skills/agentic-repository-execution/references/task-decomposition-and-handoffs.md"
       ],
