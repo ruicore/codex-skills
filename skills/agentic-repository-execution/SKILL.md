@@ -29,6 +29,9 @@ and a master silently taking over implementation.
 - Do not let the master edit code, tests, configuration, migrations, public
   documentation, or other production deliverables. Allow the master to write
   only coordination artifacts in an approved local convention.
+- Keep agent creation, dispatch, re-dispatch, and ownership assignment with the
+  Root Master. Do not let a worker, reviewer, validator, or remediation agent
+  create a child agent or transfer its production responsibility.
 - Do not claim delegated execution when the runtime cannot start sub-agents.
   Report `BLOCKED` instead of letting the master implement as a fallback.
 - Do not treat this skill as permission to commit, push, publish, deploy, or
@@ -72,14 +75,36 @@ Resolve conflicts in this order:
 Never let a stale plan, old handoff, model assumption, or remembered skill name
 outrank inspected current state.
 
+## Autonomy Principle
+
+Make autonomy the default inside every authorized assignment. Give the worker
+ownership of all normal engineering decisions within the assigned behavior and
+contract, owned surfaces, side-effect limit, and non-goals. Let the worker
+decide naming, internal code structure, helper extraction, local abstraction,
+test organization, and implementation strategy when the result can be verified
+locally without changing external or business meaning.
+
+Do not escalate merely because multiple reasonable implementations exist, a
+technical tradeoff is subjective, or the master did not preselect an approach.
+Inspect the evidence, choose a defensible option, validate it, and continue.
+Escalate only when the choice may change business or domain semantics,
+architecture boundaries, system ownership, long-term component responsibility,
+public contracts, data meaning, security boundaries, irreversible behavior, or
+existing scope, side-effect, or decision authority. Treat internal module
+splits, class extraction, and local refactors as normal engineering decisions
+when those boundaries and meanings remain unchanged.
+
 ## Decision Escalation And Stop Contract
 
 Classify risk and uncertainty before dispatch and whenever new evidence changes
 the task:
 
 - Resolve **routine uncertainty** from current evidence, repository convention,
-  and existing authority when the choice is reliable, reversible, and
-  low-impact. Continue without approval; record the choice when it constrains
+  and existing authority. Choose a defensible option among one or more
+  reasonable implementations when it stays inside the assignment boundaries,
+  the mutation is reversible or recoverable within the authorized side-effect
+  boundary, and the choice can be verified locally without changing behavior or
+  contract. Continue without approval; record the choice when it constrains
   later work.
 - For **material uncertainty**, make the worker pause the affected slice and
   complete the linked Decision Request. Before treating the escalation as raised
@@ -87,12 +112,16 @@ the task:
   of that form. Use a safe coordination location when available; otherwise
   output the complete record in the worker response. Merely saying a record
   should be created is incomplete, and the affected slice remains paused. Do not
-  silently choose among reasonable options that affect ownership, public
-  behavior or compatibility, data integrity or migration, security or trust,
-  external side effects, irreversible behavior, or the assignment boundary.
-- Make the master apply the Evidence Hierarchy and decide only within the user's
-  original authority. Do not widen scope or authority, or choose an arbitrary
-  assumption because of time pressure or a desire to finish.
+  silently choose among reasonable options that may change business or domain
+  semantics, architecture boundaries, system ownership or long-term component
+  responsibility, public behavior or compatibility, data integrity or
+  migration, security or trust, external side effects, irreversible behavior,
+  or the assignment boundary.
+- Make the master first apply the task context and Evidence Hierarchy to resolve
+  material engineering or design choices within the user's original authority.
+  Ask the human only when the decision still lacks required business or user
+  authority, or evidence. Do not widen scope or authority, or choose an
+  arbitrary assumption because of time pressure or a desire to finish.
 - When a material decision still lacks evidence or authority, require the master
   to emit or persist every field of the linked Stop Record before treating the
   decision-related gate as `BLOCKED`. Persist it at a safe coordination location
@@ -127,11 +156,22 @@ Keep these responsibilities with the master:
 - discover repository rules and available execution capabilities;
 - persist and update the execution plan;
 - choose task boundaries, order, ownership, and gates;
-- dispatch bounded work with complete contracts;
+- create and dispatch every bounded peer assignment with a complete contract;
 - resolve worker Decision Requests only within existing authority, or escalate;
 - inspect returned artifacts, diffs, and validation evidence;
 - re-dispatch missing or insufficient work;
 - perform the final integrated review and report status.
+
+Keep delegation depth at one: make every worker, reviewer, validator, and
+remediation agent a peer dispatched directly by the Root Master. Permit workers
+to submit a Delegation Request when a newly discovered, separable responsibility
+needs another owner; never permit them to spawn or dispatch that owner.
+
+Read
+[agent-hierarchy-policy.md](references/agent-hierarchy-policy.md)
+before dispatching or re-dispatching agents, assigning ownership, or processing
+a Delegation Request. Use its request lifecycle without treating delegation as
+human escalation or granting the master production-file write authority.
 
 Delegate all implementation and production-file edits. Do not reinterpret a
 sub-agent timeout, silence, partial response, or unsupported capability as
@@ -207,7 +247,9 @@ For every assignment, state:
 
 Also state owned files or surfaces, dependencies, required inputs, side-effect
 limits, risk level, authority boundary, escalation path, and the handoff path
-when relevant.
+when relevant. State that delegation authority belongs to the Root Master, that
+the dispatched agent may not create child agents, and where it may submit a
+Delegation Request.
 
 Read [model-and-effort-routing.md](references/model-and-effort-routing.md) before
 recommending execution settings. Name only models and effort values advertised
@@ -239,6 +281,14 @@ incomplete and while the master inspects its cited evidence. Record the master's
 bounded resolution and rationale, then re-dispatch. If the master cannot resolve
 it within current evidence and authority, apply the stop contract instead of
 guessing.
+
+Accept a Delegation Request only as a control-plane proposal. Make the master
+approve, deny, merge, narrow, or defer it. On approval, update the task graph,
+ownership, dependencies, and gates before the Root Master creates the new peer
+agent. Continue the requester's authorized work when the proposed responsibility
+is independent; pause only the affected slice when it is a necessary dependency.
+Do not turn the request into a human escalation, Decision Request, new gate
+state, or automatic `BLOCKED`.
 
 ### 6. Hold Evidence Gates
 
@@ -365,6 +415,9 @@ reports.
   re-dispatch; do not infer completion.
 - **Validation failure:** record `FAIL`, assign diagnosis or remediation, and
   rerun the failed and integration checks.
+- **New independent responsibility discovered:** keep authorized work moving
+  and submit a complete Delegation Request; do not spawn, dispatch, or transfer
+  ownership from the worker.
 - **Private data in artifacts:** stop publication or registration, sanitize the
   public surface, record the affected gate as `FAIL`, and revalidate.
 - **Scope expansion discovered:** preserve completed in-scope work, pause the

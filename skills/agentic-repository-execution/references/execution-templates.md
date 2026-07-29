@@ -78,6 +78,11 @@ Ownership:
 - Read-only/shared: <inputs>
 - Do not touch: <unrelated or conflicting surfaces>
 
+Delegation authority:
+- Agent creation/dispatch/re-dispatch: Root Master only
+- This agent may create child agents: no
+- Delegation Request path or response contract: <path or complete response form>
+
 Dependencies and inputs:
 - <prior artifact or handoff path>
 - Read the prior handoff before starting: <yes/no>
@@ -87,8 +92,12 @@ Side-effect limit:
 
 Risk and authority:
 - Risk: <Low|Medium|High|Critical with consequence>
-- Worker may decide: <routine choices inside the assignment>
-- Must escalate: <material decisions or surfaces outside worker authority>
+- Worker may decide: <all normal engineering decisions inside the assigned
+  behavior/contract, owned surfaces, side-effect limit, and non-goals>
+- Must escalate: <possible change to business/domain meaning, architecture
+  boundaries, system ownership, long-term component responsibility, public
+  contract, data meaning, security, irreversible behavior, or existing
+  scope/side-effect/decision authority>
 - Stop condition and scope: <condition; branch|whole task>
 
 Recommended execution:
@@ -102,6 +111,48 @@ Handoff:
 - Write to: <path or response contract>
 - Include completed work, files changed, decisions, validation results, risks,
   and exact next instructions.
+```
+
+## Delegation Request
+
+Use this when a dispatched agent discovers a coherent responsibility that may
+need a separate peer owner. This is a control-plane proposal, not human
+escalation, a Decision Request, a gate state, or automatic `BLOCKED`. Continue
+authorized independent work; pause only the affected slice when the requested
+responsibility is a necessary dependency.
+
+```markdown
+# Delegation Request <ID>: <short title>
+
+- Discovery and reason: <new work found, evidence, and why it matters>
+- Proposed coherent responsibility: <one outcome for one peer>
+- Independence from current scope: <how it differs from this assignment and why
+  a separate owner preserves coherence>
+- Dependencies and start condition: <inputs, predecessors, and exact condition
+  required before the peer begins>
+- Required capability: <expertise, tools, or execution class>
+- Recommended model: <runtime-advertised model|runtime default>
+- Recommended reasoning effort: <supported value|runtime default>
+- Verified skills: <runtime-verified skills or none>
+- Proposed ownership: <writable and read-only surfaces, integration owner>
+- Ownership conflicts: <overlap, dirty state, or none; prohibited surfaces>
+- Expected artifact: <exact files, findings, or evidence>
+- Validation: <commands/checks, expected evidence, and validation owner>
+- Impact if denied or deferred: <effect on root objective and task branch>
+- Current work continuation/pause state: <authorized work continuing; exact
+  affected slice paused, if any>
+
+## Master disposition
+
+- Disposition: <approve|deny|merge|narrow|defer>
+- Rationale and evidence: <why this disposition fits scope and authority>
+- Task graph update: <new/changed task IDs, or none>
+- Ownership update: <owner and surfaces, or none>
+- Dependencies and start condition update: <changes, or none>
+- Gate update: <existing gates and NOT RUN|PASS|FAIL|BLOCKED; no new state>
+- Dispatch action: <Root Master creates named peer after updates, or none>
+- Requester continuation: <work that continues and exact slice that remains
+  paused, if any>
 ```
 
 ## Phase Handoff

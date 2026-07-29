@@ -22,11 +22,13 @@ Classify the decision, not the worker's confidence or the apparent task size.
 
 Continue without escalation when all of these are true:
 
-- inspected evidence or a stable repository convention supports one reliable
-  choice;
-- the choice stays inside the assignment and the user's existing authority;
-- the result is reversible and low-impact;
-- the choice does not alter an authoritative contract or user-visible meaning.
+- inspected evidence or a stable repository convention supports a defensible
+  choice, even when multiple reasonable implementations remain;
+- the choice stays inside the assigned behavior and contract, owned surfaces,
+  side-effect limit, non-goals, and the user's existing authority;
+- the result remains reversible within the authorized side-effect boundary;
+- the result can be verified locally without altering an authoritative
+  contract, external behavior, or business or domain meaning.
 
 Examples include following an established naming pattern, choosing the local
 test helper already used by adjacent tests, or adjusting an internal
@@ -38,7 +40,8 @@ constrains later work or would otherwise be hard to reconstruct.
 Pause the affected slice and send a Decision Request when multiple reasonable
 options remain and the choice may affect any of these surfaces:
 
-- architecture ownership or component responsibility;
+- architecture boundaries, system ownership, or long-term component
+  responsibility;
 - public API, compatibility, protocol, or user-visible semantics;
 - data model, integrity, retention, backfill, or migration behavior;
 - security, trust, identity, permissions, or credential handling;
@@ -47,6 +50,17 @@ options remain and the choice may affect any of these surfaces:
 - the worker's assigned scope, owned surface, or side-effect limit.
 
 Material uncertainty is not permission to make the least disruptive guess.
+Do not classify internal module splits, class extraction, helper extraction, or
+local refactors as material merely because they change implementation structure.
+Keep them routine when external behavior, system boundaries, ownership, and
+authoritative contracts remain unchanged and focused validation can prove it.
+
+Treat **business semantic drift** as a change to the meaning of a system or
+domain rule, not a change to its implementation. Internal renames, refactors,
+and equivalent algorithms do not drift semantics when verified behavior is
+preserved. Changes to order lifecycle rules, refund eligibility or calculation,
+permission meaning, data interpretation, API contracts, or equivalent domain
+rules are semantic drift and require escalation.
 
 ### Blocking uncertainty
 
@@ -85,10 +99,19 @@ deadline is unavailable. Reduce scope or record `BLOCKED` instead.
 
 ### Worker
 
-A worker may make routine implementation judgments inside its explicit
-assignment and side-effect limit. A worker must not independently:
+A worker owns all normal engineering decisions inside its assigned behavior and
+contract, owned surfaces, side-effect limit, and non-goals. This includes
+naming, internal code structure, helper extraction, local abstraction, test
+organization, and implementation strategy. Choose a defensible option from the
+available evidence, validate it locally, and continue even when other reasonable
+implementations exist.
+
+A worker must not independently:
 
 - expand scope or take ownership of an unassigned surface;
+- change business or domain rules or their meaning;
+- change architecture boundaries, system ownership, or long-term component
+  responsibility;
 - change public API, compatibility, protocol, or user-visible semantics;
 - change data-model, integrity, retention, backfill, or migration semantics;
 - change security, trust, identity, permissions, or credential boundaries;
@@ -100,10 +123,11 @@ a Decision Request.
 
 ### Master
 
-The master may resolve a Decision Request only when stronger evidence supports
-the choice and the user's original authorization already covers it. Record the
-evidence, decision, constraints, and affected gates, then re-dispatch the
-bounded work.
+The master must first use the task context and Evidence Hierarchy to resolve
+material engineering or design choices. The master may resolve a Decision
+Request when the evidence supports a bounded choice and the user's original
+authorization already covers it. Record the evidence, decision, constraints,
+and affected gates, then re-dispatch the bounded work.
 
 The master may not grant itself or a worker new scope, public-contract freedom,
 data or security authority, infrastructure authority, or a higher side-effect
@@ -112,10 +136,11 @@ not authority.
 
 ### Human
 
-Ask the human only for the missing decision or authority that materially blocks
-safe progress. State concrete options and risks. Do not ask the human to approve
-routine repository-conforming choices, rerun ordinary validation, or operate
-every Evidence Gate.
+Ask the human only for missing business or user authority, or evidence, that
+materially blocks safe progress after master review. State concrete options and
+risks. Do not ask the human to approve normal engineering decisions,
+repository-conforming choices, rerun ordinary validation, or operate every
+Evidence Gate.
 
 ## Decision Escalation
 
@@ -128,7 +153,7 @@ every Evidence Gate.
    worker response. Stating that a request should be created is not completion.
 4. Keep dependent work closed; allow only genuinely independent, safe work.
 5. Make the master inspect the cited evidence and the Evidence Hierarchy.
-6. If existing evidence and authority support one option, record the bounded
+6. If existing evidence and authority support a bounded option, record the
    resolution and re-dispatch with updated constraints.
 7. If evidence or authority is still missing, apply the stop protocol.
 
@@ -197,7 +222,12 @@ Keep the four states unchanged:
 - A neighboring module establishes the formatter and naming pattern: routine;
   follow it and continue.
 - Two internal helpers are equally suitable but behavior and ownership stay
-  unchanged: routine; choose the repository-consistent option.
+  unchanged: routine; choose a defensible option and validate it.
+- Renaming an internal class, extracting a module, or selecting an equivalent
+  algorithm preserves verified behavior and system ownership: routine.
+- Changing when an order becomes final, when a refund is allowed, what a
+  permission grants, or how stored data is interpreted: material business
+  semantic drift; pause and send a Decision Request.
 - A fix can preserve an old public response or adopt a cleaner incompatible
   shape: material; pause and send a Decision Request.
 - A migration needs a retention or backfill rule absent from code and user
