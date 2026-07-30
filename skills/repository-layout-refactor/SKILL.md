@@ -12,6 +12,36 @@ behavior.
 
 Example: [concept-owned package migration](examples/concept-owned-package-migration.md).
 
+## Repository Layout Quality Criteria
+
+Evaluate the current and target layouts by the outcomes they enable, not by
+file count, line count, or directory depth:
+
+1. **Concept discoverability:** A realistic change request should point to a
+   likely owner from package and module names without requiring a broad search.
+   Prefer capability names over vague names such as `manager`, `processor`, or
+   `helper`.
+2. **Ownership visibility:** Each important concept or capability should have
+   one authoritative owner. Group code by meaningful ownership, not arbitrary
+   file type or convenient colocation.
+3. **Change locality:** A localized behavior change should remain within its
+   owner, direct contracts, and focused tests. Repeated edits across unrelated
+   modules are evidence that the boundary may be wrong.
+4. **Context locality:** An agent should be able to load the smallest useful
+   context for a change without reading unrelated behavior. Keep the rules,
+   contracts, and collaborators needed to understand one responsibility near
+   its owner.
+5. **Dependency clarity:** The physical structure should expose the intended
+   dependency direction, and actual imports should follow it. A tidy tree that
+   hides cycles or cross-layer shortcuts does not have a good layout.
+6. **Evolution path:** Likely new capabilities should have a predictable home
+   within an existing concept boundary. Avoid layouts that naturally grow
+   parallel managers, numbered services, or generic helper modules.
+
+Treat these criteria as contextual checks, not a scorecard. A good layout makes
+ownership and change impact visible; it does not merely produce more folders or
+smaller files.
+
 ## When To Use
 
 Use this skill when:
@@ -184,6 +214,9 @@ Before claiming completion:
 - baseline failures are distinguished from new failures
 - the old owner no longer contains duplicate active behavior
 - the target ownership map matches the implementation
+- representative changes have an obvious owner and bounded context
+- the physical structure exposes dependency direction and predictable extension
+  points
 - no generic dumping ground or unjustified wrapper was introduced
 - focused and full available checks pass
 - the final diff contains real cutover and cleanup, not only new facades
