@@ -41,6 +41,35 @@ It is not:
 - Prefer local evidence over intended architecture: inspect code, docs, configs, generated artifacts, runtime wiring, validation signals, and recent diffs when relevant.
 - Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
 
+## Architecture Quality Criteria
+
+Evaluate architecture by how it assigns responsibility and contains change, not
+by its file tree:
+
+1. **Clear ownership:** Each important concept, rule, and lifecycle has an
+   authoritative owner. Competing sources of truth are absent or explicitly
+   reconciled.
+2. **Stable boundaries:** Responsibilities that change for different reasons
+   are separated, and dependency direction prevents lower-level details from
+   owning higher-level policy.
+3. **Cohesion:** Responsibilities grouped under one owner naturally evolve
+   together. Technical proximity alone is not evidence that they belong
+   together.
+4. **Change locality:** A change to one concept primarily affects its owner,
+   explicit contracts, and direct consumers rather than unrelated modules.
+5. **Explicit rules:** Important invariants, policies, and transitions are
+   named and attached to an identifiable owner instead of being reconstructed
+   from scattered call sites.
+6. **Evolution path:** A likely new capability has an obvious owner and
+   extension path without requiring a parallel manager, generic helper, or
+   duplicate concept.
+
+Treat these criteria as architectural questions, not a scorecard. Repository
+layout may provide evidence about ownership and boundaries, but it is an
+expression of architecture rather than architecture itself. Use
+`repository-layout-refactor` only after the ownership decision is sufficiently
+clear to implement.
+
 ## Agent Legibility As An Architecture Concern
 
 Architecture is also consumed by future coding agents. Clear ownership and

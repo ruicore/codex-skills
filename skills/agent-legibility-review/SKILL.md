@@ -41,6 +41,30 @@ decisions, hand that decision to `architecture-review`. When both skills are
 used, avoid duplicate findings: architecture owns the boundary decision;
 legibility owns the navigation and modification consequence.
 
+## Agent Legibility Criteria
+
+Evaluate the repository as an interaction surface for a future coding agent:
+
+1. **Discoverability:** Can an agent identify the likely edit point for a
+   realistic task without an unnecessarily broad search?
+2. **Authority visibility:** Can an agent distinguish the authoritative owner
+   from callers, adapters, generated surfaces, compatibility layers, and
+   duplicated representations?
+3. **Context locality:** Can an agent load the rules, contracts, collaborators,
+   and tests needed for one change without absorbing unrelated behavior?
+4. **Impact predictability:** Can an agent discover direct consumers, side
+   effects, generated outputs, and validation surfaces before editing?
+5. **Intent signaling:** Do names, structure, tests, and nearby guidance expose
+   concepts, lifecycle stages, policies, and safe modification boundaries?
+6. **Hidden knowledge:** Are invariants and conventions visible where an agent
+   will look, rather than existing only in call order, tribal knowledge,
+   distant comments, or unrelated files?
+
+These criteria describe whether an agent can perceive and use the current
+repository safely. They do not decide where responsibility should live. Route
+findings that require new authority, ownership, or boundary decisions to
+`architecture-review`.
+
 ## Review Process
 
 Follow this order. Use each step to collect evidence; assign each issue to exactly one output section later.
@@ -73,24 +97,15 @@ Follow this order. Use each step to collect evidence; assign each issue to exact
    - Belongs: code shapes likely to make agents misread local evidence, such as complex condition trees, defensive branches that imply undocumented rules, dynamic dispatch, generated code, reflection, metaprogramming, and weak test anchors.
    - Does not: duplicate concepts, missing authority, hidden rules, or ambiguous ownership. Owner: Agent Risk Hotspots only for risky interpretation surfaces without an earlier owner.
 
-## Review Dimensions
+## Scoring The Criteria
 
-Score each dimension from 1 to 5 using observable evidence:
+Score each Agent Legibility Criterion from 1 to 5 using observable evidence:
 
 - 5: inspected evidence shows one obvious edit path for major capabilities, explicit rules or documented conventions, clear owners, localized change paths, and discoverable consumers.
 - 4: most major capabilities have clear edit paths and owners; remaining ambiguity is localized, documented, or covered by tests.
 - 3: agents can complete changes, but must infer some rules from usage, naming, call order, or multiple files; authority is uneven.
 - 2: several important changes require broad search or cross-file inference because ownership, rules, conventions, or consumers are not discoverable from one area.
 - 1: inspected evidence shows agents are likely to edit the wrong place, miss an undocumented invariant, or change one location while leaving required coupled locations inconsistent.
-
-Assess these dimensions:
-
-- Discoverability: Can an agent quickly find the correct place to change behavior?
-- Authoritative Location: Does each important concept have one canonical source, and are concepts with no clear source of truth identified?
-- Explicitness: Are business rules, invariants, conventions, and workflow rules represented directly or documented where agents will look?
-- Responsibility Clarity: Do names and boundaries reveal what each unit owns for modification and validation?
-- Change Locality: Can typical feature or rule changes remain small and focused?
-- Impact Predictability: Can an agent discover downstream consumers and effects from local evidence?
 
 ## Finding Rules
 
@@ -156,11 +171,11 @@ Use a table:
 | Dimension | Score | Evidence |
 |---|---:|---|
 | Discoverability | 1-5 | observed navigation evidence |
-| Authoritative Location | 1-5 | observed source-of-truth evidence |
-| Explicitness | 1-5 | observed rule/convention evidence |
-| Responsibility Clarity | 1-5 | observed ownership evidence |
-| Change Locality | 1-5 | observed change-surface evidence |
+| Authority Visibility | 1-5 | observed source-of-truth evidence |
+| Context Locality | 1-5 | observed context-selection evidence |
 | Impact Predictability | 1-5 | observed consumer/effect evidence |
+| Intent Signaling | 1-5 | observed naming, structure, test, and guidance evidence |
+| Hidden Knowledge | 1-5 | observed invariant and convention evidence |
 
 ### 3. High-Risk Findings
 

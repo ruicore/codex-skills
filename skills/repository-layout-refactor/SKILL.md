@@ -42,6 +42,33 @@ Treat these criteria as contextual checks, not a scorecard. A good layout makes
 ownership and change impact visible; it does not merely produce more folders or
 smaller files.
 
+## Layout Migration Criteria
+
+Use these criteria to judge the migration itself. This skill implements a
+resolved ownership model; it does not invent new architectural authority:
+
+1. **Resolved destination ownership:** Every target module or package has one
+   accepted responsibility and cutover condition. Use `architecture-review`
+   first when ownership or boundary decisions remain unresolved.
+2. **Behavior-preserving slices:** Move one coherent responsibility at a time,
+   keep the repository working after each slice, and validate through public
+   behavior rather than the proposed internal tree.
+3. **Complete consumer cutover:** Update real callers, imports, registries,
+   bootstrap paths, generated discovery surfaces, and focused tests in the
+   same slice as the moved owner.
+4. **Single active authority:** Do not leave the old and new locations as
+   competing implementations. Delete old ownership or retain only a verified,
+   time-bounded compatibility surface with a retirement condition.
+5. **Contract and dependency integrity:** Preserve in-scope public APIs,
+   serialized shapes, import contracts, metadata, and dependency direction.
+   Do not hide new cycles behind dynamic imports or indirection.
+6. **Reviewable recovery:** Keep each slice small enough to review, validate,
+   and reverse without discarding unrelated work. Record baseline failures and
+   distinguish them from migration regressions.
+
+A migration is incomplete when it only adds the target tree, re-exports the old
+monolith, or postpones consumer cutover and cleanup indefinitely.
+
 ## When To Use
 
 Use this skill when:
