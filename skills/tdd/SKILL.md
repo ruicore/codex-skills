@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor and behavior-preserving refactor loops. Use when the user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests or test-first development, or asks to restructure code without changing public behavior.
+description: Test-driven development with vertical red-green-refactor cycles and behavior-preserving green-to-green refactor loops. Use when the user requests TDD, test-first feature or bug work, integration tests that drive implementation, or an internal restructure that must preserve observable behavior. Infer the contract from the request and repository evidence; ask only when unresolved material choices would change public or business behavior, data or security meaning, or scope.
 ---
 
 # Test-Driven Development
@@ -48,16 +48,20 @@ When exploring the codebase, use the project's domain glossary so that test name
 
 Before writing any code:
 
-- [ ] Confirm with user what interface changes are needed
-- [ ] Confirm with user which behaviors to test (prioritize)
+- [ ] Infer the intended interface and prioritized behavior from the user
+      request, existing tests, code, repository rules, and documented contracts
 - [ ] Identify opportunities for [deep modules](deep-modules.md) (small interface, deep implementation)
 - [ ] Design interfaces for [testability](interface-design.md)
 - [ ] List the behaviors to test (not implementation steps)
-- [ ] Get user approval on the plan
 
-Ask: "What should the public interface look like? Which behaviors are most important to test?"
+Proceed with the strongest evidence-backed interpretation. Ask the user only
+when an unresolved material choice would change public or business behavior,
+data or security meaning, or the authorized scope. State the competing options
+and their effects; do not use routine implementation details as approval gates.
 
-**You can't test everything.** Confirm with the user exactly which behaviors matter most. Focus testing effort on critical paths and complex logic, not every possible edge case.
+**You can't test everything.** Infer priorities from risk and repository
+contracts. Focus testing effort on critical paths and complex logic, not every
+possible edge case.
 
 ### 2. Tracer Bullet
 
@@ -69,6 +73,12 @@ GREEN: Write minimal code to pass → test passes
 ```
 
 This is your tracer bullet - proves the path works end-to-end.
+
+Use the smallest testable seam that exercises the behavior. A small contract
+fixture is appropriate when it is the shortest path to test an API envelope,
+configuration interpretation, or display-value versus runtime-value mapping.
+Do not build heavyweight scaffolding for a narrow contract, and do not let
+boundary cataloguing turn the TDD cycle into an architecture review.
 
 ### 3. Incremental Loop
 
@@ -97,6 +107,18 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 - [ ] Run tests after each refactor step
 
 **Never refactor while RED.** Get to GREEN first.
+
+## Validation Evidence
+
+Use `RED`, `GREEN`, and `REFACTOR` as observed execution states, not intentions:
+
+- report the exact command actually run and the result observed
+- call a test RED only after it ran and failed for the expected missing behavior
+- call a test GREEN only after it ran and passed
+- label checks that were not run as **planned**, **unavailable**, or **inferred**
+  and explain why
+- never claim GREEN from a plan, code trace, static inspection, or expected
+  outcome alone
 
 ## Behavior-Preserving Refactor Mode
 
@@ -162,4 +184,5 @@ See [refactoring.md](refactoring.md) for the refactor-mode checklist.
 [ ] Test would survive internal refactor
 [ ] Code is minimal for this test
 [ ] No speculative features added
+[ ] Validation is labeled executed or planned; GREEN reflects an observed pass
 ```

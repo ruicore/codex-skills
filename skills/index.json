@@ -261,20 +261,23 @@
         "broad DAL or repository rewrites unless explicitly requested"
       ],
       "default_side_effect_level": "read-only",
-      "side_effect_level": "read-only",
+      "side_effect_level": "git-working-tree",
       "requires_credentials": false,
       "primary_outputs": [
         "read-only database access audit report",
         "prioritized findings",
-        "counter-evidence and validation-needed notes"
+        "counter-evidence and validation-needed notes",
+        "authorized database-access fixes and focused tests when explicitly requested"
       ],
       "validation_expectations": [
         "default to static, read-only repository inspection",
+        "enter working-tree fix mode only when the user explicitly requests fixes, patches, edits, refactoring, or implementation",
         "distinguish query, connection, transaction, round trip, statement, row mutation, flush, commit, and object mutation",
         "include disproof evidence and validation needed for findings"
       ],
       "supporting_files": [
-        "skills/database-access-audit/quick-reference.md"
+        "skills/database-access-audit/quick-reference.md",
+        "skills/database-access-audit/references/audit-pattern-catalog.md"
       ],
       "agents_metadata_path": "skills/database-access-audit/agents/openai.yaml",
       "portability_notes": "Portable across stacks, but the audit must discover project-specific database primitives before applying generic search terms."
@@ -286,18 +289,20 @@
       "secondary_categories": [
         "planning-execution"
       ],
-      "maturity": "personal-skill",
-      "purpose": "Writes durable local agent-facing traces for stable engineering decisions, findings, review outcomes, and user-clarified constraints.",
+      "maturity": "stable-workflow",
+      "purpose": "Secondary persistence workflow that writes durable local agent-facing traces for stable engineering decisions, findings, and user-clarified constraints after primary work establishes them.",
       "triggers": [
         "preserve stable engineering decision context for future Codex runs",
-        "record architecture tradeoffs, debugging findings, review outcomes, or clarified constraints",
+        "record a stable architecture tradeoff, debugging finding, review outcome, or clarified constraint after the primary workflow",
         "update an existing decision trace after implementation or validation changes"
       ],
       "do_not_use_for": [
+        "the primary workflow for every architecture review, diagnosis, implementation, or review task",
         "routine implementation details with no reusable decision",
         "transient task plans, TODO lists, meeting notes, brainstorming artifacts, or chat recaps",
         "unresolved investigations where facts are still changing",
-        "formal ADRs intended for human readers"
+        "formal ADRs intended for human readers",
+        "raw-trace extraction, sanitization, dataset generation, evaluator building, or skill-proposal generation"
       ],
       "default_side_effect_level": "local-files",
       "side_effect_level": "local-files",
@@ -308,15 +313,17 @@
         "small decision record when a compact trace is enough"
       ],
       "validation_expectations": [
-        "apply the worth-recording gate before writing",
+        "apply the worth-recording gate before writing and stop when no durable record is warranted",
         "inspect local evidence and existing trace conventions before choosing placement",
-        "verify the trace file exists, is readable, includes concrete references, and has accurate status"
+        "verify the trace file exists, is readable, evidence-grounded, privacy-safe, and has accurate status and validation claims"
       ],
       "supporting_files": [
-        "skills/decision-trace-writer/examples/export-idempotency-trace.md"
+        "skills/decision-trace-writer/examples/export-idempotency-trace.md",
+        "skills/decision-trace-writer/references/trace-formats.md",
+        "skills/decision-trace-writer/references/tracegym-metadata.md"
       ],
-      "agents_metadata_path": null,
-      "portability_notes": "Personal agent-memory workflow. Placement must follow the target repository's existing durable-memory convention and should avoid committing ignored or private agent-facing traces unless explicitly requested."
+      "agents_metadata_path": "skills/decision-trace-writer/agents/openai.yaml",
+      "portability_notes": "Portable durable-memory workflow. Placement must follow the target repository's existing durable-memory convention and should avoid committing ignored or private agent-facing traces unless explicitly requested."
     },
     {
       "name": "diagnose",
@@ -324,15 +331,18 @@
       "category": "core-engineering",
       "secondary_categories": [],
       "maturity": "portable-candidate",
-      "purpose": "Runs a disciplined diagnosis loop for hard bugs and performance regressions before fixing them.",
+      "purpose": "Diagnoses hard bugs and performance regressions through the full evidence loop when safe and authorized, or a bounded, non-mutating assessment when reproduction or change authority is unavailable.",
       "triggers": [
         "diagnose this",
         "debug this",
         "a bug is broken, throwing, failing, or regressing",
-        "performance regression investigation"
+        "performance regression investigation",
+        "read-only or production-only assessment of a failure when safe reproduction is unavailable"
       ],
       "do_not_use_for": [
-        "speculative fixes without reproduction",
+        "turning an assessment-only or bounded-diagnosis request into instrumentation, implementation, or repair authority",
+        "speculative fixes without a full-mode feedback loop and observed reproduction",
+        "claiming reproduction, confirmed root cause, verified fix, or GREEN validation without observed evidence",
         "routine implementation that does not require diagnosis",
         "broad refactors before the failure mode is understood"
       ],
@@ -340,22 +350,23 @@
       "side_effect_level": "git-working-tree",
       "requires_credentials": false,
       "primary_outputs": [
-        "reproduction or failing test",
-        "ranked hypotheses",
-        "targeted instrumentation",
-        "fix and regression validation when requested"
+        "full diagnosis: reproduction or failing test, ranked hypotheses, targeted instrumentation, and fix/regression validation when authorized",
+        "bounded diagnosis report with observed evidence, ranked hypotheses, confidence, and a verification plan"
       ],
       "validation_expectations": [
-        "reproduce or bound the failure before fixing",
+        "select full or bounded mode from the available evidence and the user's authority",
+        "separate observed evidence from hypotheses and report confidence plus the exact verification still needed in bounded mode",
+        "do not fix unless Full Diagnosis Mode has an observed feedback loop/reproduction and the user granted implementation authority",
         "test hypotheses one at a time",
-        "convert the minimized repro into a regression check when feasible"
+        "convert an observed minimized repro into a regression check when a correct seam is feasible",
+        "report only reproduction, root-cause, fix, and GREEN claims that were actually observed"
       ],
       "supporting_files": [
         "skills/diagnose/examples/intermittent-checkout-total.md",
         "skills/diagnose/scripts/hitl-loop.template.sh"
       ],
       "agents_metadata_path": "skills/diagnose/agents/openai.yaml",
-      "portability_notes": "Portable diagnosis loop, but concrete commands, fixtures, and test seams must be discovered from the target repository. Default diagnosis starts with reproduction and evidence gathering; fix mode escalates to working-tree changes when the user asks for repair."
+      "portability_notes": "Portable diagnosis workflow, but concrete commands, fixtures, and test seams must be discovered from the target repository. Use the full loop only when safe reproduction and required change authority exist; otherwise deliver the bounded read-only assessment and verification plan without expanding into implementation."
     },
     {
       "name": "excalidraw-diagrams",
@@ -487,39 +498,42 @@
       "secondary_categories": [
         "agent-memory"
       ],
-      "maturity": "personal-skill",
-      "purpose": "Stress-tests architecture, plans, domain models, workflow semantics, or durable repo knowledge against local repository docs and conventions.",
+      "maturity": "portable-candidate",
+      "purpose": "Runs a deep, iterative, docs-grounded adversarial critique of architecture, plans, domain models, and workflow semantics against repository language and implementation reality; persists durable knowledge only with explicit or repository-rule authority.",
       "triggers": [
         "pressure-test a plan against repository docs",
-        "challenge architecture, domain model, workflow semantics, or durable repo knowledge",
-        "update repo-local context such as .manifest files, CONTEXT files, or ADRs after stable findings"
+        "challenge architecture, domain model, or workflow semantics through an iterative repository-grounded grilling session",
+        "persist settled critique outcomes only when the user or an applicable repository rule explicitly authorizes documentation updates"
       ],
       "do_not_use_for": [
         "ordinary bug fixes",
         "small code edits",
         "routine PR review",
         "one-off code tracing unless architectural pressure-testing is explicitly requested",
+        "one-shot architecture assessment or review, which belongs to architecture-review",
+        "recording a decision that is already settled, which belongs to decision-trace-writer",
         "public product docs when the knowledge is only personal agent context"
       ],
       "default_side_effect_level": "read-only",
       "side_effect_level": "local-files",
       "requires_credentials": false,
       "primary_outputs": [
-        "repo-grounded critique",
-        "validated objections",
-        "updated repo-local context, CONTEXT files, or ADR-shaped notes when appropriate"
+        "read-only repo-grounded critique with objections that survived counter-evidence",
+        "confidence, decision gaps, scenario pressure tests, and proposed wording",
+        "authorized durable documentation update only in Persistence Mode"
       ],
       "validation_expectations": [
+        "default to read-only Critique Mode and require explicit user or applicable repository-rule authority before Persistence Mode",
         "read local docs and implementation evidence before preserving claims",
         "downgrade or remove objections invalidated by repository evidence",
-        "persist only stable, validated knowledge"
+        "persist only stable, self-challenged knowledge in a repository-approved location"
       ],
       "supporting_files": [
         "skills/grill-with-docs/ADR-FORMAT.md",
         "skills/grill-with-docs/CONTEXT-FORMAT.md"
       ],
       "agents_metadata_path": "skills/grill-with-docs/agents/openai.yaml",
-      "portability_notes": "Personal repository-knowledge workflow. It should discover local documentation conventions instead of assuming .manifest, CONTEXT, or ADR paths."
+      "portability_notes": "Repository-grounded critique workflow. It defaults to read-only Critique Mode, discovers local documentation conventions instead of assuming .manifest, CONTEXT, or ADR paths, and enters Persistence Mode only with explicit user or applicable repository-rule authority."
     },
     {
       "name": "paper-deck-style",
@@ -793,7 +807,7 @@
       "secondary_categories": [
         "planning-execution"
       ],
-      "maturity": "personal-skill",
+      "maturity": "portable-candidate",
       "purpose": "Refactors working repositories around authoritative concept ownership, localized change surfaces, complete cutover, and preserved public behavior.",
       "triggers": [
         "refactor large or flat mixed-responsibility modules into concept-owned packages",
@@ -833,11 +847,11 @@
       "category": "core-engineering",
       "secondary_categories": [],
       "maturity": "portable-candidate",
-      "purpose": "Guides feature implementation through behavior-focused red-green-refactor slices and structural changes through behavior-preserving green-to-green refactor slices.",
+      "purpose": "Infers the behavior contract from user and repository evidence, then guides feature implementation through behavior-focused red-green-refactor slices and structural changes through behavior-preserving green-to-green refactor slices.",
       "triggers": [
         "build features or fix bugs using TDD",
         "red-green-refactor",
-        "integration tests",
+        "integration tests that drive implementation",
         "test-first development",
         "restructure code without changing public behavior"
       ],
@@ -851,16 +865,17 @@
       "side_effect_level": "git-working-tree",
       "requires_credentials": false,
       "primary_outputs": [
-        "one behavior test at a time",
+        "one behavior-focused test at a time with observed RED/GREEN evidence",
         "minimal implementation for each test",
         "refactored code after green tests",
         "behavior-preserving responsibility migration",
-        "behavior-focused verification"
+        "behavior-focused verification with executed results distinguished from planned checks"
       ],
       "validation_expectations": [
-        "confirm interface and behavior priorities before coding",
-        "keep each cycle to one failing test and one minimal implementation",
+        "infer the interface and behavior priorities from user and repository evidence; ask only for unresolved material behavior, data/security, or scope choices",
+        "keep each feature cycle to one executed failing test and one minimal implementation with an observed passing result",
         "freeze material public behavior before a structural refactor",
+        "record exact executed RED, GREEN, and refactor commands/results; label unrun checks as planned, unavailable, or inferred",
         "run focused tests after each red-green or green-to-green slice and full relevant checks after refactors"
       ],
       "supporting_files": [
@@ -881,7 +896,7 @@
       "secondary_categories": [
         "research"
       ],
-      "maturity": "personal-skill",
+      "maturity": "portable-candidate",
       "purpose": "Ingests one Ray-reviewed weekly AI Systems Engineering Radar report into an ai-signal-radar repository as durable signal records and indexes.",
       "triggers": [
         "ingest this weekly radar",

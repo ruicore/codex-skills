@@ -13,7 +13,9 @@
 
 ## How The Skill Should Proceed
 
-1. Confirm the public interface and priority behavior before coding.
+1. Infer the public interface and priority behavior from the request, existing
+   API, tests, and repository contracts; ask only if a material behavioral
+   choice remains unresolved.
 2. List behavior tests, not implementation tasks.
 3. Start with one tracer-bullet test through the public API: create a saved filter, then retrieve it for the same user.
 4. Run the test and confirm it fails for the expected reason.
@@ -25,8 +27,8 @@
 ## Expected Output Shape
 
 - Short TDD plan listing prioritized behaviors.
-- Per-cycle notes: `RED`, `GREEN`, and optional `REFACTOR`.
-- Test file and command used for each cycle.
+- Per-cycle notes: observed `RED`, observed `GREEN`, and optional `REFACTOR`.
+- Test file, command actually run, and observed result for each cycle.
 - Final verification command.
 - Any deferred behaviors or open interface questions.
 
@@ -35,6 +37,8 @@
 - Tests should call the public API instead of private repository methods.
 - Each cycle should introduce one failing behavior test and one minimal implementation.
 - Refactors should not change observable behavior, and tests should run after each refactor.
+- Planned or unavailable validation should be labeled explicitly rather than
+  reported as GREEN.
 
 ## Common Mistakes The Skill Prevents
 

@@ -315,41 +315,12 @@ What Codex should not change automatically:
 - Do not modernize deprecated workflows opportunistically.
 - Do not keep sensitive historical material for compatibility.
 
-## Initial Maturity Map
+## Current Maturity Values
 
-This map is a starting point for repository maintenance. It should be updated
-only when a concrete change improves or reduces a skill's public readiness.
-
-| Skill | Primary category | Secondary category | Current maturity |
-|---|---|---|---|
-| `agent-legibility-review` | `review-audit` |  | `portable-candidate` |
-| `agentic-repository-execution` | `planning-execution` | `core-engineering` | `portable-candidate` |
-| `ai-career-signal-researcher` | `research` | `agent-memory` | `personal-skill` |
-| `architecture-review` | `review-audit` |  | `portable-candidate` |
-| `brand-deal-researcher` | `research` | `publishing` | `personal-skill` |
-| `buffer-publisher` | `tool-ops` | `publishing` | `personal-skill` |
-| `database-access-audit` | `review-audit` |  | `portable-candidate` |
-| `decision-trace-writer` | `agent-memory` | `planning-execution` | `personal-skill` |
-| `diagnose` | `core-engineering` |  | `portable-candidate` |
-| `excalidraw-diagrams` | `visual-artifacts` |  | `personal-skill` |
-| `genmedia` | `tool-ops` | `publishing` | `personal-skill` |
-| `grill-me` | `review-audit` | `planning-execution` | `portable-candidate` |
-| `grill-with-docs` | `review-audit` | `agent-memory` | `personal-skill` |
-| `paper-deck-style` | `visual-artifacts` |  | `personal-skill` |
-| `paper-mcp` | `tool-ops` | `visual-artifacts` | `personal-skill` |
-| `prd-to-issues` | `planning-execution` |  | `portable-candidate` |
-| `python-backend-review` | `review-audit` |  | `portable-candidate` |
-| `python-ecosystem-review` | `review-audit` |  | `portable-candidate` |
-| `radar-analysis` | `agent-memory` | `research` | `personal-skill` |
-| `readwise-cli-control` | `tool-ops` | `research` | `personal-skill` |
-| `repository-layout-refactor` | `core-engineering` | `planning-execution` | `personal-skill` |
-| `tdd` | `core-engineering` |  | `portable-candidate` |
-| `weekly-radar-ingestion` | `agent-memory` | `research` | `personal-skill` |
-| `write-a-prd` | `planning-execution` |  | `portable-candidate` |
-
-No existing skill is marked `stable-workflow` yet because this repository does
-not currently apply a consistent metadata, example, and validation standard
-across skills. No existing skill is marked `deprecated` by this document.
+This taxonomy owns maturity vocabulary and promotion criteria. The current
+maturity value for each skill lives only in `skills/index.json`; inspect it with
+`python scripts/list_skills.py` or filter it with
+`python scripts/list_skills.py --maturity <level>`.
 
 ## Maintenance Rules
 

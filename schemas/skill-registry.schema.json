@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/ruicore/codex-skills/schemas/skill-registry.schema.json",
   "title": "Codex Skills Registry",
-  "description": "Validates the future skills/index.json registry for this repository.",
+  "description": "Validates skills/index.json, which records current per-skill values; docs/skill-taxonomy.md defines category and maturity semantics and vocabulary.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -119,7 +119,7 @@
           "uniqueItems": true
         },
         "maturity": {
-          "description": "Current maturity level from docs/skill-taxonomy.md.",
+          "description": "Current registry-recorded maturity value; docs/skill-taxonomy.md defines its vocabulary and semantics.",
           "$ref": "#/definitions/maturity"
         },
         "purpose": {

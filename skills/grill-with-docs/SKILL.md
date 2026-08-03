@@ -1,13 +1,36 @@
 ---
 name: grill-with-docs
-description: Deep architectural and domain grilling session that stress-tests plans against the current repository's domain language, implementation reality, and local documentation conventions. Use when the user wants to pressure-test a plan, architecture, domain model, workflow semantics, or durable repo knowledge, especially when findings may update repo-local context such as .manifest files, CONTEXT files, or ADRs.
+description: Deep, docs-grounded pressure-testing session for plans, domain models, workflow semantics, and architectural assumptions against repository language and implementation reality. Use when the user wants an adversarial, iterative grilling session rather than a one-shot architecture assessment. Default to read-only critique; update durable docs only with explicit user authority or an applicable repository rule requesting persistence. Route one-shot architecture assessments to architecture-review and settled-decision recording to decision-trace-writer.
 ---
 
 # Grill With Docs
 
-Use this skill to turn vague architecture or domain discussion into precise language, validated operational semantics, and carefully maintained repo-local knowledge.
+Use this skill to turn vague architecture or domain discussion into precise
+language and evidence-tested operational semantics.
 
 Do not use it for ordinary bug fixes, small code edits, routine PR review, or one-off code tracing unless the user explicitly wants architectural pressure-testing.
+
+## Select The Mode
+
+Use **Critique Mode** by default. Treat requests to grill, challenge,
+pressure-test, assess, or review as read-only unless the user says otherwise.
+Inspect repository evidence, challenge assumptions, surface contradictions and
+decision gaps, run scenario pressure tests, and return findings, confidence,
+and questions. Do not edit durable documentation in this mode; present any
+useful wording as a proposed update only.
+
+Use **Persistence Mode** only when the user explicitly authorizes documentation
+updates or an applicable repository instruction explicitly requests them.
+Persist only settled knowledge that survived the self-challenge pass, and write
+only to the repository-approved location. Never infer write authority from the
+mere existence of `.manifest`, `CONTEXT`, ADR, trace, or specification files.
+
+Route adjacent work deliberately:
+
+- Use `architecture-review` for a one-shot architecture assessment or review.
+- Use `decision-trace-writer` to record a decision that is already settled.
+- Keep `grill-with-docs` for the deep, iterative, docs-grounded adversarial
+  session that resolves assumptions before conclusions.
 
 ## Core Loop
 
@@ -19,7 +42,8 @@ Do not use it for ordinary bug fixes, small code edits, routine PR review, or on
 6. Pressure-test claims with concrete runtime scenarios: failure, retry, concurrency, partial success, rollback, ownership, and state transitions.
 7. Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
 8. After raising objections, run the Self-Challenge Pass before turning them into conclusions or durable knowledge.
-9. Persist only stable, validated knowledge. Do not fossilize brainstorming.
+9. In Persistence Mode only, preserve stable, validated knowledge. Do not
+   fossilize brainstorming.
 
 ## Repository Discovery
 
@@ -35,11 +59,15 @@ First identify semantic roles:
 
 Prefer pointer files over broad scans. If a repo instruction file says where context belongs, follow that rule.
 
-For repos that use `.manifest`, treat `.manifest` as the default write location for this skill's generated knowledge. Keep all newly created or updated skill context files under `.manifest/` unless the user explicitly asks for public/team docs.
+In Critique Mode, repository discovery remains read-only. In Persistence Mode,
+use the location required by repository instructions. If the repository accepts
+`.manifest` for personal agent knowledge, keep that knowledge there unless the
+user explicitly requests public or team documentation.
 
-## Documentation Writes
+## Documentation Writes In Persistence Mode
 
-Create or update files lazily, only when there is stable knowledge to preserve.
+Create or update files only when Persistence Mode is authorized and stable
+knowledge is ready to preserve.
 
 When writing:
 
@@ -49,7 +77,9 @@ When writing:
 - If `.manifest/knowledge.md` exists, use it for confirmed decisions, repeated wrong assumptions, and durable behavioral facts.
 - If `.manifest/validation.md` exists, use it for runtime validation data, test assets, environment constraints, and verification workflows.
 - If the repo instead uses `CONTEXT.md`, `CONTEXT-MAP.md`, or `docs/adr/`, use those conventions.
-- If no suitable structure exists, propose the smallest repo-local structure before creating it. For personal/local agent knowledge, prefer `.manifest/`.
+- If no suitable structure exists, propose the smallest repo-local structure
+  and obtain explicit authority before creating it. For personal/local agent
+  knowledge, prefer `.manifest/` only when the repository accepts it.
 
 Do not update public product docs when the stable knowledge is only personal agent context. Do not create ADRs unless the repo already uses ADRs or the user accepts that convention.
 
@@ -63,7 +93,9 @@ If existing docs define a term, compare the user's wording against that definiti
 
 > Existing context defines cancellation as order-level, but this proposal implies item-level cancellation. Which model is intended?
 
-When a term is resolved, persist it only if it is domain-level and likely to help future work. Avoid implementation trivia in glossary/context files.
+When a term is resolved, persist it only in Persistence Mode and only if it is
+domain-level and likely to help future work. Avoid implementation trivia in
+glossary/context files.
 
 ## Implementation Reality
 
@@ -105,7 +137,7 @@ Do not leave claims abstract. Test them with concrete scenarios such as:
 
 Use scenarios to force decisions about state, ownership, retries, consistency, and user-visible results.
 
-## Decision Persistence
+## Decision Persistence In Persistence Mode
 
 Use status labels when useful:
 
@@ -122,7 +154,9 @@ Suggest an ADR only when all are true:
 
 If any condition is missing, prefer a lightweight context or knowledge note.
 
-If the repo uses the bundled formats and they fit the repo convention, use [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md) or [ADR-FORMAT.md](./ADR-FORMAT.md). Otherwise follow the repo's existing format.
+If Persistence Mode is authorized and the repo uses the bundled formats, use
+[CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md) or
+[ADR-FORMAT.md](./ADR-FORMAT.md). Otherwise follow the repo's existing format.
 
 ## Portability Notes
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Decision Trace Writer"
+  short_description: "Preserve settled engineering decisions for agents"
+  default_prompt: "Use $decision-trace-writer to preserve this settled engineering decision for future agents."

@@ -1,4 +1,4 @@
 interface:
   display_name: "TDD"
   short_description: "Build or refactor with behavior-focused tests"
-  default_prompt: "Use $tdd to implement or safely refactor this change with behavior-focused test loops."
+  default_prompt: "Use $tdd to infer the behavioral contract, then implement or safely refactor it through executed behavior-focused test loops."

@@ -1,4 +1,4 @@
 interface:
   display_name: "Diagnose"
-  short_description: "Debug hard bugs with evidence loops"
-  default_prompt: "Use $diagnose to debug this failure with a reproducible evidence loop."
+  short_description: "Diagnose with full or bounded evidence loops"
+  default_prompt: "Use $diagnose to investigate this failure in full or bounded mode, matching the user's authority and the available evidence."

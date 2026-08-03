@@ -35,6 +35,19 @@ metadata, validation, and public documentation mature.
 
 ### Changed
 
+- Promoted `decision-trace-writer` to `stable-workflow` after repeated real
+  secondary-persistence use established stable decision/trace boundaries and
+  validated durable-output behavior.
+- Promoted `grill-with-docs` to `portable-candidate` after real docs-grounded
+  pressure-testing use demonstrated a reusable workflow while retaining its
+  portability caveats.
+- Promoted `repository-layout-refactor` to `portable-candidate` after validated
+  behavior-preserving layout-refactor use demonstrated a reusable
+  concept-owned-package workflow while retaining its portability caveats.
+- Promoted `weekly-radar-ingestion` to `portable-candidate` after validated
+  recurring weekly ingestion/publish use in its target repository, with its
+  repository- and practice-specific caveats retained.
+- Added decision-trace UI metadata and removed the duplicated maturity map.
 - Updated the README direction, repository guide links, install flow, registry
   notes, category overview, skill outcomes, and validation guidance to reflect
   the current public repository surface.

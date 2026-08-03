@@ -50,13 +50,14 @@ expected migration step.
 
 ## Maturity Promotions
 
-Use the maturity labels from `docs/skill-taxonomy.md`. A maturity promotion
-should be evidence-backed and should not happen only because a skill has been
-reformatted.
+`docs/skill-taxonomy.md` owns the maturity vocabulary, semantics, and promotion
+criteria. `skills/index.json` is the sole source of truth for each skill's
+current maturity value. A maturity promotion should be evidence-backed and
+should not happen only because a skill has been reformatted.
 
 When promoting maturity:
 
-- update `skills/index.json`
+- update the current maturity value in `skills/index.json`
 - describe the evidence for the promotion in `CHANGELOG.md`
 - update examples, validation expectations, or portability notes when they are
   part of the promotion
@@ -83,6 +84,9 @@ When deprecating a skill:
 Changes to skills and public metadata should keep the repository's sources of
 truth aligned:
 
+- keep maturity vocabulary, semantics, and promotion criteria in
+  `docs/skill-taxonomy.md`; record current per-skill maturity values only in
+  `skills/index.json`
 - update `skills/index.json` when category, maturity, side-effect level,
   supporting files, validation expectations, or portability notes change
 - update `schemas/skill-registry.schema.json` when registry field structure or

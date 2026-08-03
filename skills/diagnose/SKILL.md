@@ -1,15 +1,44 @@
 ---
 name: diagnose
-description: Disciplined diagnosis loop for hard bugs and performance regressions. Reproduce → minimise → hypothesise → instrument → fix → regression-test. Use when user says "diagnose this" / "debug this", reports a bug, says something is broken/throwing/failing, or describes a performance regression.
+description: Evidence-led diagnosis for hard bugs and performance regressions, using the full reproduce → minimise → hypothesise → instrument → test → fix → prevent loop when possible and a bounded, non-mutating assessment when reproduction is unsafe, unavailable, production-only, or outside the user's authority. Use when the user asks to diagnose or debug a failure or regression; do not broaden an assessment-only request into implementation.
 ---
 
 # Diagnose
 
-A discipline for hard bugs. Skip phases only when explicitly justified.
+A discipline for hard bugs. Prefer the full loop and skip phases only when the
+selected mode or available evidence justifies it.
 
 When exploring the codebase, use the project's domain glossary to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
 
 Example: [intermittent checkout total regression](examples/intermittent-checkout-total.md).
+
+## Select The Mode
+
+Use **Full Diagnosis Mode** when the failure can be exercised safely and the
+user has authorized changes needed to test and fix it. Follow the complete
+reproduce → minimise → hypothesise → instrument → test → fix → prevent loop.
+
+Use **Bounded Diagnosis Mode** when reproduction is unsafe, unavailable,
+non-reproducible, production-only, or the user authorized read-only analysis
+only. In this mode:
+
+- inspect available code, configuration, logs, traces, tests, and history
+  without mutating the target system or repository
+- separate **observed evidence** from **inference / hypotheses**
+- give each conclusion a confidence level and state its evidence basis
+- name the exact experiment, artifact, access, or runtime observation still
+  needed to verify each material hypothesis
+- stop and report when stronger proof requires a mutation, production action,
+  unavailable environment, or authority the user did not grant
+- never claim reproduction, a confirmed root cause, a verified fix, or GREEN
+  validation unless it was actually observed
+
+Bounded mode produces a diagnosis report and verification plan, not an
+implementation. If the user asked only to assess, do not patch, instrument, or
+fix; request expanded authority only when it is necessary to continue.
+
+The phases below define Full Diagnosis Mode. Do not enter them from bounded
+mode unless the missing evidence and authority become available.
 
 ## Phase 1 — Build a feedback loop
 
@@ -46,13 +75,18 @@ A 30-second flaky loop is barely better than no loop. A 2-second deterministic l
 
 The goal is not a clean repro but a **higher reproduction rate**. Loop the trigger 100×, parallelise, add stress, narrow timing windows, inject sleeps. A 50%-flake bug is debuggable; 1% is not — keep raising the rate until it's debuggable.
 
-### When you genuinely cannot build a loop
+### When you genuinely cannot build a loop in Full Diagnosis Mode
 
-Stop and say so explicitly. List what you tried. Ask the user for: (a) access to whatever environment reproduces it, (b) a captured artifact (HAR file, log dump, core dump, screen recording with timestamps), or (c) permission to add temporary production instrumentation. Do **not** proceed to hypothesise without a loop.
+Stop the full loop and say so explicitly. List what you tried. Ask the user for:
+(a) access to whatever environment reproduces it, (b) a captured artifact (HAR
+file, log dump, core dump, screen recording with timestamps), or (c) permission
+to add temporary production instrumentation. Do **not** proceed to a verified
+fix without a loop. If bounded mode applies, report ranked hypotheses under its
+evidence and confidence rules instead.
 
-Do not proceed to Phase 2 until you have a loop you believe in.
+Do not proceed to Phase 2 in full mode until you have a loop you believe in.
 
-## Phase 2 — Reproduce
+## Phase 2 — Reproduce + Minimise
 
 Run the loop. Watch the bug appear.
 
@@ -63,6 +97,11 @@ Confirm:
 - [ ] You have captured the exact symptom (error message, wrong output, slow timing) so later phases can verify the fix actually addresses it.
 
 Do not proceed until you reproduce the bug.
+
+Minimise the reproducer while preserving the exact symptom. Remove unrelated
+inputs, services, timing, and state one at a time; rerun the loop after each
+reduction. Keep the original scenario so the eventual fix can be verified
+against both the minimal case and the user's real failure.
 
 ## Phase 3 — Hypothesise
 
@@ -76,9 +115,13 @@ If you cannot state the prediction, the hypothesis is a vibe — discard or shar
 
 **Show the ranked list to the user before testing.** They often have domain knowledge that re-ranks instantly ("we just deployed a change to #3"), or know hypotheses they've already ruled out. Cheap checkpoint, big time saver. Don't block on it — proceed with your ranking if the user is AFK.
 
-## Phase 4 — Instrument
+## Phase 4 — Instrument + Test Hypotheses
 
 Each probe must map to a specific prediction from Phase 3. **Change one variable at a time.**
+
+Run each probe and record whether the observed result supports or falsifies its
+hypothesis. Do not promote a plausible explanation to root cause from code
+inspection alone.
 
 Tool preference:
 
@@ -90,7 +133,7 @@ Tool preference:
 
 **Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second.
 
-## Phase 5 — Fix + regression test
+## Phase 5 — Regression Test + Fix
 
 Write the regression test **before the fix** — but only if there is a **correct seam** for it.
 
@@ -106,7 +149,7 @@ If a correct seam exists:
 4. Watch it pass.
 5. Re-run the Phase 1 feedback loop against the original (un-minimised) scenario.
 
-## Phase 6 — Cleanup + post-mortem
+## Phase 6 — Cleanup + Prevent
 
 Required before declaring done:
 
