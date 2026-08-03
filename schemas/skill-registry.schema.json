@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/ruicore/codex-skills/schemas/skill-registry.schema.json",
+  "$id": "https://github.com/ruicore/codex-skills/blob/main/schemas/skill-registry.schema.json",
   "title": "Codex Skills Registry",
   "description": "Validates skills/index.json, which records current per-skill values; docs/skill-taxonomy.md defines category and maturity semantics and vocabulary.",
   "type": "object",
