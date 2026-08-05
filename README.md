@@ -111,14 +111,14 @@ Some category memberships are secondary; the registry records those in `secondar
 
 | Category | Current skills | Primary use |
 |---|---|---|
-| `core-engineering` | `agentic-repository-execution`, `diagnose`, `repository-layout-refactor`, `tdd` | Implementation, debugging, testing, refactoring, and feedback loops. |
-| `review-audit` | `agent-legibility-review`, `architecture-review`, `database-access-audit`, `grill-me`, `grill-with-docs`, `python-backend-review`, `python-ecosystem-review` | Evidence-first review, critique, architecture assessment, and audit work. |
-| `planning-execution` | `agentic-repository-execution`, `prd-to-issues`, `repository-layout-refactor`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts and migration slices. |
-| `agent-memory` | `decision-trace-writer`, `radar-analysis`, `weekly-radar-ingestion` | Preserving durable context or analyzing stored agent-readable records. |
-| `research` | `ai-career-signal-researcher`, `brand-deal-researcher` | Gathering, evaluating, synthesizing, or prioritizing external signals. |
-| `tool-ops` | `buffer-publisher`, `genmedia`, `paper-mcp`, `readwise-cli-control` | Operating a specific external tool, local service, CLI, API, or connected account. |
-| `visual-artifacts` | `excalidraw-diagrams`, `paper-deck-style` | Creating, editing, or styling visual deliverables. |
-| `publishing` | `buffer-publisher`, `brand-deal-researcher`, `genmedia` | Preparing, scheduling, queueing, publishing, or packaging outward-facing artifacts. |
+| <nobr><code>core-engineering</code></nobr> | `agentic-repository-execution`, `diagnose`, `repository-layout-refactor`, `tdd` | Implementation, debugging, testing, refactoring, and feedback loops. |
+| <nobr><code>review-audit</code></nobr> | `agent-legibility-review`, `architecture-review`, `database-access-audit`, `grill-me`, `grill-with-docs`, `python-backend-review`, `python-ecosystem-review` | Evidence-first review, critique, architecture assessment, and audit work. |
+| <nobr><code>planning-execution</code></nobr> | `agentic-repository-execution`, `prd-to-issues`, `repository-layout-refactor`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts and migration slices. |
+| <nobr><code>agent-memory</code></nobr> | `decision-trace-writer`, `radar-analysis`, `weekly-radar-ingestion` | Preserving durable context or analyzing stored agent-readable records. |
+| <nobr><code>research</code></nobr> | `ai-career-signal-researcher`, `brand-deal-researcher` | Gathering, evaluating, synthesizing, or prioritizing external signals. |
+| <nobr><code>tool-ops</code></nobr> | `buffer-publisher`, `genmedia`, `paper-mcp`, `readwise-cli-control` | Operating a specific external tool, local service, CLI, API, or connected account. |
+| <nobr><code>visual-artifacts</code></nobr> | `excalidraw-diagrams`, `paper-deck-style` | Creating, editing, or styling visual deliverables. |
+| <nobr><code>publishing</code></nobr> | `buffer-publisher`, `brand-deal-researcher`, `genmedia` | Preparing, scheduling, queueing, publishing, or packaging outward-facing artifacts. |
 
 ## Skills and Engineering Outcomes
 
