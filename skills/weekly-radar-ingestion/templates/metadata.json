@@ -1,5 +1,11 @@
 {
+  "schema_version": "2.0",
+  "radar_type": "systems or creation",
   "date": "",
+  "observation_window": {
+    "start": "",
+    "end": ""
+  },
   "week": "",
   "title": "",
   "status": "reviewed",

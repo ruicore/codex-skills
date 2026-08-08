@@ -5,8 +5,7 @@
 
 ## Related Reports
 
-- YYYY-MM-DD: [Report title](../radars/YYYY/YYYY-MM-DD.md)
+- YYYY-MM-DD: [Report title](../../radars/<track>/YYYY/YYYY-MM-DD.md)
 
 ## Notable Recurring Signals
-
 

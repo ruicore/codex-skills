@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate weekly radar ingestion consistency."""
+"""Validate multi-track radar ingestion consistency."""
 
 from __future__ import annotations
 
@@ -7,16 +7,26 @@ import argparse
 import json
 import re
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Any
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-RADAR_PATH_RE = re.compile(r"radars/\d{4}/\d{4}-\d{2}-\d{2}\.md")
+RADAR_TYPES = ("systems", "creation")
+RADAR_PATH_RE = re.compile(
+    r"radars/(systems|creation)/\d{4}/\d{4}-\d{2}-\d{2}\.md"
+)
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path.cwd(), help="Repository root.")
+    parser.add_argument(
+        "--track",
+        choices=RADAR_TYPES,
+        default="systems",
+        help="Radar track. Defaults to systems for backward-compatible use.",
+    )
     parser.add_argument("--date", help="Optional report date to validate, formatted YYYY-MM-DD.")
     return parser.parse_args()
 
@@ -30,9 +40,42 @@ def as_relative(path_text: str) -> Path:
     return Path(path_text.replace("\\", "/"))
 
 
-def record_paths(repo: Path, report_date: str) -> tuple[Path, Path]:
+def record_paths(repo: Path, radar_type: str, report_date: str) -> tuple[Path, Path]:
     year = report_date[:4]
-    return repo / "radars" / year / f"{report_date}.md", repo / "data" / year / f"{report_date}.json"
+    return (
+        repo / "radars" / radar_type / year / f"{report_date}.md",
+        repo / "data" / radar_type / year / f"{report_date}.json",
+    )
+
+
+def parse_iso_date(value: Any) -> date | None:
+    if not isinstance(value, str) or not DATE_RE.match(value):
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def validate_observation_window(
+    record: dict[str, Any], source_path: Path, errors: list[str]
+) -> None:
+    if record.get("radar_type") != "creation":
+        return
+
+    window = record.get("observation_window")
+    if not isinstance(window, dict):
+        errors.append(f"{source_path}: creation radar requires observation_window")
+        return
+
+    start = parse_iso_date(window.get("start"))
+    end = parse_iso_date(window.get("end"))
+    if start is None or end is None:
+        errors.append(
+            f"{source_path}: observation_window start and end must use YYYY-MM-DD"
+        )
+    elif start > end:
+        errors.append(f"{source_path}: observation_window start must not be after end")
 
 
 def validate_record(repo: Path, record: dict[str, Any], source_path: Path, errors: list[str]) -> None:
@@ -41,7 +84,14 @@ def validate_record(repo: Path, record: dict[str, Any], source_path: Path, error
         errors.append(f"{source_path}: missing or invalid date")
         return
 
-    radar_path, expected_data_path = record_paths(repo, date_value)
+    radar_type = record.get("radar_type")
+    if radar_type not in RADAR_TYPES:
+        errors.append(f"{source_path}: radar_type must be systems or creation")
+        return
+
+    validate_observation_window(record, source_path, errors)
+
+    radar_path, expected_data_path = record_paths(repo, radar_type, date_value)
     if source_path.resolve() != expected_data_path.resolve():
         errors.append(f"{source_path}: expected data path {expected_data_path.relative_to(repo)}")
 
@@ -67,9 +117,11 @@ def validate_record(repo: Path, record: dict[str, Any], source_path: Path, error
         return
 
     for theme in themes:
-        theme_path = repo / "themes" / f"{theme}.md"
+        theme_path = repo / "themes" / radar_type / f"{theme}.md"
         if not theme_path.exists():
-            errors.append(f"{source_path}: missing theme file themes/{theme}.md")
+            errors.append(
+                f"{source_path}: missing theme file themes/{radar_type}/{theme}.md"
+            )
 
 
 def validate_theme_files(repo: Path, errors: list[str]) -> None:
@@ -77,7 +129,7 @@ def validate_theme_files(repo: Path, errors: list[str]) -> None:
     if not themes_root.exists():
         return
 
-    for theme_path in sorted(themes_root.glob("*.md")):
+    for theme_path in sorted(themes_root.glob("*/*.md")):
         if theme_path.name == "README.md":
             continue
         text = theme_path.read_text(encoding="utf-8")
@@ -106,21 +158,32 @@ def walk_index_paths(repo: Path, owner: Path, payload: Any, errors: list[str]) -
         validate_index_path(repo, owner, payload, errors)
 
 
-def validate_indexes(repo: Path, report_date: str | None, errors: list[str]) -> None:
+def validate_indexes(
+    repo: Path, radar_type: str, report_date: str | None, errors: list[str]
+) -> None:
     index_root = repo / "indexes"
     if not index_root.exists():
         errors.append("indexes/ directory is missing")
         return
 
-    saw_report_date = report_date is None
+    expected_report_path = (
+        f"radars/{radar_type}/{report_date[:4]}/{report_date}.md"
+        if report_date
+        else None
+    )
+    saw_report = report_date is None
     for index_path in sorted(index_root.glob("*.json")):
         payload = load_json(index_path)
         walk_index_paths(repo, index_path, payload, errors)
-        if report_date and report_date in json.dumps(payload, ensure_ascii=False):
-            saw_report_date = True
+        if expected_report_path and expected_report_path in json.dumps(
+            payload, ensure_ascii=False
+        ):
+            saw_report = True
 
-    if not saw_report_date:
-        errors.append(f"indexes/: no JSON index references {report_date}")
+    if not saw_report:
+        errors.append(
+            f"indexes/: no JSON index references {radar_type} radar {report_date}"
+        )
 
 
 def main() -> int:
@@ -136,7 +199,7 @@ def main() -> int:
             errors.append(f"{dirname}/ directory is missing")
 
     if args.date:
-        radar_path, data_path = record_paths(repo, args.date)
+        radar_path, data_path = record_paths(repo, args.track, args.date)
         if not radar_path.exists():
             errors.append(f"missing report {radar_path.relative_to(repo)}")
         if not data_path.exists():
@@ -145,7 +208,7 @@ def main() -> int:
         else:
             data_files = [data_path]
     else:
-        data_files = sorted((repo / "data").glob("*/*.json"))
+        data_files = sorted((repo / "data").glob("*/*/*.json"))
 
     for data_path in data_files:
         payload = load_json(data_path)
@@ -155,7 +218,7 @@ def main() -> int:
         validate_record(repo, payload, data_path, errors)
 
     validate_theme_files(repo, errors)
-    validate_indexes(repo, args.date, errors)
+    validate_indexes(repo, args.track, args.date, errors)
 
     if errors:
         for error in errors:

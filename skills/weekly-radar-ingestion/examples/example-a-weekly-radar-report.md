@@ -1,5 +1,6 @@
 ---
 date: 2026-06-15
+radar_type: systems
 week: 2026-W25
 title: Weekly AI Systems Engineering Radar - 2026-06-15
 themes:

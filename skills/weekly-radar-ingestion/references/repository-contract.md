@@ -1,42 +1,51 @@
 # Repository Contract
 
-Use this reference when ingesting a reviewed weekly AI Systems Engineering Radar
-report into `ai-signal-radar`.
+Use this reference when ingesting a reviewed systems or creation radar report
+into `ai-signal-radar`.
 
 ## Source of Truth
 
 The reviewed report is the canonical human-approved signal record. Preserve its
-content under `radars/YYYY/YYYY-MM-DD.md`; derive structured files from it.
+content under `radars/<track>/YYYY/YYYY-MM-DD.md`; derive structured files from
+it.
 
 This repository is a long-term personal signal repository for future AI agents,
 not a news archive. Optimize for retrieval, trend analysis, recurring signal
-detection, and idea generation.
+detection, and idea generation without collapsing distinct radar tracks.
 
-## Date Rules
+## Track And Date Rules
 
-Use exactly one ISO date for every ingestion. Required paths:
+Choose one explicit track:
 
-- `radars/YYYY/YYYY-MM-DD.md`
-- `data/YYYY/YYYY-MM-DD.json`
+- `systems` for AI systems engineering and infrastructure;
+- `creation` for AI-native creation, behavior change, and creative forms.
 
-If the input says "this week" but no date is present, ask for the date. Do not
-use the current date silently.
+Use exactly one ISO date for every ingestion. The canonical key is
+`radar_type + date`, and required paths are:
+
+- `radars/<track>/YYYY/YYYY-MM-DD.md`
+- `data/<track>/YYYY/YYYY-MM-DD.json`
+
+Creation reports additionally require explicit observation-window start and end
+dates. If the input says "this week" but no reliable date is present, ask for
+the date. Do not use the current date silently.
 
 ## Metadata Compatibility
 
-Ray's neutral metadata preference is:
+Ray's current tracked metadata shape begins with:
 
 ```json
 {
+  "schema_version": "2.0",
+  "radar_type": "systems or creation",
   "date": "",
-  "week": "",
   "title": "",
   "status": "reviewed",
   "reviewed_by": "Ray",
   "themes": [],
-  "importance": 0,
-  "top_signals": [],
-  "action_items": []
+  "signals": [],
+  "patterns": [],
+  "ideas": []
 }
 ```
 
@@ -44,6 +53,7 @@ When the repository has a JSON schema, that schema wins. Map neutral fields to
 schema fields without losing information:
 
 - `top_signals` can map to `signals` when the schema models full signal objects.
+- creation forms that recur across cases can map to `patterns`.
 - `action_items` can stay empty if the schema has no action item field.
 - `importance` can stay `0` or be omitted when unsupported.
 - source provenance should record that the report was reviewed before ingestion.
@@ -53,7 +63,7 @@ unless the schema is intentionally updated in the same change.
 
 ## Theme Files
 
-Create or update `themes/<theme>.md` for each explicit theme.
+Create or update `themes/<track>/<theme>.md` for each explicit theme.
 
 Required sections:
 
@@ -66,7 +76,7 @@ Required sections:
 
 ## Related Reports
 
-- YYYY-MM-DD: [Report title](../radars/YYYY/YYYY-MM-DD.md)
+- YYYY-MM-DD: [Report title](../../radars/<track>/YYYY/YYYY-MM-DD.md)
 
 ## Notable Recurring Signals
 
@@ -82,8 +92,10 @@ appearance can be noted as a related report with an empty recurring signal.
 Prefer checked-in scripts that rebuild indexes from `data/`. If no script
 exists, maintain:
 
-- `indexes/reports.json`: chronological report entries with date, title,
-  themes, markdown path, and data path.
-- `indexes/themes.json`: map from theme slug to related reports.
+- `indexes/reports.json`: chronological report entries with track, date, title,
+  themes, Markdown path, and data path.
+- `indexes/themes.json`: map from theme slug to related reports with track
+  provenance.
 
-Use stable sorted order: dates ascending and theme slugs alphabetically.
+Use stable sorted order: dates ascending, tracks deterministic, and theme slugs
+alphabetically.

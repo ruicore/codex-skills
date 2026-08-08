@@ -1,5 +1,6 @@
 ---
 date: 2026-06-29
+radar_type: systems
 week: 2026-W27
 title: Weekly AI Systems Engineering Radar - 2026-06-29
 themes:
@@ -23,7 +24,7 @@ acting on it.
 
 ## Action Items
 
-- Create `themes/agent-memory.md`.
+- Create `themes/systems/agent-memory.md`.
 - Add this report as the first related report.
 - Leave recurring signals empty until at least one later report confirms
   repetition.

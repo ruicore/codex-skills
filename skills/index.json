@@ -897,19 +897,22 @@
         "research"
       ],
       "maturity": "portable-candidate",
-      "purpose": "Ingests one Ray-reviewed weekly AI Systems Engineering Radar report into an ai-signal-radar repository as durable signal records and indexes.",
+      "purpose": "Ingests one Ray-reviewed systems or creation radar report into an explicit ai-signal-radar track as durable signal records and indexes.",
       "triggers": [
         "ingest this weekly radar",
         "add this reviewed report",
         "import this week's signal report",
         "store this AI radar",
         "archive this reviewed report",
-        "turn an approved weekly AI systems report into radars, data, themes, indexes, and a commit"
+        "ingest this creation radar",
+        "turn an approved AI signal report into radars, data, themes, indexes, and a commit"
       ],
       "do_not_use_for": [
         "unreviewed draft reports",
         "fabricating dates, themes, signals, action items, or importance",
         "rewriting the reviewed report as a summary",
+        "combining systems and creation reports into one track",
+        "ingesting a creation report without an explicit observation window",
         "adding unsupported schema fields unless the schema is intentionally updated"
       ],
       "default_side_effect_level": "git-working-tree",
@@ -925,8 +928,9 @@
       ],
       "validation_expectations": [
         "inspect the target repository README, schemas, radar/data/theme/index structure, scripts, and git status before editing",
+        "select an explicit systems or creation track and require an observation window for creation reports",
         "prefer checked-in schemas and scripts when they exist",
-        "run validate_ingestion.py or repository validation and fix failures before committing"
+        "run validate_ingestion.py with the target track plus repository validation and fix failures before committing"
       ],
       "supporting_files": [
         "skills/weekly-radar-ingestion/examples/example-a-weekly-radar-report.md",
@@ -941,7 +945,7 @@
         "skills/weekly-radar-ingestion/templates/themes-index.json"
       ],
       "agents_metadata_path": "skills/weekly-radar-ingestion/agents/openai.yaml",
-      "portability_notes": "Project-specific to Ray-reviewed AI Systems Engineering Radar ingestion and ai-signal-radar repository conventions. Adapt reviewer naming, schema fields, paths, and scripts only after inspecting the target repository contract."
+      "portability_notes": "Project-specific to Ray-reviewed systems and creation radar ingestion and ai-signal-radar multi-track conventions. Adapt reviewer naming, track taxonomy, observation-window rules, schema fields, paths, and scripts only after inspecting the target repository contract."
     },
     {
       "name": "write-a-prd",

@@ -35,6 +35,9 @@ metadata, validation, and public documentation mature.
 
 ### Changed
 
+- `weekly-radar-ingestion`: added explicit `systems` and `creation` track
+  selection, multi-track paths and validation, creation observation-window
+  requirements, and v2 radar metadata guidance.
 - Promoted `decision-trace-writer` to `stable-workflow` after repeated real
   secondary-persistence use established stable decision/trace boundaries and
   validated durable-output behavior.

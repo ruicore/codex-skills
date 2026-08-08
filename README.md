@@ -39,7 +39,8 @@ I use Codex as an engineering partner, not only as a code generator. The work th
 - keeping TDD practical and behavior-focused
 - converting product or engineering briefs into executable issue plans
 - coordinating master/sub-agent repository work through ownership, handoffs, and validation gates
-- ingesting reviewed AI systems radar reports into durable agent-readable memory
+- ingesting reviewed systems and creation radar reports into durable
+  agent-readable memory
 - analyzing reviewed radar history for monthly, quarterly, theme, and idea-mining reports
 - researching current AI engineering career signals and content opportunities
 - turning sponsorship emails into prioritized brand-deal lead lists
@@ -138,7 +139,7 @@ Some category memberships are secondary; the registry records those in `secondar
 | <nobr><code>write&#8209;a&#8209;prd</code></nobr> | Turns rough ideas into structured product or engineering briefs. | Ambiguous requirements and unreviewable implementation starts. |
 | <nobr><code>prd&#8209;to&#8209;issues</code></nobr> | Splits a brief into scoped, dependency-aware execution issues. | Horizontal task splitting, untestable tickets, unclear sequencing. |
 | <nobr><code>decision&#8209;trace&#8209;writer</code></nobr> | Records durable technical decisions for future readers and agents. | Repeated rediscovery of settled constraints and rationale. |
-| <nobr><code>weekly&#8209;radar&#8209;ingestion</code></nobr> | Ingests Ray-reviewed weekly AI Systems Engineering Radar reports into durable signal records. | Treating approved reports as drafts, losing reasoning, and unstructured long-term agent memory. |
+| <nobr><code>weekly&#8209;radar&#8209;ingestion</code></nobr> | Ingests Ray-reviewed systems or creation radar reports into explicit tracks and durable signal records. | Mixing research tracks, treating approved reports as drafts, losing reasoning, and unstructured long-term agent memory. |
 | <nobr><code>radar&#8209;analysis</code></nobr> | Mines reviewed AI signal radar history for monthly reviews, quarterly synthesis, theme analysis, and idea candidates. | Unsupported trend claims, summary drift, and analysis detached from reviewed repository evidence. |
 | <nobr><code>ai&#8209;career&#8209;signal&#8209;researcher</code></nobr> | Researches AI systems engineering career signals, market demand, and portfolio opportunities. | Hype-driven learning plans, popularity-only evidence, and recommendations detached from backend engineering reality. |
 | <nobr><code>brand&#8209;deal&#8209;researcher</code></nobr> | Converts sponsorship and paid-promotion emails into researched, prioritized lead lists. | Missing real opportunities, duplicate follow-ups, weak fit scoring, and unverified brand claims. |

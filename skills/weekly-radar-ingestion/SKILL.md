@@ -1,13 +1,13 @@
 ---
 name: weekly-radar-ingestion
-description: "Ingest Ray-reviewed weekly AI Systems Engineering Radar reports into the ai-signal-radar repository as durable signal records. Use when the user asks to ingest this weekly radar, add this reviewed report, import this week's signal report, store this AI radar, archive this reviewed report, or otherwise turn an approved weekly AI systems report into radars/, data/, themes/, indexes/, and a commit."
+description: "Ingest Ray-reviewed systems or creation radar reports into the ai-signal-radar repository as durable signal records. Use when the user asks to ingest this weekly radar, add this reviewed report, import this week's signal report, store this AI radar, archive this reviewed report, or otherwise turn an approved AI signal report into radars/, data/, themes/, indexes/, and a commit."
 ---
 
 # Weekly Radar Ingestion
 
 ## Purpose
 
-Ingest one Ray-reviewed weekly AI Systems Engineering Radar report into
+Ingest one Ray-reviewed AI Signal Radar report into
 `ai-signal-radar` as an approved signal record for future AI agents. Treat the
 report as canonical input, not as a draft or news clipping. Preserve Ray's
 reasoning and use additive, deterministic updates.
@@ -34,7 +34,15 @@ or theme file format is unclear.
 
 ## Workflow
 
-### 1. Detect Report Date
+### 1. Detect Track And Report Date
+
+Select an explicit repository track from the approved report and user intent:
+
+- `systems` for AI systems engineering and infrastructure;
+- `creation` for AI-native creation, human behavior, and creative forms.
+
+Do not combine tracks. Creation reports also require explicit observation
+window start and end dates.
 
 Determine one `YYYY-MM-DD` report date using this order:
 
@@ -54,7 +62,7 @@ if the repository schema does not support it.
 Write the reviewed Markdown report to:
 
 ```text
-radars/YYYY/YYYY-MM-DD.md
+radars/<track>/YYYY/YYYY-MM-DD.md
 ```
 
 Preserve content. Normalize only:
@@ -75,13 +83,15 @@ into that structure if it would rewrite content.
 Write structured metadata to:
 
 ```text
-data/YYYY/YYYY-MM-DD.json
+data/<track>/YYYY/YYYY-MM-DD.json
 ```
 
 Recommended agent-friendly fields:
 
 ```json
 {
+  "schema_version": "2.0",
+  "radar_type": "systems or creation",
   "date": "",
   "week": "",
   "title": "",
@@ -94,11 +104,13 @@ Recommended agent-friendly fields:
 }
 ```
 
-When the repository already has `schemas/weekly_radar.schema.json`, validate
-against that schema and use its field names. In the current ai-signal-radar
-schema, store signal objects in `signals`, ideas in `ideas`, and source
-provenance in `source`; do not add unsupported properties unless the schema is
-updated in the same change.
+When the repository already has `schemas/radar.schema.json`, validate against
+that schema and use its field names. In the current ai-signal-radar schema,
+store signal objects in `signals`, recurring creation forms in `patterns`, ideas
+in `ideas`, and source provenance in `source`. Creation signals may preserve
+domain, creator, evidence level, what was created, what AI changed, human
+behavior change, and a transferable idea. Do not add unsupported properties
+unless the schema is updated in the same change.
 
 Use `templates/metadata.json` as the neutral metadata shape for repositories
 without a stricter schema.
@@ -127,7 +139,7 @@ than forcing it into an existing bucket.
 Maintain one file per theme under:
 
 ```text
-themes/<theme>.md
+themes/<track>/<theme>.md
 ```
 
 Each theme file should keep these sections:
@@ -165,6 +177,7 @@ Verify:
 - report file exists
 - metadata file exists
 - metadata date, status, reviewer, paths, and themes are coherent
+- creation metadata contains a valid observation window
 - every theme reference points to an existing report
 - indexes include the ingested report and reference valid files
 
@@ -177,7 +190,8 @@ uv run pytest
 Then run the bundled consistency helper:
 
 ```bash
-python .codex/skills/weekly-radar-ingestion/scripts/validate_ingestion.py --repo . --date YYYY-MM-DD
+python .codex/skills/weekly-radar-ingestion/scripts/validate_ingestion.py \
+  --repo . --track <track> --date YYYY-MM-DD
 ```
 
 Fix validation failures before committing.
@@ -215,9 +229,16 @@ repository workflow. Never force-push.
 
 ## Portability Notes
 
-- Specific to the author's current workflow: this assumes Ray-reviewed AI Systems Engineering Radar reports and an `ai-signal-radar` repository with `radars/`, `data/`, `themes/`, `indexes/`, schemas, and validation scripts.
-- Reusable: approved-report preservation, deterministic date/path handling, schema-first metadata extraction, additive theme/index updates, and validation-before-commit discipline.
-- Adapt before reuse: replace reviewer naming, repository layout, schema fields, validation commands, commit policy, and theme taxonomy with the target repository's checked-in contract.
+- Specific to the author's current workflow: this assumes Ray-reviewed systems
+  and creation radar reports and an `ai-signal-radar` repository with explicit
+  tracks under `radars/`, `data/`, and `themes/`.
+- Reusable: approved-report preservation, explicit track selection,
+  deterministic track/date paths, schema-first metadata extraction, additive
+  theme/index updates, and validation-before-commit discipline.
+- Adapt before reuse: replace reviewer naming, track taxonomy, observation
+  window requirements, repository layout, schema fields, validation commands,
+  commit policy, and theme taxonomy with the target repository's checked-in
+  contract.
 
 ## Bundled Resources
 
