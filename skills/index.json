@@ -355,6 +355,7 @@
       ],
       "validation_expectations": [
         "select full or bounded mode from the available evidence and the user's authority",
+        "for live failures, establish runtime identity, correlation, freshness, and explicit visibility gaps before treating static repository evidence as runtime proof",
         "separate observed evidence from hypotheses and report confidence plus the exact verification still needed in bounded mode",
         "do not fix unless Full Diagnosis Mode has an observed feedback loop/reproduction and the user granted implementation authority",
         "test hypotheses one at a time",
@@ -363,6 +364,7 @@
       ],
       "supporting_files": [
         "skills/diagnose/examples/intermittent-checkout-total.md",
+        "skills/diagnose/references/runtime-evidence-acquisition.md",
         "skills/diagnose/scripts/hitl-loop.template.sh"
       ],
       "agents_metadata_path": "skills/diagnose/agents/openai.yaml",
@@ -727,17 +729,19 @@
         "research"
       ],
       "maturity": "personal-skill",
-      "purpose": "Analyzes existing reviewed ai-signal-radar repository history for monthly reviews, quarterly synthesis, theme analysis, trend synthesis, and idea mining.",
+      "purpose": "Analyzes explicit systems or creation tracks in the reviewed multi-track ai-signal-radar repository for monthly reviews, quarterly synthesis, theme analysis, trend synthesis, and idea mining.",
       "triggers": [
         "mine AI signal radar history",
-        "summarize a month or quarter of reviewed radar records",
-        "identify recurring themes, compare periods, or draft reports from data, radars, indexes, and reports"
+        "summarize a month or quarter of reviewed systems or creation radar records",
+        "identify recurring themes, compare periods, or draft track-scoped reports from data, radars, indexes, and reports",
+        "compare systems and creation tracks while preserving radar_type provenance"
       ],
       "do_not_use_for": [
         "ingesting new weekly reports",
         "external sources or OpenAI API calls unless the user changes the contract",
         "editing reviewed weekly source files under data or radars",
-        "creating or updating ideas files unless explicitly requested"
+        "creating or updating ideas files unless explicitly requested",
+        "silently combining systems and creation evidence without an explicit cross-track request"
       ],
       "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
@@ -749,13 +753,14 @@
         "grounded trend interpretation"
       ],
       "validation_expectations": [
-        "treat data JSON as primary source and radars Markdown as reviewed narrative context",
+        "select an explicit systems or creation track and filter shared indexes by radar_type",
+        "treat track-scoped data JSON as primary source and radars Markdown as reviewed narrative context",
         "run or mentally apply repository consistency checks before reporting",
-        "cite dates and file paths and separate deterministic extraction from interpretation"
+        "cite dates and track-scoped file paths and separate deterministic extraction, track-local interpretation, and cross-track inference"
       ],
       "supporting_files": [],
       "agents_metadata_path": "skills/radar-analysis/agents/openai.yaml",
-      "portability_notes": "Project-specific to ai-signal-radar style repositories with data, radars, indexes, themes, reports conventions, and reviewer-framing assumptions that adopters should replace with their own."
+      "portability_notes": "Project-specific to a multi-track ai-signal-radar repository with systems and creation records, shared generated indexes, track-specific themes and monthly reports, and reviewer-framing assumptions that adopters should replace with their own."
     },
     {
       "name": "readwise-cli-control",

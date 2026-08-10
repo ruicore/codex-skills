@@ -35,6 +35,13 @@ metadata, validation, and public documentation mature.
 
 ### Changed
 
+- `radar-analysis`: aligned source paths, indexes, monthly generation, period
+  analysis, and provenance rules with the `systems` / `creation` repository
+  contract.
+- `decision-trace-writer`: added optional observed skill-application evidence
+  for reusable TraceGym metadata without causal scoring or maturity mutation.
+- `diagnose`: added a read-only Runtime Visibility Phase 0 for runtime identity,
+  correlation, freshness, redaction, and explicit visibility-gap handling.
 - `weekly-radar-ingestion`: added explicit `systems` and `creation` track
   selection, multi-track paths and validation, creation observation-window
   requirements, and v2 radar metadata guidance.
