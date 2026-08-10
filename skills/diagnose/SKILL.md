@@ -37,8 +37,39 @@ Bounded mode produces a diagnosis report and verification plan, not an
 implementation. If the user asked only to assess, do not patch, instrument, or
 fix; request expanded authority only when it is necessary to continue.
 
-The phases below define Full Diagnosis Mode. Do not enter them from bounded
-mode unless the missing evidence and authority become available.
+Phase 0 applies to both modes and is read-only by default. Phases 1–6 define
+Full Diagnosis Mode. Do not enter them from bounded mode unless the missing
+evidence and authority become available.
+
+## Phase 0 — Establish runtime visibility
+
+Before reasoning about a live failure, establish what runtime evidence can be
+observed under the user's authority. Treat repository code and configuration as
+static evidence, never as proof of what the current running instance loaded or
+executed.
+
+1. Record the read-only evidence boundary and separate it from any mutation
+   such as restarting, replaying traffic, changing state, or adding
+   instrumentation. Do not perform a mutation without matching authorization.
+2. Inventory only available, authorized sensors: processes and services,
+   ports or sockets, targeted logs, HTTP or health endpoints, browser/HAR
+   evidence, database audit evidence, container/orchestrator state, metrics,
+   and traces.
+3. Identify the observed runtime using PID or workload identity, `start_time`,
+   build/commit/version, and a redacted config fingerprint where available.
+4. Correlate observations with explicit time zone and timestamps plus available
+   `run_id`, `request_id`, or `trace_id` values.
+5. Prove freshness: confirm the evidence belongs to the current instance and
+   time window. A restart claim is not evidence that an old or zombie process
+   stopped listening, that a replacement started, or that stale/old logs belong
+   to the replacement.
+6. Preserve a minimal redacted evidence bundle and classify every visibility
+   gap as `unavailable`, `unauthorized`, or `unsupported`.
+
+Read [runtime-evidence-acquisition.md](references/runtime-evidence-acquisition.md)
+when the diagnosis depends on a running process, service, deployed build,
+restart, live request, or production observation. Keep the selected mode's
+authority boundary unchanged after reading it.
 
 ## Phase 1 — Build a feedback loop
 
