@@ -16,7 +16,7 @@ Load only the reference needed for the current trace:
 | Need | Read |
 | --- | --- |
 | Expanded or compact trace structure, section guidance, and quality prompts | [Trace formats](references/trace-formats.md) |
-| TraceGym schema, field rules, sanitized-derivation boundary, or skill-proposal signal | [TraceGym metadata](references/tracegym-metadata.md) |
+| TraceGym schema, skill-application evidence, field rules, sanitized-derivation boundary, or skill-proposal signal | [TraceGym metadata](references/tracegym-metadata.md) |
 | A concrete fictional walkthrough of the workflow | [Export idempotency example](examples/export-idempotency-trace.md) |
 
 Do not load the example just to write an ordinary trace. Load the TraceGym reference only when the trace has reusable workflow, eval, evaluator, benchmark, or skill-improvement value.
@@ -50,7 +50,7 @@ This skill does not replace a formal ADR. When a decision changes public archite
 5. **Make the result actionable.** Record concrete affected files and behavior boundaries, required and prohibited behavior, invariants, validation expectations, current status, unresolved boundaries, and revisit triggers.
 6. **Choose the right trace size.** Read [Trace formats](references/trace-formats.md) and select compact or expanded structure using its impact criteria.
 7. **Classify every trace.** Write an explicit privacy class in the trace whether or not TraceGym metadata will be present. Use `local_raw_trace` for the normal repository-grounded trace. Use `sanitized_trace_seed` or `public_benchmark_candidate` only for a separately authorized derived artifact that satisfies the corresponding publication gate.
-8. **Add reusable-signal metadata conditionally.** When the trace has reusable workflow, eval, benchmark, evaluator, or skill-improvement value, read [TraceGym metadata](references/tracegym-metadata.md) and add the appropriate block. Omit it for purely local memory with no reusable lesson and record the omission reason; the standalone privacy classification remains required.
+8. **Add reusable-signal metadata conditionally.** When the trace has reusable workflow, eval, benchmark, evaluator, or skill-improvement value, read [TraceGym metadata](references/tracegym-metadata.md) and add the appropriate block. Use its canonical skill-application entry fields only for observed loading or use, record human review honestly, and keep application evidence distinct from skills that might learn from the case. Omit the block for purely local memory with no reusable lesson and record the omission reason; the standalone privacy classification remains required.
 9. **Respect privacy and publication boundaries.** Keep private or ignored traces unstaged unless the user explicitly asks otherwise. Treat any future sanitized or public derivative as separate work requiring separate review.
 10. **Verify the artifact.** Check existence, readability, filename, evidence accuracy, current status, privacy class, version-control state, and honest validation claims.
 

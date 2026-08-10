@@ -2,6 +2,14 @@
 
 Read this reference only when a stable trace has reusable workflow, skill-improvement, benchmark, evaluator, or proposal value. The metadata is a structured footer for possible later sanitized derivation; it is not a dataset, sanitized artifact, benchmark item, evaluator, or skill proposal.
 
+## Contents
+
+- [Full Metadata Block](#full-metadata-block)
+- [Compact Block](#compact-block)
+- [Field Rules](#field-rules)
+- [Quality And Derivation Boundaries](#quality-and-derivation-boundaries)
+- [Improvement Loop Catalog](#improvement-loop-catalog)
+
 ## Full Metadata Block
 
 ```yaml
@@ -12,6 +20,16 @@ tracegym_metadata:
   source_capture_skill: decision-trace-writer
   candidate_workflow_skills:
     - <skill-name-or-unknown>
+  skill_application_evidence:
+    - skill_name: <skill-name>
+      role: <primary|supporting|capture|unknown>
+      trigger_source: <user_explicit|request_match|repository_rule|agent_selection|workflow_handoff|unknown>
+      application_status: <loaded_only|applied|partially_applied|loaded_not_applied|referenced_not_loaded|corrected|misrouted|requested_unavailable|unknown>
+      task_outcome: <success|partial|failure|blocked|unknown>
+      validation_strength: <none|weak|medium|strong>
+      contribution_classification: <supported|corrected|neutral|unknown>
+      artifact_sha256: <lowercase-sha256-or-null>
+      human_reviewed: <true|false>
   reusable_workflow_lesson: <one-sentence reusable lesson after redaction>
   sensitive_surfaces:
     - <repo_paths|private_links|customer_data|production_payloads|credentials|none>
@@ -48,6 +66,16 @@ tracegym_metadata:
   public_export_candidate: false
   source_capture_skill: decision-trace-writer
   candidate_workflow_skills: [<skill-or-unknown>]
+  skill_application_evidence:
+    - skill_name: <skill-name>
+      role: <primary|supporting|capture|unknown>
+      trigger_source: <user_explicit|request_match|repository_rule|agent_selection|workflow_handoff|unknown>
+      application_status: <loaded_only|applied|partially_applied|loaded_not_applied|referenced_not_loaded|corrected|misrouted|requested_unavailable|unknown>
+      task_outcome: <success|partial|failure|blocked|unknown>
+      validation_strength: <none|weak|medium|strong>
+      contribution_classification: <supported|corrected|neutral|unknown>
+      artifact_sha256: null
+      human_reviewed: <true|false>
   reusable_workflow_lesson: <one-line lesson>
   sensitive_surfaces: [<repo_paths|private_links|production_payloads|credentials|none>]
   public_sanitization_required:
@@ -70,12 +98,24 @@ tracegym_metadata:
 - Set `trace_privacy_class` explicitly to `local_raw_trace`, `sanitized_trace_seed`, or `public_benchmark_candidate` without collapsing those asset layers.
 - Set `public_export_candidate: true` only when the sanitization notes explain how a public-safe derivative could be created from the raw trace.
 - Use `candidate_workflow_skills` for the skill that might learn from the case, not automatically for `decision-trace-writer` and not as the primary skill label when another workflow owns the lesson.
+- Omit `skill_application_evidence` when no application evidence was observed. Do not infer it from `candidate_workflow_skills`, and do not add a skill merely because it could have helped.
+- Treat each array item as the canonical skill-application entry. Keep these exact field names and enums in any downstream envelope; add evidence hashes, privacy, source, or collection time outside the entry rather than translating its semantics.
+- Use one `skill_application_evidence` entry per observed skill. Set `skill_name` to the registered skill identifier. Set `role` to `primary` for the workflow that owned the task result, `supporting` for a materially used secondary workflow, `capture` for a post-result persistence workflow such as this skill, or `unknown` when unverified.
+- Set `trigger_source` to why the skill entered the workflow: `user_explicit`, `request_match`, `repository_rule`, `agent_selection`, `workflow_handoff`, or `unknown`. Evidence collection such as observing a `SKILL.md` read is not a trigger, and a skill inventory is not proof that the skill entered the workflow.
+- Set `application_status` to `loaded_only`, `applied`, `partially_applied`, `loaded_not_applied`, `referenced_not_loaded`, `corrected`, `misrouted`, `requested_unavailable`, or `unknown`. Use `loaded_not_applied` when instructions were read but not used, `referenced_not_loaded` only when a named skill was not read, and `requested_unavailable` only when the requested registered workflow could not be loaded.
+- Set `task_outcome` to `success`, `partial`, `failure`, `blocked`, or `unknown` for the same task represented by the entry. Do not borrow an outcome from another application record.
+- Set `validation_strength` to `none`, `weak`, `medium`, or `strong` based on performed validation relevant to the task result. This grades the supporting evidence, not the inherent quality of the skill.
+- Set `contribution_classification` to `supported` when evidence supports the skill-guided behavior, `corrected` when the guidance or routing was materially corrected, `neutral` when use did not distinguish its effect, or `unknown` when evidence is insufficient. Never turn this classification into a causal percentage, ranking, or maturity change.
+- Set `artifact_sha256` to a lowercase SHA-256 only when a stable, permitted artifact was actually hashed; otherwise set it to `null`. A hash does not make private material public-safe or prove causation.
+- Set `human_reviewed: true` only after a human reviewed this exact entry's application, outcome, validation, and contribution claims. Keep it `false` for automatic collection. An automatic `loaded_only` entry must also use `role: unknown`, `trigger_source: unknown`, `task_outcome: unknown`, `validation_strength: none`, `contribution_classification: unknown`, and cannot influence maturity recommendations.
 - Write `reusable_workflow_lesson` as the lesson that remains after expected redaction, not as a private-project-only fact.
 - Use `sensitive_surfaces` and `public_sanitization_required` to name what must be removed, generalized, or replaced.
 - Use `ready_after_sanitization` only when replayable evidence is sufficient to construct a task item.
 - Prefer deterministic checks for `evaluator_signals`; keep `llm_judge_allowed: false` unless a separately governed downstream workflow changes that policy.
 - Use `update_existing_skill`, `new_skill_candidate`, or `no_skill_change` as a signal only. Base `proposal_strength` on evidence quality and repeatability, and record evidence still needed before any skill change.
 - Record actual validation honestly. Never upgrade planned, skipped, or blocked validation into performed validation.
+
+`skill_application_evidence` is reusable metadata only. It is not required in ordinary decision traces, and this skill does not aggregate it, score skills, calculate maturity, or update a registry. Any later aggregation or maturity recommendation belongs to a separately governed workflow and must preserve the distinction between observed application, validation strength, and contribution classification.
 
 ## Quality And Derivation Boundaries
 
