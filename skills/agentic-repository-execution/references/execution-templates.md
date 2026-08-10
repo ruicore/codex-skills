@@ -7,12 +7,14 @@ complex hierarchy merely to host templates.
 ## Contents
 
 - [Execution Plan](#execution-plan)
+- [Convergence Forecast](#convergence-forecast)
 - [Sub-agent Dispatch](#sub-agent-dispatch)
 - [Delegation Request](#delegation-request)
 - [Phase Handoff](#phase-handoff)
 - [Decision Request](#decision-request)
 - [Stop Record](#stop-record)
 - [Gate Record](#gate-record)
+- [Convergence Review](#convergence-review)
 - [Routing Substitution](#routing-substitution)
 - [Master Final Review](#master-final-review)
 
@@ -56,6 +58,12 @@ Only `PASS` permits dependent work to start.
 |---|---|---|---|---|
 | T1 | <responsibility> | none | serial/parallel | NOT RUN |
 
+## Cross-slice convergence
+
+<Include this section only when the pre-dispatch forecast identifies an
+evidence-backed convergence set. Use the Convergence Forecast form for each
+set; otherwise omit the section entirely.>
+
 ## Expected artifacts
 - <path or result>
 
@@ -66,6 +74,30 @@ Only `PASS` permits dependent work to start.
 
 ## Risks and stop conditions
 - <risk, mitigation, affected gate, and branch/whole-task stop condition>
+```
+
+## Convergence Forecast
+
+Use this after the pre-dispatch forecast identifies that multiple slices
+implement one evidence-backed shared concept or contract. Omit it entirely
+when no convergence set exists, including for unrelated parallel slices.
+
+```markdown
+## Convergence Set <ID>: <shared concept or contract>
+
+- Members and surfaces: <assignment IDs and bounded outputs>
+- Integration point: <where and when the outputs are compared>
+- Level: <Semantic|Structural|Exact>
+- Shared invariant: <what every member must preserve>
+- Trusted reference or comparator: <path, schema, test, command, or gated
+  reference-first output, with authority basis>
+- Allowed variation: <choices each worker retains>
+- Reference-first task and gate: <task/gate or none because reference exists>
+- Convergence Reviewer: <read-only peer; may also own broader Independent
+  Review when policy permits>
+- Convergence gate: <gate ID, initially NOT RUN>
+- Failure path: <bounded remediation owner distinct from reviewer and
+  validator; rerun convergence review and affected downstream gates>
 ```
 
 ## Sub-agent Dispatch
@@ -103,6 +135,17 @@ Delegation authority:
 Dependencies and inputs:
 - <prior artifact or handoff path>
 - Read the prior handoff before starting: <yes/no>
+
+<Include the following block only when this assignment is a member of a
+forecast convergence set.>
+
+Convergence contract:
+- Set: <ID>
+- Level and invariant: <Semantic|Structural|Exact and shared requirement>
+- Trusted reference or comparator: <artifact/check and authority basis>
+- Allowed variation: <normal engineering choices retained by this worker>
+- Integration and review condition: <when this member may integrate and which
+  convergence gate must pass>
 
 Side-effect limit:
 <read-only/local-files/git-working-tree; explicitly excluded higher actions>
@@ -300,6 +343,31 @@ available evidence within existing authority.
 - Follow-up dispatch: <ID or none>
 ```
 
+## Convergence Review
+
+Use this after all members of a forecast convergence set are integrated. It is
+a focused Independent Review recorded with the same four Evidence Gate states,
+not an additional gate state. Keep the reviewer read-only.
+
+```markdown
+## Gate <ID>: Convergence Review for <set ID>
+
+- Owner: <read-only Convergence Reviewer>
+- Assurance role: Independent Review
+- Revision inspected: <commit, tree, diff, or artifact identity>
+- Members inspected: <all assignments and surfaces in the set>
+- Level and invariant: <Semantic|Structural|Exact and requirement>
+- Reference or comparator: <artifact, command, schema, or manual comparison>
+- Allowed variation preserved: <evidence that autonomy outside the contract was
+  not incorrectly rejected>
+- Status: NOT RUN|PASS|FAIL|BLOCKED
+- Observed result: <member-by-member and integrated evidence>
+- Remaining uncertainty: <none or explicit gap>
+- Follow-up dispatch: <bounded remediation implementer or none>
+- Gates to rerun after remediation: <convergence review and affected Review or
+  Validation gates>
+```
+
 ## Routing Substitution
 
 Use this when a preferred setting cannot be used or observed degradation causes
@@ -332,6 +400,7 @@ re-routing. The Root Master owns re-dispatch.
 - Required validation gate: NOT RUN|PASS|FAIL|BLOCKED
 - Handoffs complete: NOT RUN|PASS|FAIL|BLOCKED
 - Ownership conflicts resolved: NOT RUN|PASS|FAIL|BLOCKED
+- Forecast convergence sets passed: NOT RUN|PASS|FAIL|BLOCKED
 - Public sanitization checked: NOT RUN|PASS|FAIL|BLOCKED
 - Unrelated user changes preserved: NOT RUN|PASS|FAIL|BLOCKED
 - Authorized side effects only: NOT RUN|PASS|FAIL|BLOCKED

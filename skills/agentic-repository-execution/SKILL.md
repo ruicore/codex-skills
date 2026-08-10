@@ -240,6 +240,29 @@ to infer permission.
 Read [task-decomposition-and-handoffs.md](references/task-decomposition-and-handoffs.md)
 before dispatching medium, large, serial, or parallel work.
 
+Before parallel dispatch, forecast whether two or more slices implement the
+same concept or contract and therefore form a **convergence set**. Do not infer
+a convergence requirement from superficial similarity alone. For each set,
+record its members and affected surfaces, shared invariant, required level,
+trusted reference or comparator, allowed variation, integration point, and
+review owner:
+
+- **Semantic:** observable behavior and invariants converge; internal structure
+  may vary.
+- **Structural:** selected interfaces, types, lifecycle shape, organization, or
+  other named structure converge; implementation details outside that shape may
+  vary.
+- **Exact:** the selected artifact or representation matches a defined
+  comparator exactly; explicitly bound the exact surface so unrelated details
+  remain autonomous.
+
+When Structural or Exact convergence has no trustworthy existing reference,
+schedule a serial reference-first or contract-first assignment and hold its
+gate before dispatching the dependent parallel slices. Prefer no convergence
+set over a speculative one, and keep one coherent worker for low-risk local
+work when parallel governance adds no value. Use the convergence guidance and
+forms in the linked decomposition reference and execution templates.
+
 Treat implementer-run checks as author checks or implementation evidence, not
 independent Validation. Read
 [independent-review-policy.md](references/independent-review-policy.md) before
@@ -263,8 +286,10 @@ For every assignment, state:
 
 Also state owned files or surfaces, dependencies, required inputs, side-effect
 limits, risk level, authority boundary, escalation path, and the handoff path
-when relevant. State that delegation authority belongs to the Root Master, that
-the dispatched agent may not create child agents, and where it may submit a
+when relevant. For a slice in a convergence set, include the set ID, level,
+invariant, reference or comparator, allowed variation, and integration/review
+condition. State that delegation authority belongs to the Root Master, that the
+dispatched agent may not create child agents, and where it may submit a
 Delegation Request.
 
 Read [model-and-effort-routing.md](references/model-and-effort-routing.md) before
@@ -285,6 +310,11 @@ Run independent assignments in parallel only when their write ownership does
 not overlap and neither depends on the other's unreviewed output. Prefer serial
 work when agents would edit the same file, change the same contract, or consume
 the same evolving state.
+
+Do not let parallel members invent separate versions of a forecast convergence
+contract. Make every member consume the same trusted reference or the gated
+output of the reference-first assignment. Preserve autonomy for all choices
+listed as allowed variation.
 
 Require a handoff at every serial phase boundary. Make the next agent read the
 previous handoff before starting. Require each handoff to list completed work,
@@ -332,6 +362,21 @@ the required evidence cannot be obtained or verified. Do not introduce another
 gate state. Inspect the actual files and diff; do not accept a completion claim
 by itself.
 
+After integrating a forecast convergence set, dispatch a read-only
+**Convergence Reviewer** to compare every member against the recorded invariant,
+level, reference or comparator, and allowed variation. This is a focused
+Independent Review and uses an ordinary Evidence Gate; it is not another gate
+state or a substitute for Validation. The same peer may own the broader
+Independent Review when the assurance policy permits and both reviews inspect
+the same unchanged revision.
+
+On convergence `FAIL`, make the Root Master dispatch a bounded remediation
+implementer who is not the reviewer or validator for the affected revision.
+After remediation, rerun the convergence review and every affected downstream
+Review and Validation gate against the new revision. A Convergence Reviewer who
+edits the artifact becomes an implementer and loses reviewer independence for
+that revision.
+
 Do not mark a gate `BLOCKED` merely because a routine engineering judgment was
 needed. Use `BLOCKED` for a material decision that the master cannot resolve
 from available evidence within existing authority, or for another missing
@@ -361,6 +406,7 @@ verify:
 - requested behavior and artifacts are present;
 - scope and non-goals were preserved;
 - no parallel ownership conflict or unreviewed overwrite remains;
+- every forecast convergence set passed review against its recorded contract;
 - repository tests and required checks passed;
 - checks in `NOT RUN` or `BLOCKED` are explicit;
 - public files contain no credentials or private identifiers;
@@ -446,6 +492,9 @@ reports.
 - **Overlapping parallel ownership:** pause the conflicting assignment, inspect
   the shared state, record the affected gate as `BLOCKED`, then serialize or
   redefine ownership.
+- **Cross-slice divergence:** record the convergence gate as `FAIL`, dispatch a
+  bounded remediation implementer separate from the reviewer and validator,
+  then rerun convergence review and affected downstream Review and Validation.
 - **Missing handoff:** record `BLOCKED` and request or reconstruct the handoff
   from verified artifacts through a bounded agent task.
 - **Agent timeout or incomplete evidence:** record `BLOCKED`, narrow and

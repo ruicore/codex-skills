@@ -9,6 +9,7 @@ phases, or any task whose ownership is unclear.
 - [Define a good assignment](#define-a-good-assignment)
 - [Control ownership](#control-ownership)
 - [Build the task graph](#build-the-task-graph)
+- [Forecast cross-slice convergence](#forecast-cross-slice-convergence)
 - [Require handoffs](#require-handoffs)
 - [Recover from failure](#recover-from-failure)
 
@@ -97,6 +98,56 @@ Use parallel execution only when:
 
 Use serial execution when a downstream agent needs an upstream decision,
 artifact, schema, test seam, or verified change.
+
+## Forecast Cross-Slice Convergence
+
+Before dispatching parallel slices, check whether two or more outputs implement
+one shared concept or contract. Create a convergence set only when current
+repository evidence, the user request, or an authoritative contract requires
+the outputs to agree. Typical signals include homologous service integrations,
+repeated lifecycle or dependency seams, platform variants of one contract, and
+generated artifacts that must stay synchronized. Similar names or incidental
+code resemblance are not enough.
+
+For each convergence set, record:
+
+- set ID, member assignments, and affected surfaces;
+- shared invariant and the integration point where members are compared;
+- required level: Semantic, Structural, or Exact;
+- trusted reference artifact or comparator and why it is authoritative;
+- allowed variation outside the shared contract;
+- a read-only Convergence Reviewer and an ordinary Evidence Gate.
+
+Choose the narrowest level that protects the contract:
+
+| Level | Must converge | May vary | Useful evidence |
+| --- | --- | --- | --- |
+| Semantic | Observable behavior, lifecycle guarantees, side effects, and stated invariants | Naming, local helpers, internal structure, and implementation strategy | Contract tests, behavior traces, or adversarial review |
+| Structural | Selected interfaces, types, dependency seams, lifecycle shape, organization, or another named structure | Details outside the selected shape | Schema, signature, AST, type, or structured manual comparison |
+| Exact | A bounded artifact, representation, or canonical fragment defined by the comparator | Only fields explicitly outside the exact surface | Deterministic diff, hash, generator check, or exact fixture comparison |
+
+Do not use Exact as shorthand for general consistency. Name the exact surface
+and comparator so workers retain autonomy everywhere else.
+
+When a trusted implementation or contract already exists, make it a shared
+read-only input. When Structural or Exact convergence lacks one, add a serial
+reference-first or contract-first assignment with sole ownership of the
+reference. Its gate must be `PASS` before dependent parallel work begins. Do
+not ask parallel workers to independently invent the standard they must later
+match.
+
+After integration, the Root Master dispatches the forecast read-only
+Convergence Reviewer. The reviewer checks all members together against the
+recorded contract and reports `NOT RUN`, `PASS`, `FAIL`, or `BLOCKED`. On
+`FAIL`, a remediation implementer distinct from the reviewer and validator
+owns the bounded correction. Rerun convergence review and affected downstream
+Review and Validation against the changed revision. The convergence review may
+be part of an already-required Independent Review when one peer can answer both
+questions without editing the artifact.
+
+Skip this mechanism when there is no evidence-backed convergence set. Do not
+add parallel assignments, reviewers, references, or exactness merely to make a
+small local task look uniform.
 
 ## Require Handoffs
 
