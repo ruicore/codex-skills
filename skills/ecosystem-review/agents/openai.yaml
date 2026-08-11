@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ecosystem Review"
+  short_description: "Review multi-language ecosystem usage"
+  default_prompt: "Use $ecosystem-review to review this repository's ecosystem technologies and integration boundaries with location-backed findings."

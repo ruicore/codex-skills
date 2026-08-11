@@ -1,11 +1,11 @@
 ---
 name: python-ecosystem-review
-description: Review Python repositories by automatically discovering important ecosystem libraries and evaluating concrete library usage against current best practices. Use when Codex needs a review of framework, validation, ORM, migration, dependency injection, async, background job, HTTP client, testing, LLM/agent, observability, or runtime-library integration points. Review-only by default; do not use for broad architecture, generic Python style, full agent-legibility, security, performance, or framework-only reviews.
+description: Review Python repositories as the Python-specialist adapter for ecosystem review, automatically discovering important ecosystem libraries and evaluating concrete library usage against current best practices. Use when Codex needs a Python review of framework, validation, ORM, migration, dependency injection, async, background job, HTTP client, testing, LLM/agent, observability, or runtime-library integration points. Review-only by default; do not use for broad architecture, generic Python style, full agent-legibility, security, performance, or framework-only reviews.
 ---
 
 # Python Ecosystem Review
 
-Review one thing: how a Python repository actually uses important ecosystem libraries. Focus on libraries that shape architecture, data flow, validation, persistence, API boundaries, concurrency, background execution, testing, or runtime behavior.
+Review one thing: how a Python repository actually uses important ecosystem libraries. Operate as the Python adapter to [`ecosystem-review`](../ecosystem-review/SKILL.md): apply its language-neutral, technology-appropriate evidence, version/effective-configuration precedence, disproof, uncertainty, official-source, and read-only rules while retaining the Python-specific discovery and checks below. Do not require users to rename a `$python-ecosystem-review` request.
 
 Do not modify code unless the user explicitly asks for fixes. If fixes are allowed, complete the review first, then make only the requested or clearly justified library-usage changes.
 
@@ -28,15 +28,16 @@ Do not modify code unless the user explicitly asks for fixes. If fixes are allow
 Support these optional inputs:
 
 - `priority_libraries`: library names the user wants emphasized.
-- `allow_web_research`: whether to check official sources when version-specific claims may be stale; default to true when network access is available or the user asks for current best practices.
+- `languages`: accept `auto` or an explicit list when supplied; this adapter reviews Python and should identify material non-Python components as adjacent ecosystem boundaries rather than silently treating a polyglot repository as Python-only.
+- `allow_web_research`: whether to check official sources when version-specific claims may be stale; default `true`.
 - `review_only`: default `true`.
 
 ## Discovery Workflow
 
-1. Discover dependency evidence.
+1. Discover Python dependency evidence.
    - Inspect `pyproject.toml`, `requirements.txt`, `requirements/*.txt`, `poetry.lock`, `uv.lock`, `Pipfile`, `setup.py`, `setup.cfg`, tox/nox config, Docker files, CI files, and README/deployment notes when relevant.
    - Record declared versions, version ranges, lockfile versions, extras, dependency groups, and runtime/dev separation.
-   - Treat mismatches between declarations and lock/runtime files as review evidence.
+   - Use imports and configured registrations to prove library use; prefer fresh runtime evidence for executed version or configuration, then lock evidence, then declarations when they conflict. Treat mismatches as review evidence.
 
 2. Build the library candidate list.
    - Search imports and integration points, not only dependency files.
@@ -66,7 +67,7 @@ Use examples as hints, not a closed list:
    - Prefer official documentation, official changelogs, official migration guides, and official release notes.
    - Do not rely on generic blog posts for version-specific best-practice claims unless official sources are unavailable.
    - Cite official sources when web research is used.
-   - If current verification is unavailable, state the uncertainty and downgrade version-specific claims.
+   - If current verification or network access is unavailable, continue the review, state the uncertainty, and downgrade version-specific claims.
 
 ## Review Dimensions
 

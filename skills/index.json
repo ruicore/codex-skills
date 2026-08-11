@@ -371,6 +371,46 @@
       "portability_notes": "Portable diagnosis workflow, but concrete commands, fixtures, and test seams must be discovered from the target repository. Use the full loop only when safe reproduction and required change authority exist; otherwise deliver the bounded read-only assessment and verification plan without expanding into implementation."
     },
     {
+      "name": "ecosystem-review",
+      "path": "skills/ecosystem-review",
+      "category": "review-audit",
+      "secondary_categories": [],
+      "maturity": "portable-candidate",
+      "purpose": "Reviews concrete ecosystem technology usage and integration boundaries across one or more languages, using repository evidence and official sources only when version-sensitive claims require them.",
+      "triggers": [
+        "perform a multi-language or polyglot dependency and usage review",
+        "review a repository's ecosystem technologies, frameworks, libraries, runtimes, or integration boundaries when no more-specific installed and applicable language adapter applies",
+        "evaluate concrete package, framework, SDK, persistence, messaging, testing, or runtime-library usage across multiple languages or without a more-specific installed adapter",
+        "route Python-focused ecosystem requests to $python-ecosystem-review"
+      ],
+      "do_not_use_for": [
+        "broad architecture review",
+        "generic code-style or language-fundamentals review",
+        "security or performance audit",
+        "reviewing every dependency, including tooling-only, trivial, or transitive dependencies",
+        "universal lifecycle or architecture prescriptions detached from repository evidence"
+      ],
+      "default_side_effect_level": "read-only",
+      "side_effect_level": "read-only",
+      "requires_credentials": false,
+      "primary_outputs": [
+        "inferred language and technology scope",
+        "location-backed prioritized ecosystem findings",
+        "cross-technology integration risk notes",
+        "scoped, testable follow-up recommendations"
+      ],
+      "validation_expectations": [
+        "inspect package manifests, lock files, build/runtime/CI evidence, and actual source or configuration usage before reporting",
+        "require concrete technology-appropriate evidence of use: source/import/registration evidence for code libraries, or relevant configuration, build, CI, entrypoint, deployment, plugin, or runtime evidence for declarative and tooling technologies",
+        "for conflicting version or effective-configuration claims, prefer fresh executed runtime evidence, then lock evidence, then declarations; state conflicts and missing evidence",
+        "run an explicit disproof pass and distinguish unexecuted or absent tests from passing evidence",
+        "verify version-sensitive, deprecation, migration, or compatibility claims with official sources when available, otherwise downgrade confidence"
+      ],
+      "supporting_files": [],
+      "agents_metadata_path": "skills/ecosystem-review/agents/openai.yaml",
+      "portability_notes": "Portable read-only review workflow. Prefer it for multi-language/polyglot work or when no more-specific installed adapter applies; use an adapter only when it is installed and applicable. Otherwise retain the generic workflow, avoid unsupported language-specific claims, and state scoped uncertainty. Infer languages from repository evidence and avoid universal lifecycle or architecture prescriptions."
+    },
+    {
       "name": "excalidraw-diagrams",
       "path": "skills/excalidraw-diagrams",
       "category": "visual-artifacts",
@@ -690,11 +730,11 @@
       "category": "review-audit",
       "secondary_categories": [],
       "maturity": "portable-candidate",
-      "purpose": "Reviews important Python ecosystem library usage and integration boundaries against current best practices.",
+      "purpose": "Acts as the compatible Python-specialist adapter to ecosystem-review, retaining concrete Python ecosystem library and integration-boundary coverage.",
       "triggers": [
-        "review Python framework, validation, ORM, migration, dependency injection, async, background job, HTTP client, testing, LLM or agent, observability, or runtime-library integration points",
+        "review Python framework, validation, ORM, migration, dependency injection, async, background job, HTTP client, testing, LLM or agent, observability, or runtime-library integration points without renaming the prompt",
         "discover important ecosystem libraries and evaluate concrete usage",
-        "check version-sensitive library patterns with official sources when needed"
+        "apply a Python-specialist ecosystem review with official-source checks for version-sensitive claims when needed"
       ],
       "do_not_use_for": [
         "broad architecture review",
@@ -713,13 +753,13 @@
         "version-sensitive recommendations grounded in official docs when needed"
       ],
       "validation_expectations": [
-        "discover important libraries before reviewing usage",
-        "inspect imports, setup, lifecycle hooks, schemas, repositories, clients, tasks, tests, and configuration",
-        "check official docs or changelogs for version-sensitive claims when model knowledge may be stale"
+        "apply the generic ecosystem evidence rules while retaining Python-specific discovery and integration checks",
+        "inspect Python imports, setup, lifecycle hooks, schemas, repositories, clients, tasks, tests, and configuration",
+        "check official docs or changelogs for strong version-sensitive claims when available, otherwise state scoped uncertainty"
       ],
       "supporting_files": [],
       "agents_metadata_path": "skills/python-ecosystem-review/agents/openai.yaml",
-      "portability_notes": "Portable review workflow, but current best-practice claims may require live official documentation checks for the target dependency versions."
+      "portability_notes": "Compatible Python entry point and portable specialist adapter. Keep Python dependency sources and cross-library checks concrete; current version-sensitive claims may require live official documentation checks."
     },
     {
       "name": "radar-analysis",
