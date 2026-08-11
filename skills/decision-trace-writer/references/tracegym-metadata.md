@@ -4,14 +4,34 @@ Read this reference only when a stable trace has reusable workflow, skill-improv
 
 ## Contents
 
-- [Full Metadata Block](#full-metadata-block)
-- [Compact Block](#compact-block)
+- [Footer Contract](#footer-contract)
+- [Full Metadata Footer](#full-metadata-footer)
+- [Compact Metadata Footer](#compact-metadata-footer)
 - [Field Rules](#field-rules)
 - [Quality And Derivation Boundaries](#quality-and-derivation-boundaries)
 - [Improvement Loop Catalog](#improvement-loop-catalog)
 
-## Full Metadata Block
+## Footer Contract
 
+Include TraceGym metadata only when the conditional gate in `SKILL.md` passes.
+When included, append exactly one final section with this shape:
+
+````markdown
+## TraceGym Metadata
+```yaml
+tracegym_metadata:
+  ...
+```
+````
+
+The heading must be exactly `## TraceGym Metadata`. It must be followed immediately by a YAML fence whose opening line is exactly three backticks followed by `yaml`, and that fence must begin with `tracegym_metadata:`. After its closing fence, the trace must contain no non-whitespace content. When `skill_application_evidence` is present, make it the final metadata field. Do not place a second metadata heading, an earlier metadata-looking example, or prose after this footer. If the conditional gate fails, omit the footer altogether.
+
+The templates below show the complete body of that final footer. They are instructional templates in this reference, not metadata attached to this reference.
+
+## Full Metadata Footer
+
+````markdown
+## TraceGym Metadata
 ```yaml
 tracegym_metadata:
   schema_version: tracegym.trace.v1
@@ -20,16 +40,6 @@ tracegym_metadata:
   source_capture_skill: decision-trace-writer
   candidate_workflow_skills:
     - <skill-name-or-unknown>
-  skill_application_evidence:
-    - skill_name: <skill-name>
-      role: <primary|supporting|capture|unknown>
-      trigger_source: <user_explicit|request_match|repository_rule|agent_selection|workflow_handoff|unknown>
-      application_status: <loaded_only|applied|partially_applied|loaded_not_applied|referenced_not_loaded|corrected|misrouted|requested_unavailable|unknown>
-      task_outcome: <success|partial|failure|blocked|unknown>
-      validation_strength: <none|weak|medium|strong>
-      contribution_classification: <supported|corrected|neutral|unknown>
-      artifact_sha256: <lowercase-sha256-or-null>
-      human_reviewed: <true|false>
   reusable_workflow_lesson: <one-sentence reusable lesson after redaction>
   sensitive_surfaces:
     - <repo_paths|private_links|customer_data|production_payloads|credentials|none>
@@ -53,19 +63,6 @@ tracegym_metadata:
     proposal_strength: <none|weak|medium|strong>
     evidence_needed_before_proposal:
       - <additional traces, validation, or counterexamples needed>
-```
-
-## Compact Block
-
-Use this only with Small Decision Mode:
-
-```yaml
-tracegym_metadata:
-  schema_version: tracegym.trace.v1
-  trace_privacy_class: local_raw_trace
-  public_export_candidate: false
-  source_capture_skill: decision-trace-writer
-  candidate_workflow_skills: [<skill-or-unknown>]
   skill_application_evidence:
     - skill_name: <skill-name>
       role: <primary|supporting|capture|unknown>
@@ -74,8 +71,24 @@ tracegym_metadata:
       task_outcome: <success|partial|failure|blocked|unknown>
       validation_strength: <none|weak|medium|strong>
       contribution_classification: <supported|corrected|neutral|unknown>
-      artifact_sha256: null
+      artifact_sha256: <lowercase-sha256-or-null>
       human_reviewed: <true|false>
+```
+````
+
+## Compact Metadata Footer
+
+Use this only with Small Decision Mode:
+
+````markdown
+## TraceGym Metadata
+```yaml
+tracegym_metadata:
+  schema_version: tracegym.trace.v1
+  trace_privacy_class: local_raw_trace
+  public_export_candidate: false
+  source_capture_skill: decision-trace-writer
+  candidate_workflow_skills: [<skill-or-unknown>]
   reusable_workflow_lesson: <one-line lesson>
   sensitive_surfaces: [<repo_paths|private_links|production_payloads|credentials|none>]
   public_sanitization_required:
@@ -91,7 +104,18 @@ tracegym_metadata:
     action: <update_existing_skill|new_skill_candidate|no_skill_change>
     proposal_strength: <none|weak|medium|strong>
     evidence_needed_before_proposal: [<additional evidence or none>]
+  skill_application_evidence:
+    - skill_name: <skill-name>
+      role: <primary|supporting|capture|unknown>
+      trigger_source: <user_explicit|request_match|repository_rule|agent_selection|workflow_handoff|unknown>
+      application_status: <loaded_only|applied|partially_applied|loaded_not_applied|referenced_not_loaded|corrected|misrouted|requested_unavailable|unknown>
+      task_outcome: <success|partial|failure|blocked|unknown>
+      validation_strength: <none|weak|medium|strong>
+      contribution_classification: <supported|corrected|neutral|unknown>
+      artifact_sha256: null
+      human_reviewed: <true|false>
 ```
+````
 
 ## Field Rules
 

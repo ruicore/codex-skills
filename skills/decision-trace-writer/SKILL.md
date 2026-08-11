@@ -50,7 +50,7 @@ This skill does not replace a formal ADR. When a decision changes public archite
 5. **Make the result actionable.** Record concrete affected files and behavior boundaries, required and prohibited behavior, invariants, validation expectations, current status, unresolved boundaries, and revisit triggers.
 6. **Choose the right trace size.** Read [Trace formats](references/trace-formats.md) and select compact or expanded structure using its impact criteria.
 7. **Classify every trace.** Write an explicit privacy class in the trace whether or not TraceGym metadata will be present. Use `local_raw_trace` for the normal repository-grounded trace. Use `sanitized_trace_seed` or `public_benchmark_candidate` only for a separately authorized derived artifact that satisfies the corresponding publication gate.
-8. **Add reusable-signal metadata conditionally.** When the trace has reusable workflow, eval, benchmark, evaluator, or skill-improvement value, read [TraceGym metadata](references/tracegym-metadata.md) and add the appropriate block. Use its canonical skill-application entry fields only for observed loading or use, record human review honestly, and keep application evidence distinct from skills that might learn from the case. Omit the block for purely local memory with no reusable lesson and record the omission reason; the standalone privacy classification remains required.
+8. **Add reusable-signal metadata conditionally.** When the trace has reusable workflow, eval, benchmark, evaluator, or skill-improvement value, read [TraceGym metadata](references/tracegym-metadata.md) and append its appropriate final-footer template. When metadata is included, write exactly one final `## TraceGym Metadata` section, immediately followed by a YAML fence whose opening line is exactly three backticks followed by `yaml`; its fence begins with `tracegym_metadata:` and, after the closing fence, the trace contains no non-whitespace content. The Full or Compact template is the body of that final footer, not an arbitrary code sample elsewhere in the trace. When present, `skill_application_evidence` is the final metadata field. Use its canonical skill-application entry fields only for observed loading or use, record human review honestly, and keep application evidence distinct from skills that might learn from the case. Omit metadata altogether when this conditional gate fails; record the omission reason while retaining the standalone privacy classification.
 9. **Respect privacy and publication boundaries.** Keep private or ignored traces unstaged unless the user explicitly asks otherwise. Treat any future sanitized or public derivative as separate work requiring separate review.
 10. **Verify the artifact.** Check existence, readability, filename, evidence accuracy, current status, privacy class, version-control state, and honest validation claims.
 
@@ -121,7 +121,7 @@ The trace must capture, at the detail warranted by its risk:
 - current implementation, commit, validation, or blocked status;
 - future validation and follow-up boundaries;
 - an explicit privacy class, normally `local_raw_trace`, even when TraceGym metadata is omitted;
-- TraceGym metadata only when its conditional gate passes.
+- TraceGym metadata only when its conditional gate passes, as exactly one final `## TraceGym Metadata` section with its `yaml` fence and no later non-whitespace content.
 
 In the final response, state the trace path, whether it was created or updated, the validation performed, and any privacy or version-control boundary relevant to the user.
 
