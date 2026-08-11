@@ -23,6 +23,10 @@ it. When identity metadata is incomplete, the plan must retain an unknown
 identity, state the visibility gap, avoid cause or repair conclusions, and ask
 for a further read-only observation.
 
+The two readiness fixtures demonstrate complementary limits: liveness is not
+end-to-end readiness, and a ready gateway does not establish that every
+downstream workload is available. Both require a bounded, read-only plan.
+
 ## Run
 
 The evaluator rejects an output location that resolves to this package or any

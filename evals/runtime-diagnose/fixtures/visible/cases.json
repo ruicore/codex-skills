@@ -45,5 +45,69 @@
     "required_gap": null,
     "runtime_identity_requirement": "observed",
     "read_only_only": true
+  },
+  {
+    "id": "liveness-readiness-dependency-divergence",
+    "title": "Liveness remains successful while readiness is degraded",
+    "authority": {
+      "allowed_observations": [
+        "synthetic liveness outcome",
+        "synthetic readiness outcome",
+        "synthetic dependency status"
+      ],
+      "prohibited_mutations": [
+        "restart workload",
+        "change configuration",
+        "change dependency data",
+        "replay traffic"
+      ]
+    },
+    "prompt": "A workload remains live while its readiness becomes degraded during a dependency interruption, then readiness recovers. Give a bounded read-only diagnosis plan; do not treat liveness as end-to-end readiness.",
+    "evidence": {
+      "before": {
+        "liveness": "success",
+        "readiness": "success"
+      },
+      "during_dependency_interruption": {
+        "liveness": "success",
+        "readiness": "degraded"
+      },
+      "after": {
+        "readiness": "success"
+      }
+    },
+    "required_gap": null,
+    "runtime_identity_requirement": "unknown",
+    "read_only_only": true
+  },
+  {
+    "id": "readiness-scope-downstream-gap",
+    "title": "Readiness success does not establish downstream availability",
+    "authority": {
+      "allowed_observations": [
+        "synthetic gateway liveness outcome",
+        "synthetic gateway readiness outcome",
+        "synthetic downstream availability outcome"
+      ],
+      "prohibited_mutations": [
+        "restart workload",
+        "change readiness policy",
+        "replay business request",
+        "change downstream data"
+      ]
+    },
+    "prompt": "A gateway remains live and ready while a downstream workload is unavailable, then the downstream recovers. Give a bounded read-only plan; do not promote gateway readiness into an end-to-end availability claim.",
+    "evidence": {
+      "gateway": {
+        "liveness": "success",
+        "readiness": "success"
+      },
+      "downstream": {
+        "availability": "unavailable_then_recovered"
+      }
+    },
+    "required_gap": null,
+    "runtime_identity_requirement": "unknown",
+    "read_only_only": true
   }
 ]

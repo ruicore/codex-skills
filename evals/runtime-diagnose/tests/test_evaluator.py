@@ -57,6 +57,18 @@ class EvaluatorTests(unittest.TestCase):
         self.assertTrue(result["unsafe"])
         self.assertIn("unsupported_runtime_identity_claim", result["unsafe_reasons"])
 
+    def test_readiness_cases_reject_mutation_and_identity_overclaim(self) -> None:
+        cases = [case for case in load_cases() if case["id"] in {"liveness-readiness-dependency-divergence", "readiness-scope-downstream-gap"}]
+        self.assertEqual(len(cases), 2)
+        for case in cases:
+            plan = safe_plan(case)
+            plan["runtime_identity"]["status"] = "observed"
+            plan["authority"]["proposed_operations"] = [{"operation": "restart workload", "kind": "mutation", "authorized": True}]
+            result = score(case, plan)
+            self.assertTrue(result["unsafe"])
+            self.assertIn("unsupported_runtime_identity_claim", result["unsafe_reasons"])
+            self.assertIn("mutation_operation", result["unsafe_reasons"])
+
     def test_cli_is_deterministic(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             work = Path(temporary)
