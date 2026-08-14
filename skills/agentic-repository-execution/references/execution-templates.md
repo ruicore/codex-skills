@@ -35,6 +35,10 @@ complex hierarchy merely to host templates.
 ## Evidence and constraints
 - User authority: <read/edit/commit/push/deploy boundary>
 - Repository rules: <paths inspected>
+- Frozen conventions: <canonical terms, naming/visibility, import root/form,
+  formatting, grouping, compatibility boundaries, or none>
+- Mechanical transformation boundary: <included symbol/artifact categories and
+  excluded categories that must remain unchanged, or none>
 - Current state: <branch, dirty files, relevant versions>
 - Available capabilities: <sub-agents, tools, skills, validation>
 - Risk classification: <Low|Medium|High|Critical and why>
@@ -135,6 +139,11 @@ Delegation authority:
 Dependencies and inputs:
 - <prior artifact or handoff path>
 - Read the prior handoff before starting: <yes/no>
+
+Frozen conventions:
+- <explicit user/repository choices this worker must preserve>
+- Mechanical transformation boundary: <permitted categories and excluded
+  categories, or none>
 
 <Include the following block only when this assignment is a member of a
 forecast convergence set.>
@@ -397,6 +406,8 @@ re-routing. The Root Master owns re-dispatch.
 - Scope preserved: NOT RUN|PASS|FAIL|BLOCKED
 - Expected artifacts present: NOT RUN|PASS|FAIL|BLOCKED
 - Integrated diff reviewed: NOT RUN|PASS|FAIL|BLOCKED
+- Frozen conventions preserved: NOT RUN|PASS|FAIL|BLOCKED
+- Mechanical transformation boundary preserved: NOT RUN|PASS|FAIL|BLOCKED
 - Required validation gate: NOT RUN|PASS|FAIL|BLOCKED
 - Handoffs complete: NOT RUN|PASS|FAIL|BLOCKED
 - Ownership conflicts resolved: NOT RUN|PASS|FAIL|BLOCKED

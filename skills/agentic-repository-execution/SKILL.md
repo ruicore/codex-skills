@@ -50,6 +50,11 @@ before asking:
 - scope, non-goals, acceptance criteria, and side-effect authority;
 - repository instructions, ownership boundaries, public hygiene rules, and
   durable coordination conventions;
+- explicit user- or repository-selected conventions that must remain frozen,
+  such as canonical domain terms, visibility and naming rules, import roots or
+  forms, formatting limits, declaration grouping, and compatibility aliases;
+- for mechanical transformations, the exact symbol or artifact categories in
+  scope and the categories that must remain unchanged;
 - available sub-agent controls, models, reasoning efforts, skills, tools, and
   validation commands;
 - dirty-worktree state and files that must not be touched;
@@ -85,6 +90,13 @@ contract, owned surfaces, side-effect limit, and non-goals. Let the worker
 decide naming, internal code structure, helper extraction, local abstraction,
 test organization, and implementation strategy when the result can be verified
 locally without changing external or business meaning.
+
+Treat an explicit user or repository choice as a frozen constraint, not as an
+implementation option delegated to the worker. Worker autonomy applies only
+after those constraints are satisfied. Do not replace a configured local
+convention with a generic ecosystem preference merely because both are valid.
+For a mechanical rename or rewrite, enumerate the permitted symbol or artifact
+categories and preserve every excluded category literally.
 
 Do not escalate merely because multiple reasonable implementations exist, a
 technical tradeoff is subjective, or the master did not preselect an approach.
@@ -187,6 +199,13 @@ Inspect the repository root, applicable instruction files, current branch and
 worktree state, existing task or memory conventions, relevant skills, tools,
 tests, and validation entry points.
 
+Extract explicit conventions and canonical domain terms from the user request,
+repository configuration, public contracts, and current authoritative code.
+Record them as frozen constraints before dispatch. When import form or module
+layout is in scope, identify the supported invocation modes and import roots;
+do not infer them from the current working directory or from one ad hoc script
+execution.
+
 Use repository-native code discovery before broad text search when available.
 Scan the runtime's actual skill inventory before recommending skills. Never
 invent a skill, model, reasoning effort, or tool.
@@ -288,9 +307,10 @@ Also state owned files or surfaces, dependencies, required inputs, side-effect
 limits, risk level, authority boundary, escalation path, and the handoff path
 when relevant. For a slice in a convergence set, include the set ID, level,
 invariant, reference or comparator, allowed variation, and integration/review
-condition. State that delegation authority belongs to the Root Master, that the
-dispatched agent may not create child agents, and where it may submit a
-Delegation Request.
+condition. Include frozen conventions and, for a mechanical transformation,
+the permitted and excluded symbol or artifact categories. State that
+delegation authority belongs to the Root Master, that the dispatched agent may
+not create child agents, and where it may submit a Delegation Request.
 
 Read [model-and-effort-routing.md](references/model-and-effort-routing.md) before
 recommending execution settings. Name only models and effort values advertised
@@ -441,6 +461,12 @@ Require each gate record to contain:
 - result: `NOT RUN`, `PASS`, `FAIL`, or `BLOCKED`;
 - artifact or output location;
 - remaining uncertainty.
+
+When imports, entrypoints, or module layout change, validate every supported
+invocation mode defined by the repository, such as an installed console entry,
+module execution, or direct script execution only when direct execution is an
+actual contract. Do not treat success from a modified working directory or an
+ad hoc `PYTHONPATH` as proof of the packaged execution contract.
 
 Rerun integration checks after combining parallel work. Run diff and
 scope-boundary review even when automated tests succeed. State every skipped

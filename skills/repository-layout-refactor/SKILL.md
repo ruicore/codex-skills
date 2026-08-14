@@ -37,6 +37,10 @@ file count, line count, or directory depth:
 6. **Evolution path:** Likely new capabilities should have a predictable home
    within an existing concept boundary. Avoid layouts that naturally grow
    parallel managers, numbered services, or generic helper modules.
+7. **Canonical terminology:** Name internal authoritative modules and packages
+   with the repository's current domain terms. Keep a legacy name only at a
+   verified compatibility boundary; do not let a compatibility alias remain
+   the apparent internal owner of the canonical concept.
 
 Treat these criteria as contextual checks, not a scorecard. A good layout makes
 ownership and change impact visible; it does not merely produce more folders or
@@ -159,6 +163,8 @@ Define a target package tree and ownership matrix. Each proposed module or
 package must have:
 
 - one primary concept or capability owner
+- a name aligned with the repository's canonical domain term, with any legacy
+  public alias isolated at an explicit compatibility boundary
 - a clear reason to change
 - explicit inbound and outbound dependencies
 - contract-preservation requirements
@@ -217,6 +223,8 @@ Verify that:
 - tests are organized around public capabilities rather than private module
   layout
 - documentation and navigation entrypoints point to the new owner when needed
+- internal imports and ownership names use the canonical term while retained
+  compatibility aliases remain visibly boundary-only
 
 ### 7. Validate The Repository
 
