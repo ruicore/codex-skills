@@ -29,7 +29,11 @@ If the selected browser reaches a login, SSO, or permission barrier, stop. State
 
 Feishu issue access is a hard read-only boundary for this skill. Never edit fields, status, assignees, comments, attachments, relations, work progress, or any other issue state. Do not invoke mutating Feishu tools, submit forms, upload files, or publish evidence. If the user asks for issue administration or mutation, stop this skill's Feishu workflow and route that request to a separate explicitly authorized workflow; do not reinterpret it as permission for this debugger to write.
 
+This read-only boundary applies to Feishu remote state, not to the local evidence workspace. Within the verified ignored or external issue evidence root, this skill may create, update, organize, deduplicate, hash, validate, and sanitize local evidence files as part of the investigation. Local evidence writes never imply permission to change the Feishu work item.
+
 Downloaded staging artifacts created by the current run are temporary. After a final artifact is copied into the verified issue evidence root and passes the required validation, delete the exact staging file by default. This standing cleanup rule does not authorize deleting pre-existing downloads, user-provided files, final evidence, or anything whose ownership cannot be proven. Follow the guarded cleanup procedure in [references/evidence-and-validation.md](references/evidence-and-validation.md).
+
+Local evidence persistence is the default for an investigation. Unless the user explicitly requests an access-only or download-capability check, or explicitly says not to download, create a verified ignored or external issue evidence root and retain a sanitized issue brief, all captured comments, every issue-owned Description or comment image, the attachment inventory and relevant downloaded attachments, lifecycle evidence that was inspected, and a validation/acquisition index. Keep final evidence; clean only proven task-created staging artifacts. If any required evidence cannot be saved, report the exact coverage and blocker rather than silently continuing with a browser-only summary.
 
 ## Establish the Authoritative Issue Brief
 
@@ -130,6 +134,7 @@ Lead with the current conclusion, then report:
 - validation actually performed;
 - what remains unverified and why;
 - files, worktrees, or local artifacts created;
+- the retained evidence root and comment, image, attachment, failed, unverified, and cleaned counts when local acquisition ran;
 - whether any code, remote state, issue, commit, push, or merge request changed.
 
 Distinguish documentation claims, static code proof, focused tests, real-project replay, and full GUI/GPU/customer-runtime validation. Never promote one layer into another or invent `TEST` wording.
