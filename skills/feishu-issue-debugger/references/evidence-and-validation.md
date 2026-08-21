@@ -2,15 +2,27 @@
 
 Read this reference when a Feishu issue contains screenshots, attachments, logs, downloaded projects, customer data, or a request to reproduce or validate behavior.
 
-## Rendered Issue Evidence
+## Rendered Bug Work-Item Evidence
 
-Treat the rendered Issue Name as the primary scope and symptom. Treat the bold Description fields as supporting evidence:
+Treat the rendered work-item title or name as the primary scope and symptom. Feishu Project work-item types and templates can use different field names for the same diagnostic role, so map visible evidence into semantic slots while preserving the original field label or narrative source:
 
-- `测试版本：` selects the code baseline. Inspect images for client application/processing service versions, build ids, commits, branch names, and visible environment details.
-- `复现步骤：` identifies the product action and runtime path.
-- `结果：` identifies the observed outcome and expected acceptance signal.
+- **Version and environment baseline:** version, build, commit, branch, deployment, hardware, configuration, or readable version-screenshot evidence, separated by owning component when multiple components participate.
+- **Trigger and execution path:** reproduction steps, user action, job, scene, configuration combination, timing, or other conditions that reach the reported path.
+- **Observed outcome:** error, missing or incorrect output, crash, latency, state transition, log event, or other reported failure signal.
+- **Expected outcome and acceptance:** the intended behavior or exact signal that would prove reproduction or repair. Keep this separate from the observed outcome; mark it missing when it is not stated.
+- **Supporting evidence:** relevant descriptions, logs, files, screenshots, comments, links, and lifecycle information.
+
+`测试版本：` / `复现步骤：` / `结果：` is one known template pattern, not a required contract. Other bug templates may expose the same roles through labels such as software version, version screenshot, problem description, job or scene, key logs, or key files, or combine several roles in narrative text. Do not report a semantic slot as missing merely because one candidate label is absent.
 
 Do not assume a flattened API description contains image evidence. Do not infer screenshot content from its URL or thumbnail.
+
+## Discover Template Fields Progressively
+
+Start with the rendered title, work-item type or template when visible, section headings, non-empty field labels, and the smallest relevant narrative. Build a compact candidate map from original labels to the diagnostic slots above, then open only the screenshots, comments, attachments, or structured fields needed to resolve the remaining slots.
+
+Use read-only structured Feishu Project tools to cross-check visible labels, values, and metadata when useful, but do not request every custom field or use an `_all` query by default. An unfamiliar template is a reason to inspect its visible structure first, not to bulk-collect the entire work item. A request for complete issue evidence means complete evidence relevant to the reported bug and its lifecycle, not every unrelated business or administrative field.
+
+Treat fields whose labels or values indicate passwords, temporary access codes, remote-control credentials, tokens, private contact details, or other secrets as sensitive before reading their full value. Do not request or expand them unless their content is strictly necessary and separately authorized. If a read-only source returns such a value incidentally, redact it immediately; do not print, persist, index, or include it in the issue brief. Record only that a sensitive field exists and whether it is relevant to a blocked validation step.
 
 ## Comments And Remarks
 
@@ -63,7 +75,7 @@ Never persist or expose cookies, tokens, authorization headers, credentials, cus
 
 ## Acquire Complete Evidence Efficiently
 
-Before downloading, build a compact inventory from the rendered page and, when available, read-only structured Feishu Project tools: returned work-item fields, Description images, comment pages and images, activity coverage, progress state, attachments, declared sizes, and linked-item identifiers. Use the rendered page as authority for visual content and ownership; use structured results to cross-check counts and metadata.
+Before downloading, build a compact inventory from the rendered page and, when available, selectively queried read-only structured Feishu Project tools: relevant work-item fields, Description or narrative images, comment pages and images, activity coverage, progress state, attachments, declared sizes, and linked-item identifiers. Use the rendered page as authority for visual content and ownership; use structured results to cross-check counts and metadata. Do not expand unrelated or sensitive fields merely to make the inventory exhaustive.
 
 In the Codex in-app Browser, prefer a `pageAssets` inventory plus an exact `bundle` selection for Description images and visible attachments when that capability observes them. It creates a task-specific temporary bundle and avoids contention in a shared Downloads directory. Do not bundle every image or select by broad URL shape alone. Establish ownership from at least one authoritative association: exact resource membership in the structured Description or attachment field, ancestry inside the rendered Description/comment/attachment container, or an exact visible filename tied to that container. Then bundle only those asset IDs.
 
