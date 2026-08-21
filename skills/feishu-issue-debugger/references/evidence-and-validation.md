@@ -28,7 +28,7 @@ Treat fields whose labels or values indicate passwords, temporary access codes, 
 
 Treat the Chinese `评论/备注` tab and the English `Comments` tab as localized labels for the same evidence surface. Prefer a tab-role or exact visible-text locator that supports the active locale. Do not rely on `tabKey=comment`, an anchor, a comment-count button, or the requested URL alone: Feishu may still render the Description tab. After selecting the tab, confirm the active state from the rendered comment list, its empty state, or an equivalent visible signal.
 
-If the comments surface exists, collect its available issue evidence before deep diagnosis:
+If the comments surface exists, collect all available issue evidence before deep diagnosis:
 
 - author and rendered timestamp;
 - comment text, lists, links, mentions, reply target, and edited state when exposed;
@@ -39,7 +39,7 @@ Do not treat avatars, reaction icons, application chrome, or unrelated page asse
 
 For comment-embedded images, prefer a browser media download that exposes a completed download event and a real local path. A dynamic Feishu comment page may omit these images from a page-assets inventory, so inventory-based acquisition is an option, not the only allowed mechanism. Do not navigate directly to or persist signed media URLs merely to download the image.
 
-Store comment evidence under the same verified ignored or external issue root used for other private artifacts. Use stable local names based on comment order or rendered timestamp, and write a small index that maps author, time, text, and image filenames. Verify each image is non-empty and decodable, record its real format and dimensions, and inspect enough actual content to rule out thumbnails, avatars, placeholders, or unrelated assets. State whether all rendered comments and images were captured; if lazy loading, pagination, permissions, or service limits prevent complete capture, report the exact coverage and blocker.
+Store every captured comment under the same verified ignored or external issue root used for other private artifacts. Write a normalized, sanitized index that maps author display name, rendered time, text, reply relationship, ordinary links, and image filenames; do not persist a raw structured response merely to preserve the comments. Use stable local image names based on comment order or rendered timestamp. Download every image proven to belong to a comment, verify that it is non-empty and decodable, record its real format and dimensions, and inspect enough actual content to rule out thumbnails, avatars, placeholders, or unrelated assets. State whether all rendered comments and comment images were captured; if lazy loading, pagination, permissions, or service limits prevent complete capture, report the exact coverage and blocker.
 
 When Feishu displays a comment badge or structured comment count, compare it with the number of distinct rendered comments actually captured. If the counts differ, make bounded attempts to scroll the comment container to both ends and activate a visible load-more or pagination control, then recount after the surface becomes stable. Do not invent missing comments or loop indefinitely. Preserve all three signals when available: displayed count, structured returned count and continuation metadata, and rendered captured count. A mismatch remains an explicit coverage gap unless a rendered explanation accounts for it.
 
@@ -61,21 +61,28 @@ Discover the repository's ignored local evidence location. For processing servic
 
 Before writing private evidence, verify that the proposed path is actually ignored by Git, for example with `git check-ignore`. A candidate directory name is not proof. If the path is not ignored, use another verified ignored local root or an external temporary directory. Do not edit `.gitignore` merely to store issue evidence unless the user separately authorizes that repository change.
 
-When permitted and useful:
+Unless the user explicitly requests an access-only or download-capability check, or explicitly says not to download, persist the investigation evidence locally by default:
 
-1. Create an issue-specific directory under the verified ignored or external evidence root.
-2. Download relevant Description images, comment-embedded evidence, and attachments.
-3. Preserve source names or a small provenance note when that improves traceability.
-4. Inspect the actual image, archive, configuration, log, or project data.
-5. If downloading or opening fails, say exactly what was not read and ask the user to provide it.
+1. Create an issue-specific directory under the verified ignored or external evidence root. Record the acquisition time and, when exposed, the observed work-item update time.
+2. Save a sanitized issue brief with the original field-label or narrative provenance for each semantic slot.
+3. Save a normalized, sanitized index for every captured comment and download every image proven to belong to a Description or comment. Do not limit comment or issue-owned image retention to evidence already judged relevant; its value may emerge during later analysis.
+4. Inventory every visible attachment with its source surface, filename, type, declared size, and acquisition state. Download attachments that can materially support reproduction, diagnosis, or validation. For a large, blocked, or clearly non-diagnostic attachment that is not downloaded, retain its metadata and the reason instead of pretending acquisition was complete.
+5. Save a sanitized activity or work-progress index whenever those surfaces were inspected and materially affect the lifecycle account.
+6. Preserve stable local names, byte lengths, real formats, dimensions or archive integrity, and SHA-256 when inexpensive. Keep a mapping from page evidence to final local files.
+7. Reuse an already verified artifact when size or checksum matches. When the live work item has changed, retain a new acquisition record or run-specific snapshot instead of silently overwriting the prior evidence.
+8. If saving, downloading, or opening fails, say exactly what was not retained and ask the user to provide it when it is required for diagnosis.
+
+Retain final evidence by default. Automatic cleanup applies only to exact task-created staging files and bundle directories after promotion and validation; it never deletes the verified issue brief, comment index, final images, final attachments, or validation metadata.
 
 This skill never modifies the Feishu issue or publishes evidence. Downloading evidence, a local-code implementation request, or any other task authority does not permit issue fields, status, comments, attachments, relations, work progress, or forms to be changed.
 
-Never persist or expose cookies, tokens, authorization headers, credentials, customer identifiers unnecessary to the diagnosis, or full authenticated commands. Keep raw private evidence in ignored local storage. Durable summaries should be concise and sanitized.
+The read-only boundary is remote-only. The verified local evidence root is a writable investigation workspace: create and update briefs, indexes, snapshots, hashes, validation records, and organized final artifacts there as needed. Keep those writes scoped to the issue root, preserve provenance, and do not confuse local evidence maintenance with authority to mutate Feishu.
+
+Never persist or expose cookies, tokens, authorization headers, credentials, customer identifiers unnecessary to the diagnosis, full authenticated commands, complete page HTML, or unfiltered structured API responses. Keep necessary private evidence in ignored local storage. Durable summaries and indexes should be concise and sanitized.
 
 ## Acquire Complete Evidence Efficiently
 
-Before downloading, build a compact inventory from the rendered page and, when available, selectively queried read-only structured Feishu Project tools: relevant work-item fields, Description or narrative images, comment pages and images, activity coverage, progress state, attachments, declared sizes, and linked-item identifiers. Use the rendered page as authority for visual content and ownership; use structured results to cross-check counts and metadata. Do not expand unrelated or sensitive fields merely to make the inventory exhaustive.
+Before downloading, build a compact inventory from the rendered page and, when available, selectively queried read-only structured Feishu Project tools: relevant work-item fields, every Description or narrative image, every comment page and comment-owned image, activity coverage, progress state, all visible attachments and declared sizes, and linked-item identifiers. Use the rendered page as authority for visual content and ownership; use structured results to cross-check counts and metadata. Do not expand unrelated or sensitive fields merely to make the inventory exhaustive.
 
 In the Codex in-app Browser, prefer a `pageAssets` inventory plus an exact `bundle` selection for Description images and visible attachments when that capability observes them. It creates a task-specific temporary bundle and avoids contention in a shared Downloads directory. Do not bundle every image or select by broad URL shape alone. Establish ownership from at least one authoritative association: exact resource membership in the structured Description or attachment field, ancestry inside the rendered Description/comment/attachment container, or an exact visible filename tied to that container. Then bundle only those asset IDs.
 

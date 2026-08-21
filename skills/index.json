@@ -468,7 +468,7 @@
         "publishing evidence or performing Feishu issue administration",
         "claiming root cause or validation from thumbnails, filenames, summaries, or mismatched code versions"
       ],
-      "default_side_effect_level": "read-only",
+      "default_side_effect_level": "local-files",
       "side_effect_level": "git-working-tree",
       "requires_credentials": true,
       "primary_outputs": [
@@ -478,8 +478,9 @@
         "small local code fix and validation when explicitly authorized"
       ],
       "validation_expectations": [
-        "confirm the issue name and Description are rendered in the authenticated browser before proceeding",
+        "confirm the bug work-item title or name and relevant detail fields or narrative are rendered in the authenticated browser before proceeding",
         "keep Feishu issue access read-only and stop at login or permission barriers",
+        "unless the user requests an access-only check or no downloads, persist a sanitized brief, all captured comments, every issue-owned Description and comment image, the attachment inventory, and acquisition validation under a verified local evidence root",
         "validate downloaded assets by type, content, provenance, and issue ownership before promoting them",
         "map each rendered component version to the correct repository ref before interpreting code",
         "separate rendered issue evidence, code facts, runtime observations, hypotheses, and unknowns in the report"
