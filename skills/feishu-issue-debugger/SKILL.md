@@ -1,6 +1,6 @@
 ---
 name: feishu-issue-debugger
-description: Read and investigate bug or performance issues from Feishu Project issue links against local repositories, exact versions, screenshots, attachments, logs, and runtime evidence. Use when the user asks to analyze, reproduce, diagnose, or prepare a local fix for a Feishu Project issue. Feishu issue access is always read-only; do not use for ordinary Feishu documents, issue administration, issue mutation, or publishing.
+description: Read and investigate Feishu Project work items that report bugs or performance issues against local repositories, exact versions, screenshots, attachments, logs, and runtime evidence. Use when the user asks to analyze, reproduce, diagnose, or prepare a local fix for a bug work item in Feishu Project. Feishu access is always read-only; do not use for ordinary Feishu documents, non-bug work items, issue administration, issue mutation, or publishing.
 ---
 
 # Feishu Issue Debugger
@@ -19,11 +19,11 @@ Treat names such as `.manifest/AGENTS.md`, `context.md`, `knowledge.md`, `valida
 
 ## Enforce the Browser Gate
 
-After the minimal instruction read, open the exact Feishu Project issue URL supplied by the user. Prefer the Codex in-app Browser and select it explicitly when the browser control surface supports a stable in-app selector such as `iab`; do not use URL-based automatic browser selection for the first attempt.
+After the minimal instruction read, open the exact Feishu Project bug work-item URL supplied by the user. Prefer the Codex in-app Browser and select it explicitly when the browser control surface supports a stable in-app selector such as `iab`; do not use URL-based automatic browser selection for the first attempt.
 
 The in-app Browser is a preference, not an absolute prohibition on native external browsers. Fall back to a connected native external browser only when the in-app Browser is unavailable, disconnected after bounded recovery, cannot render the issue, or lacks an operation required to collect the evidence. Do not choose the external browser merely because it is more convenient or already open. Record the reason for fallback and the actual browser surface used.
 
-Confirm that the target issue itself is visible, including its name and Description/detail content. A cookie, Feishu homepage, loading shell, login page, SSO page, or permission error does not prove access.
+Confirm that the target bug work item itself is visible, including its title or name and the relevant rendered detail fields or narrative. Do not require a literal `Description` label. A cookie, Feishu homepage, loading shell, login page, SSO page, or permission error does not prove access.
 
 If the selected browser reaches a login, SSO, or permission barrier, stop. State the precise blocker and ask the user to log in or restore access in that browser; do not switch browser surfaces merely to bypass authentication. Do not silently fall back to public search, an API summary, copied browser credentials, local history, or a guessed issue description.
 
@@ -35,17 +35,20 @@ Downloaded staging artifacts created by the current run are temporary. After a f
 
 Before deep repository exploration, record a compact brief from the rendered page:
 
-- exact issue URL and issue identifier;
-- Issue Name as the primary statement of scope and symptom;
-- `测试版本：`, including version/build/commit information inside screenshots, separated by component such as client application, processing service, middleware, or another owning component;
-- `复现步骤：` as the reported execution path;
-- `结果：` as the observed outcome;
+- exact work-item URL and identifier;
+- work-item type or template when visible, and the work-item title or name as the primary statement of scope and symptom;
+- version and environment baseline, including relevant version/build/commit fields and readable screenshots, separated by owning component when multiple components participate;
+- trigger conditions and the reported reproduction or execution path;
+- observed outcome or failure signal;
+- expected outcome or exact acceptance signal, kept distinct from the observed outcome and marked missing when the work item does not state it;
+- the original rendered field label or narrative source for each mapped baseline, trigger, observed-outcome, and expected-outcome value;
 - comments or remarks, including their authors, timestamps, reply context, links, and embedded evidence;
 - relevant activity-log state changes and the current work-progress state;
 - identifiers and names of linked work items, without recursively expanding them unless the user asks or their contents are necessary for the reported symptom;
 - relevant screenshots, attachments, logs, branches, and environment notes;
-- the exact acceptance signal to reproduce or verify;
 - missing or unreadable evidence.
+
+Feishu field names are template-specific. Map rendered evidence to the semantic slots above instead of requiring fixed keys. Labels such as `测试版本：`, `复现步骤：`, and `结果：` are one valid existing pattern, not a contract; another bug template may expose equivalent evidence through fields such as software version, version screenshot, problem description, job or scene, key logs, or key files. Preserve the actual source label and do not treat an absent candidate label as missing evidence until the relevant visible narrative and fields have been checked.
 
 Open screenshots at a readable size. Do not infer their contents from thumbnails, filenames, URLs, flattened API text, or generic version fields.
 
@@ -97,7 +100,7 @@ Keep these categories explicit:
 - competing explanations;
 - unknowns.
 
-Do not replace the Issue Name with a broader theory. Separate workflow correctness from observability defects such as duplicate, absent, delayed, or misleading logs. A failed implementation or experiment invalidates that result, not automatically the underlying proposal.
+Do not replace the work-item title or name with a broader theory. Separate workflow correctness from observability defects such as duplicate, absent, delayed, or misleading logs. A failed implementation or experiment invalidates that result, not automatically the underlying proposal.
 
 Use the exact acceptance signal. Do not substitute a nearby warning, duplicate call, successful import, static call path, or syntax check for the behavior the issue reports.
 
