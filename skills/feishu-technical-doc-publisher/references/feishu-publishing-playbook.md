@@ -37,6 +37,10 @@ The first command previews planned files and existing-path conflicts. The write 
 
 If the project already has a more specific generator that assembles appendices or authoritative schemas, prefer it. Preserve its source boundaries and still apply the QA gates below.
 
+Freeze the exact publish artifact before accepting its inventory. Appendices, generated schemas, payload examples, and directory listings added after an earlier draft invalidate that earlier manifest. Either run the helper against the assembled reader-facing source or independently reconcile the exact final HTML/fragment set. For a split publication, create one composite ledger; per-fragment counts without a final total are not a completion contract.
+
+The composite ledger should include expected heading counts by level, tables by ordinal and identifying headers, diagram slot-to-DSL mappings, code-block count, a source-derived tail marker for each long code block, temporary placeholders, and deliberately deferred markers.
+
 ## 2. Browser And Target Preflight
 
 1. Prefer the Codex in-app browser, load `browser:control-in-app-browser`, and read its runtime documentation before browser actions. Fall back only under the conditions defined in `SKILL.md`, never silently.
@@ -45,18 +49,26 @@ If the project already has a more specific generator that assembles appendices o
 4. Do not change sharing or permissions as part of publishing unless requested.
 5. Reuse the logged-in session without inspecting credentials, cookies, storage, or profile files.
 
+For authorized multi-agent experiments, the coordinator must create pages serially and record one exact URL per worker. Local package preparation and read-only review may run in parallel, but in-app-browser cloud mutation is single-writer and must be serialized even across different target pages. A worker must open only its assigned URL, confirm the expected blank/initial body and unique title, and treat a mismatch as a stop condition. Do not let several workers click `New Docs` concurrently in a shared browser session or infer ownership from the newest untitled page.
+
+After a worker releases the in-app browser, allow the next worker one bounded fresh-state reconnect. If an old worker still cannot reacquire it, use the coordinator or a fresh worker turn on the already assigned URL. Do not poll indefinitely and do not silently switch to Chrome or another surface.
+
 When the supplied target is blank, record that once as standing publication authority and proceed through body insertion, diagrams, tables, cleanup, retries, and history-backed recovery without asking for confirmation at each stage. Reconfirm only when the page is unexpectedly populated, unrelated content could be overwritten, or the requested scope expands beyond that page.
 
 ## 3. Native Block Insertion Order
 
-A stable order is:
+A stable default order is:
 
-1. Insert or paste the ordinary body: headings, paragraphs, lists, tables, and code blocks.
-2. Convert headings to the intended native H1/H2/H3 levels and enable native numbering.
-3. For each manifest diagram, insert it at its slot through UML Board, verify the inserted block, and only then remove the entire visible slot block.
-4. Convert short positioning text to Callout/quote and create any deliberate two-column or Timeline blocks.
-5. Adjust every table's outer and inner widths, using the generated table inventory as an `adjusted/total` checklist.
-6. Perform editorial search, visual QA, save verification, and reload verification.
+1. Insert the complete ordinary body in one rich-text paste: headings, paragraphs, lists, tables, code blocks, and diagram slots.
+2. Inspect the full outline and correct H1/H2/H3 semantics after all headings exist. Apply native numbering only when the editor exposes a reliable control.
+3. Process every manifest diagram in one diagram pass. Keep each diagram transactional: insert, preview, confirm, delete its slot, and update the ledger before continuing.
+4. Convert short positioning text to Callout/quote and create deliberate two-column or Timeline blocks after the main structure is stable.
+5. Process every table in one table pass. Establish the shared outer boundary, then apply content-aware internal widths and record `adjusted/total`.
+6. Perform editorial search, visual QA, save verification, reload verification, and manifest reconciliation.
+
+This phase-batched order reduces repeated switching between the document editor, UML Board, and embedded Sheet. Do not default to publishing one section through prose, numbering, UML, and table layout before starting the next section. Use that local loop only for a genuinely small patch. If a skeleton is necessary, create semantic headings and sibling component slots only; do not wrap prose or slots inside the numbered heading list.
+
+Keep the diagram pass before the table pass by default. A table-first batch is workable when required, but Sheet state can survive into later navigation. Before opening the first Board, explicitly exit Sheet/full-screen state, re-establish ordinary document focus, discard every saved coordinate, and locate each diagram again from its final-artifact slot.
 
 For block creation, hover the block's left type icon, open its menu, and use `Insert Below`. This is more stable than relying on `/` input. The catalog is context-sensitive: page-root and ordinary blocks expose more options than some nested containers. If a component is absent inside a column or Synced Block, insert it as a sibling instead of forcing unsupported nesting.
 
@@ -64,13 +76,30 @@ The full catalog can include ordinary text, headings, lists, code, Table, Column
 
 Use rich-text paste for ordinary structure, but never assume a recognized table or code block is visually finished.
 
+### Safe broad-paste transaction
+
+Before a full-body or large-fragment paste:
+
+1. Click the visible empty-body prompt or use the last verified root document block's menu to `Insert Below` and create an ordinary sibling.
+2. Type a harmless temporary sentinel to prove where input lands.
+3. Confirm that the active editing root is the main document sibling, not a comment composer, list item, Callout, table, code block, Board, or Sheet. A current DOM class such as `.page-block.root-block` may be supporting evidence, but it is not a stable API.
+4. Undo or remove the sentinel.
+5. Paste the complete HTML fragment once.
+6. Immediately verify an early anchor, a tail anchor, and the initial heading/table/code counts before proceeding.
+
+Never target the last or a generic `[contenteditable=true]`; Feishu may place a comment composer after the document body.
+
+One complete-body paste is the default. Split the main body and appendix only when payload size, independent generation, or a demonstrated editor limitation requires it. Insert every later fragment through `Insert Below` as a verified root sibling, repeat the focus probe, and reconcile the complete outline and composite ledger immediately afterward.
+
 ## 4. Heading Numbering
 
 - Heading content contains only its semantic title: `结果可信边界`, not `9.0 结果可信边界`.
-- Enable the native numbered-list option on heading blocks so Feishu generates `9`, `9.1`, `9.2`, and later renumbers on insertion or deletion.
+- Complete the body and confirm every heading in the outline before changing numbering. Do not number headings while publishing sections one by one.
+- Enable Feishu-native numbering only when the current editor exposes a reliable heading-number control. If it does not, leave headings unnumbered; never add manual numeric prefixes or test list shortcuts against an uncertain document cursor.
 - A native number is separately clickable and exposes `Continue numbering`, `Restart numbering`, and `Customize numbering value`.
 - After paste, inspect every heading level and the left outline. Rich-text import may recognize `1. Title` but preserve `9.1 Title` as literal text.
 - Use exact document Find/Replace for repeated manual prefixes. Never use global `Ctrl+A` to repair headings.
+- Do not build a skeleton as `<ol><li><h2>Title</h2><p>body or slot</p></li></ol>`. It can number the body and component slots as nested list items. A useful skeleton contains headings only; body and slots remain ordinary sibling blocks, and numbering is deferred.
 
 ## 5. Table Layout
 
@@ -103,6 +132,19 @@ Useful starting points, not fixed rules:
 
 If the last column is not visible in full-screen mode, reduce the table zoom before dragging; the viewport edge is not necessarily the table edge. If a formula bar shows content but the document cell looks empty, clear local formatting or copy formatting from a healthy peer cell before assuming data loss.
 
+### Preferred numeric-width path
+
+When the embedded Sheet exposes a `Column Width ... Pix` menu, it is usually faster and more repeatable than divider dragging:
+
+1. Scroll the table far enough below the floating document toolbar that the column-letter row is unobstructed. If the embedded document view does not expose the numeric-width menu, enter Sheet full-screen mode; do not assume the menu exists in both views.
+2. Click a cell once to activate the embedded Sheet. The first click or right-click may only activate it; reacquire the UI and verify that the column menu is actually open before typing.
+3. Decide the common outer-width budget and target pixel width for each used column from the manifest percentages.
+4. Set columns from rightmost to leftmost so expanding earlier columns does not push an unprocessed right-side header out of the viewport.
+5. Right-click the column-letter header, select the exact numeric `Column Width ... Pix` item rather than `Autofit Column Width`, enter the target number, then click that same numeric menu item to commit. `Enter`, `Tab`, clicking outside, or repeated stepper clicks may not commit reliably.
+6. Recheck the table's outer boundary, headers, and representative cells in document view before marking it adjusted.
+
+Only type when the numeric width input is visibly present. A wrong focus can edit a selected cell or header instead of the width. If the numeric menu is absent, use full-screen divider dragging. `Autofit Column Width` is useful for short label columns, but applying it to long explanation columns can make the table excessively wide; give those columns the remaining shared-width budget instead.
+
 ### Table completion gate
 
 The generated manifest inventories every Markdown table and provides a suggested content-based percentage per column. Use it to locate and size each cloud table; the suggestion is a starting point, not an automatic Feishu setting.
@@ -122,6 +164,16 @@ Open `UML Diagram`. This first opens a blank Board and its template panel; the P
 
 Do not search the top-right document overflow menu or `More Templates` for PlantUML, and do not conclude that the feature is unavailable from those panels. Prefer semantic text/role locators after each menu opens. When a semantic locator is unavailable, take a fresh screenshot immediately before the single coordinate action; never chain coordinates learned from an earlier layout state.
 
+For a repeated diagram pass, use this stable interaction rhythm:
+
+- leave the previous Board's focus before using the document outline; if the outline changes its URL/hash but does not scroll, press `Esc` once, reacquire the current state, and retry;
+- paste the complete DSL in one clipboard operation rather than typing it incrementally;
+- after pasting, click the preview area or otherwise move focus out of the code editor so Feishu starts rendering;
+- allow the preview to settle before judging it. `Insert` can remain disabled briefly, and an immediate screenshot can still show the default example;
+- after the first successful diagram, reuse the same semantic sequence, but continue to reacquire menus and never replay a chain of stale coordinates.
+
+After returning from each Board, immediately compare the adjacent heading and its outline entry with the expected title from the final artifact. A rendered diagram can coexist with accidental Board chrome text in the surrounding document. Perform the same comparison after reload; search for generic editor-chrome pollution, using strings such as `Add Icon` or `Add Cover` only as examples rather than a fixed protocol.
+
 ### Diagram slot contract
 
 - A local source or generated publication draft may contain a human-readable slot such as `图位 01`, an HTML comment, or another clearly temporary block. The exact sentence is not fixed and must never be used as the workflow contract.
@@ -139,7 +191,7 @@ Before clicking `Insert`:
 1. Resolve every generated compatibility warning or document why it is safe.
 2. Confirm the preview contains the intended diagram, not a PlantUML version/sponsor error image or `Syntax Error` panel.
 3. Prefer established syntax supported by the displayed Feishu renderer. For decision flow, use activity-diagram `if / then / else / endif`; do not declare a standalone `diamond` node.
-4. If the preview fails, fix the DSL or choose a simpler supported diagram type. Never insert the error preview as a placeholder.
+4. If Classic preview also fails, fix the DSL or choose a simpler supported diagram type. If only Board Style reports a syntax or converter-compatibility error for otherwise sound PlantUML, switch to Classic after one bounded attempt rather than repeatedly deleting valid DSL or distorting the model. Never insert an error preview as a placeholder.
 
 ### Choose style by diagram complexity
 
@@ -167,16 +219,17 @@ For each diagram, use this transaction:
 1. Navigate to the manifest slot and open that block's `Insert Below` menu.
 2. Select `UML Diagram`; wait for the Board to finish opening.
 3. Open the left-toolbar nine-dot/More menu and select `PlantUML Diagram`.
-4. Paste the mapped DSL, inspect the preview, and choose Board or Classic Style by complexity.
+4. Choose Board or Classic Style by complexity, paste the mapped DSL, move focus to the preview, wait for rendering, and inspect the result.
 5. Click `Insert`, return to the document, and visually confirm the drawing is directly associated with the intended section.
 6. Delete the whole slot block through its block menu.
-7. Search the manifest placeholder and local diagram filename; both must return zero matches.
+7. Compare the adjacent heading and outline entry with the final artifact, then search the manifest placeholder and local diagram filename; all must pass before marking the diagram complete.
 
 Keep public captions semantic. Do not show `PlantUML`, DSL instructions, or local insertion markers in the final page.
 
 ## 7. Safe Incremental Editing
 
 - Prefer block menus, exact Find/Replace, cell-level table edits, and local section replacement.
+- Treat every return from Find, Board, Sheet, full-screen mode, or the outline as a new layout state. Reacquire the intended block and its current bounding box before clicking; a changed URL hash or coordinates captured before the transition do not prove that the document scrolled to the target. If the wrong embedded component activates, press `Esc`, recapture the current UI, and retry once from the exact source-derived anchor.
 - Never issue `Ctrl+A` in the document, code block, or table editor. Focus can escape the intended block and select the full page.
 - When replacing a code block, insert a new code block, paste the complete validated content, verify it, and only then delete the obsolete block.
 - In table cells, select the exact cell, enter cell-edit mode when needed, and verify the row after pressing Enter. Do not infer paste success from keyboard completion.
@@ -203,13 +256,14 @@ Before declaring completion:
 - wait for `Saved to cloud`;
 - reload the page;
 - confirm the document title and first/background section;
-- open the outline and check heading levels and continuous numbering;
+- open the outline and check heading levels; when native numbering is enabled, also check that it remains continuous;
 - navigate to the last appendix/API section to prove the tail survived;
 - use Find for removed field names, process-only phrases, diagram markers, and local paths;
 - inspect every inventoried table for the common outer width and readable internal widths, and reconcile the `adjusted/total` count;
 - inspect every diagram for an actual rendered drawing, syntax-error images, overlap, and duplicate board objects, and reconcile the `rendered/total` count;
 - search every manifest diagram placeholder and generic placeholder/instruction patterns; all must be absent from the public page;
 - confirm code blocks contain the intended full payload/schema rather than a partial paste;
+- for every long code block with an independent scroll container, scroll inside the block to a source-derived tail marker and confirm its closing structure; outer page height, the next heading's visibility, and code-block count alone do not prove completeness;
 - verify deliberately undecided sections contain only the agreed placeholder, commonly `待定`.
 
 Feishu may virtualize off-screen content after reload. Use the outline to prove the full heading structure, then combine native Find with targeted anchor navigation or scrolling to verify representative early, middle, and tail content. Do not treat the currently rendered DOM or first viewport as proof that the full document survived.
@@ -230,6 +284,7 @@ Record a compact local result:
 - Cloud state: Saved to cloud, reloaded
 - Tables adjusted: <adjusted/total, common boundary, explicit exceptions>
 - Diagrams rendered: <rendered/total, DSL paths, preview and reload result>
+- Headings/code blocks reconciled: <counts by level, code total, long-block tail checks>
 - Representative prose sections checked: <names>
 - Targeted searches: <terms and results>
 - Deferred: <items or none>

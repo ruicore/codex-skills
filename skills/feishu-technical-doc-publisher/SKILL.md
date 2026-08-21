@@ -82,6 +82,8 @@ Fall back to another browser surface only when the in-app browser is unavailable
 
 Reuse an already authenticated browser session when available, but never inspect or persist cookies, tokens, passwords, local storage, or profile data. Authentication permits the requested document operation only; it does not authorize editing other pages, changing sharing, deleting unrelated content, or creating extra documents unless the user asked for it.
 
+When several agents are authorized to publish experiments or independent variants, parallelize local preparation and read-only review, but treat Codex in-app-browser mutation as a single-writer resource. Serialize page creation and all cloud-editing workers, and assign each worker an exact target URL before its first write. Each worker must re-read the assigned URL, title, and initial body state and must stop if they do not match the assignment. Never infer page ownership from the newest `Untitled document`, a shared browser's selected tab, or a title prefix.
+
 ## Side-Effect Policy
 
 - **Default level:** `local-files` for publication drafts, generated packages, extracted DSL, and publish records.
@@ -93,6 +95,20 @@ Reuse an already authenticated browser session when available, but never inspect
 - Establish Edit History as the cloud recovery path before broad replacement. Do not perform unrelated deletion as cleanup.
 
 ## Core Workflow
+
+### Recommended Default Order
+
+Prefer phase batching for a complete local-Markdown-to-Feishu publication:
+
+1. Finish and freeze the exact reader-facing artifact that will be published, including generated appendices and schemas, then derive or reconcile the manifest, table inventory, code-block inventory, and diagram DSL from that exact artifact. If publication uses several paste fragments, create one composite ledger covering all fragments.
+2. When the target is blank, prove that focus belongs to the intended main-document root block, then insert the complete ordinary body in one rich-text paste: headings, prose, lists, tables, code, and diagram slots.
+3. Validate the complete outline and heading levels. Apply native Feishu numbering only when the current editor exposes a reliable control; never add manual numeric prefixes or experiment with list shortcuts section by section.
+4. Process all diagrams in one diagram pass, while keeping every diagram atomic: insert, preview, confirm, remove its slot, and mark the ledger before moving to the next diagram.
+5. Apply deliberate Callout, Timeline, column, or other presentation refinements after the main structure is stable.
+6. Process all inventoried tables in one table pass, establishing a common outer boundary and then setting content-aware internal widths.
+7. Run cleanup, save checks, reload, and complete diagram/table reconciliation.
+
+This is a recommended execution shape, not a rigid requirement. A small scoped patch can operate on one section. A headings-only skeleton can help when cloud-authored content cannot be assembled locally, but keep prose and component slots as ordinary sibling blocks and defer numbering until the structure is complete. Do not use strict section-at-a-time publication or a numbered skeleton by default: both increase editor-context switching, focus risk, and cleanup work. One complete-body paste is the default; split a main body and appendix only for a demonstrated size, generation, or editor limitation, and include every fragment in the composite ledger.
 
 ### 1. Build The Publication Package
 
@@ -107,9 +123,11 @@ python scripts/prepare_feishu_publish.py <source.md> --output-dir <publish-dir>
 
 The script extracts PlantUML fences, generates rich-text-ready Markdown/HTML, records a source hash, and reports editorial warnings. It does not edit Feishu. Diagram slots are local publication markers linked to manifest entries by ordinal/slot ID; their visible wording is not an API and must not be treated as a fixed string.
 
+The manifest must describe the exact final publish artifact, not an earlier editorial draft. If a project-specific generator appends schemas, payloads, directories, or another fragment after the helper runs, regenerate the package from the assembled publication source or independently reconcile the final fragment set before cloud mutation. Never accept an intermediate manifest whose heading, table, diagram, placeholder, or code-block counts differ from the payload that will actually be pasted.
+
 Use the generated table inventory as a completion checklist. Its width percentages are starting suggestions, not proof of cloud layout. Resolve PlantUML compatibility warnings before insertion, and still require a successful Feishu preview because static checks cannot prove renderer compatibility.
 
-Before cloud mutation, create a publication ledger from the manifest with one pending row per table and diagram. Record identifying headers for tables and the manifest placeholder/DSL path for diagrams. Counts inferred from the visible first screen are not sufficient.
+Before cloud mutation, create a publication ledger from the exact final artifact. Record expected heading counts by level; one pending row per table and diagram; identifying table headers; the diagram placeholder/DSL mapping; code-block count; a source-derived tail marker for every long code block; temporary-placeholder count; and intentionally deferred markers. Counts inferred from the visible first screen are not sufficient.
 
 ### 2. Rewrite For A No-Context Reader
 
@@ -124,7 +142,7 @@ Use [Editorial workflow](references/editorial-workflow.md) for the detailed narr
 
 ### 3. Choose Native Feishu Blocks Deliberately
 
-- Use native H1/H2/H3 and Feishu numbering. Heading text must not contain hand-maintained numeric prefixes.
+- Use native H1/H2/H3. Validate all headings through the complete outline before applying numbering. Prefer Feishu-native numbering when a reliable control is visible; if it is not, keep semantic headings unnumbered instead of adding hand-maintained prefixes or trying list shortcuts against an uncertain cursor focus.
 - Use Callout or quote blocks only for short positioning statements, hard constraints, or risks. Give a rule one primary expression; do not repeat the same sentence in an opening paragraph, Callout, quote, and table.
 - Use native tables for repeated mappings and comparisons; use code blocks for compact payloads and configuration.
 - Use a native Table of Contents for long pages only when it improves in-page onboarding; the native outline may already be sufficient. Use Equation for genuine mathematical notation; keep both full-width.
@@ -138,7 +156,8 @@ Use [Editorial workflow](references/editorial-workflow.md) for the detailed narr
 
 - Inspect the target page and its current structure before changing it. When existing content matters, note the page title and last-modified state and know how to reach Edit History.
 - Prefer block-level operations and `Insert Below`. Use rich-text paste for ordinary headings, lists, tables, and code; insert extracted PlantUML diagrams separately through UML Board.
-- Process every diagram as an atomic transaction: locate its manifest slot, insert and validate the diagram, return to the document, confirm the rendered block is in the intended position, then delete that entire slot block. Never leave a local insertion instruction or filename in the public page.
+- Before any broad rich-text paste, click the visible empty-body prompt or an explicitly created root-level sibling, type and undo a harmless focus probe, and verify that editing focus belongs to the main document rather than a comment composer, list, table, code block, or embedded component. Never select a generic or last `contenteditable` as the paste target.
+- Process every diagram as an atomic transaction: locate its manifest slot, insert and validate the diagram, return to the document, confirm the rendered block is in the intended position, compare the adjacent heading and outline text with the final artifact, then delete that entire slot block. Never leave a local insertion instruction or filename in the public page.
 - Complete an individual outer-width and content-aware column-width pass for every table in the generated inventory. Sampling representative tables is insufficient for publication completion. Clicking an autofit/distribute command is not completion until the resulting widths are visually checked in document view.
 - In the PlantUML modal, do not click `Insert` unless the preview shows the intended diagram with no syntax-error panel. A Board block existing in the document is not evidence that its diagram rendered.
 - Never use global `Ctrl+A` in the Feishu document, code block, or table editor. It can select and overwrite the entire document.
@@ -152,16 +171,18 @@ Use [Feishu publishing playbook](references/feishu-publishing-playbook.md) for t
 Verify the published page as a reader, not merely as an editor:
 
 - the first screen explains why the document exists and what it proposes;
-- the outline is coherent and Feishu numbering is continuous;
+- the outline is coherent, and Feishu-native numbering is continuous when numbering is enabled;
 - every inventoried table retains its headers and representative cell content, was individually adjusted, shares the document's chosen outer boundary, and allocates internal columns by content; an empty-looking or default equal-width import is incomplete unless the content and uniform sizing are both intentionally correct;
 - every diagram rendered successfully in the Feishu preview and remains a real diagram after insertion and reload, with no syntax-error image, overlapping labels, or duplicate board objects;
+- every diagram's adjacent heading and outline text still match the final artifact, with no Board chrome or editor text mixed into public content;
+- the actual heading counts by level and code-block count match the final-artifact ledger; long independently scrollable code blocks reach a source-derived tail marker and valid closing structure after reload;
 - unresolved sections say `待定` and no invented detail appears;
 - process-only phrases, local paths, diagram placeholders, and removed field names do not remain;
 - the page reports `Saved to cloud`.
 
 Reload the page and repeat targeted checks. A successful paste or visible save indicator before reload is not sufficient proof.
 
-Reconcile the manifest transactionally: `content-verified and adjusted tables == manifest tables`, `rendered diagrams == manifest diagrams`, and `remaining manifest placeholders == 0`. If any equality fails, publication is incomplete regardless of how much prose was successfully pasted.
+Reconcile the exact-final-artifact ledger transactionally: heading counts by level match; `content-verified and adjusted tables == ledger tables`; `rendered diagrams == ledger diagrams`; code-block count and long-block tail checks pass; and `remaining temporary placeholders == 0`. If any equality fails, publication is incomplete regardless of how much prose was successfully pasted.
 
 Feishu may virtualize off-screen blocks after reload. Verify the outline, then use native Find plus targeted anchor navigation or scrolling to inspect representative early, middle, and tail sections; a first-screen snapshot does not prove that the full document survived.
 
@@ -175,6 +196,7 @@ After cloud refinements, update the maintainable local publication source so a l
 - table layout completion as `adjusted/total`, including any explicit exceptions;
 - diagram render completion as `rendered/total`, including the Feishu preview and reload check;
 - representative sections visually checked;
+- heading/code-block reconciliation and long-block tail checks performed;
 - exact cloud-save/reload verification performed;
 - any intentionally deferred content.
 
@@ -195,7 +217,7 @@ Do not claim cloud completion when only local artifacts were prepared.
 ## Failure And Recovery Rules
 
 - If content on an initially blank publication target becomes missing, duplicated, or broadly replaced during the task, use Edit History to restore the nearest known-good revision, reload, verify the outline, and continue without requesting another confirmation. Stop for user direction only when the history does not contain a safe recovery point or unrelated pre-existing content is at risk.
-- Use Board Style for simple editable diagrams. For dense branching, high-degree center nodes, or long edge labels, choose Classic Style up front. If a Board attempt remains unreadable after one bounded simplification pass, switch to Classic rather than repeatedly rewriting a sound diagram to fit the Board layout engine.
+- Use Board Style for simple editable diagrams. For dense branching, high-degree center nodes, or long edge labels, choose Classic Style up front. If a Board attempt remains unreadable after one bounded simplification pass, switch to Classic rather than repeatedly rewriting a sound diagram to fit the Board layout engine. If Board first reports a syntax or converter-compatibility failure for otherwise sound PlantUML, prefer Classic after one bounded attempt instead of repeatedly deleting valid DSL merely to satisfy Board Style.
 - Feishu's embedded PlantUML may lag the current release. Prefer established syntax and treat the modal's displayed renderer as authoritative. Do not use standalone `diamond` declarations for decisions; use activity-diagram `if / then / else / endif` or supported structural nodes. If preview fails, fix or replace the DSL before insertion.
 - Do not infer that Feishu lacks PlantUML because it is absent from the initial UML template panel or a top-right overflow menu. In the opened Board, use the left floating toolbar's nine-dot/More menu, then choose `PlantUML Diagram`. Reacquire the current screenshot and semantic labels at each menu boundary; do not replay stale coordinates through several changing menus.
 - Do not silently substitute draw.io, Graphviz, or static images for requested native UML. If the documented PlantUML entry still cannot be reached after one fresh-state retry, leave the local slot intact, make no substitute cloud insertion, and report that diagram publication is incomplete.
