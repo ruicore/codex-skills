@@ -32,6 +32,7 @@ Current skills:
 
 - `agentic-repository-execution` (secondary)
 - `diagnose`
+- `feishu-issue-debugger`
 - `repository-layout-refactor`
 - `tdd`
 
@@ -91,6 +92,7 @@ connected account with repeatable guardrails.
 Current skills:
 
 - `buffer-publisher`
+- `feishu-issue-debugger` (secondary)
 - `feishu-technical-doc-publisher`
 - `genmedia`
 - `paper-mcp`

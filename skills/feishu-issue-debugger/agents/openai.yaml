@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Issue Debugger"
+  short_description: "Evidence-led diagnosis for Feishu Project issues"
+  default_prompt: "Use $feishu-issue-debugger to investigate this Feishu Project issue from authoritative evidence."
