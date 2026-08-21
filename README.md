@@ -112,12 +112,12 @@ Some category memberships are secondary; the registry records those in `secondar
 
 | Category | Current skills | Primary use |
 |---|---|---|
-| <code>core&#8209;engineering</code> | `agentic-repository-execution`, `diagnose`, `repository-layout-refactor`, `tdd` | Implementation, debugging, testing, refactoring, and feedback loops. |
+| <code>core&#8209;engineering</code> | `agentic-repository-execution`, `diagnose`, `feishu-issue-debugger`, `repository-layout-refactor`, `tdd` | Implementation, debugging, testing, refactoring, and feedback loops. |
 | <code>review&#8209;audit</code> | `agent-legibility-review`, `architecture-review`, `database-access-audit`, `grill-me`, `grill-with-docs`, `python-backend-review`, `python-ecosystem-review` | Evidence-first review, critique, architecture assessment, and audit work. |
 | <code>planning&#8209;execution</code> | `agentic-repository-execution`, `prd-to-issues`, `repository-layout-refactor`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts and migration slices. |
 | <code>agent&#8209;memory</code> | `decision-trace-writer`, `radar-analysis`, `weekly-radar-ingestion` | Preserving durable context or analyzing stored agent-readable records. |
 | <nobr><code>research</code></nobr> | `ai-career-signal-researcher`, `brand-deal-researcher` | Gathering, evaluating, synthesizing, or prioritizing external signals. |
-| <code>tool&#8209;ops</code> | `buffer-publisher`, `feishu-technical-doc-publisher`, `genmedia`, `paper-mcp`, `readwise-cli-control` | Operating a specific external tool, local service, CLI, API, or connected account. |
+| <code>tool&#8209;ops</code> | `buffer-publisher`, `feishu-issue-debugger`, `feishu-technical-doc-publisher`, `genmedia`, `paper-mcp`, `readwise-cli-control` | Operating a specific external tool, local service, CLI, API, or connected account. |
 | <code>visual&#8209;artifacts</code> | `excalidraw-diagrams`, `paper-deck-style` | Creating, editing, or styling visual deliverables. |
 | <nobr><code>publishing</code></nobr> | `buffer-publisher`, `brand-deal-researcher`, `feishu-technical-doc-publisher`, `genmedia` | Preparing, scheduling, queueing, publishing, or packaging outward-facing artifacts. |
 
@@ -145,6 +145,7 @@ Some category memberships are secondary; the registry records those in `secondar
 | <nobr><a href="skills/brand-deal-researcher/"><code>brand&#8209;deal&#8209;researcher</code></a></nobr> | Converts sponsorship and paid-promotion emails into researched, prioritized lead lists. | Missing real opportunities, duplicate follow-ups, weak fit scoring, and unverified brand claims. |
 | <nobr><a href="skills/buffer-publisher/"><code>buffer&#8209;publisher</code></a></nobr> | Operates Buffer accounts, channels, ideas, drafts, queues, and scheduled posts through the GraphQL API. | Accidental publishing, wrong-channel posts, missing preflight checks, and unsafe social-post mutations. |
 | <nobr><a href="skills/excalidraw-diagrams/"><code>excalidraw&#8209;diagrams</code></a></nobr> | Creates polished editable Excalidraw diagrams from text descriptions and structured plans. | Unclear diagram scope, inconsistent visual style, and non-editable one-off visuals. |
+| <nobr><a href="skills/feishu-issue-debugger/"><code>feishu&#8209;issue&#8209;debugger</code></a></nobr> | Investigates Feishu Project issues against rendered evidence and exact local code baselines while keeping the issue read-only. | Missing comments or attachments, mismatched versions, shared-download evidence collisions, speculative root causes, and accidental issue mutation. |
 | <nobr><a href="skills/feishu-technical-doc-publisher/"><code>feishu&#8209;technical&#8209;doc&#8209;publisher</code></a></nobr> | Publishes authoritative local Markdown as reader-ready native Feishu technical documentation. | Context-dependent prose, stale cloud-only edits, unsafe whole-document replacement, unreadable tables or diagrams, and unverified saves. |
 | <nobr><a href="skills/genmedia/"><code>genmedia</code></a></nobr> | Uses the genmedia CLI to discover, inspect, run, and manage fal.ai model endpoints. | Invented endpoint IDs, schema guessing, credential leakage, and untracked generated media. |
 | <nobr><a href="skills/paper-deck-style/"><code>paper&#8209;deck&#8209;style</code></a></nobr> | Guides minimal, spacious, high-end Paper slide deck design. | Crowded slides, text-heavy decks, mismatched section styles, and weak visual hierarchy. |

@@ -449,6 +449,50 @@
       "portability_notes": "Tool-specific workflow that assumes excalidraw-cli is installed and, for local previews, may depend on platform-specific preview tooling."
     },
     {
+      "name": "feishu-issue-debugger",
+      "path": "skills/feishu-issue-debugger",
+      "category": "core-engineering",
+      "secondary_categories": [
+        "tool-ops"
+      ],
+      "maturity": "personal-skill",
+      "purpose": "Investigates Feishu Project bug and performance issues against exact local repository versions, rendered issue evidence, comments, attachments, logs, and runtime observations while keeping the issue itself read-only.",
+      "triggers": [
+        "analyze or diagnose a Feishu Project issue from its issue link",
+        "collect complete rendered issue evidence, comments, screenshots, and attachments for local debugging",
+        "map a reported Feishu issue version to the correct local code baseline and prepare a local fix"
+      ],
+      "do_not_use_for": [
+        "ordinary Feishu documents",
+        "editing issue fields, status, assignees, comments, attachments, relations, or work progress",
+        "publishing evidence or performing Feishu issue administration",
+        "claiming root cause or validation from thumbnails, filenames, summaries, or mismatched code versions"
+      ],
+      "default_side_effect_level": "read-only",
+      "side_effect_level": "git-working-tree",
+      "requires_credentials": true,
+      "primary_outputs": [
+        "authoritative issue brief with rendered evidence and tested-version mapping",
+        "validated local evidence bundle for issue-specific images, attachments, logs, and comments",
+        "evidence-ranked diagnosis and verification plan",
+        "small local code fix and validation when explicitly authorized"
+      ],
+      "validation_expectations": [
+        "confirm the issue name and Description are rendered in the authenticated browser before proceeding",
+        "keep Feishu issue access read-only and stop at login or permission barriers",
+        "validate downloaded assets by type, content, provenance, and issue ownership before promoting them",
+        "map each rendered component version to the correct repository ref before interpreting code",
+        "separate rendered issue evidence, code facts, runtime observations, hypotheses, and unknowns in the report"
+      ],
+      "supporting_files": [
+        "skills/feishu-issue-debugger/references/delegation.md",
+        "skills/feishu-issue-debugger/references/evidence-and-validation.md",
+        "skills/feishu-issue-debugger/references/git-baselines.md"
+      ],
+      "agents_metadata_path": "skills/feishu-issue-debugger/agents/openai.yaml",
+      "portability_notes": "Practice-derived from authenticated Feishu Project investigation on Windows. Requires access to the target issue and adaptation to repository-specific local context, version naming, evidence roots, and browser capabilities. The Feishu issue remains strictly read-only; local implementation and Git changes require separate explicit authority."
+    },
+    {
       "name": "feishu-technical-doc-publisher",
       "path": "skills/feishu-technical-doc-publisher",
       "category": "publishing",
