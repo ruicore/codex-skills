@@ -91,6 +91,7 @@ connected account with repeatable guardrails.
 Current skills:
 
 - `buffer-publisher`
+- `feishu-technical-doc-publisher`
 - `genmedia`
 - `paper-mcp`
 - `readwise-cli-control`
@@ -113,6 +114,7 @@ Current skills:
 
 - `buffer-publisher`
 - `brand-deal-researcher`
+- `feishu-technical-doc-publisher`
 - `genmedia`
 
 `publishing` is often a secondary category. For example, `buffer-publisher` is

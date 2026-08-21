@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Technical Doc Publisher"
+  short_description: "Publish local Markdown as a polished Feishu technical doc"
+  default_prompt: "Use $feishu-technical-doc-publisher to turn this local Markdown design into a reader-ready Feishu technical document and verify the published page."
