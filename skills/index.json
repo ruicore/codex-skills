@@ -481,6 +481,7 @@
       "validation_expectations": [
         "run the publication helper dry-run before writing generated artifacts and refuse unreviewed overwrites",
         "review narrative as a reader without prior conversation context before cloud mutation",
+        "treat an initially blank named Feishu target as standing page-scoped publication authority without repeated confirmations",
         "use a frontier execution model with high or xhigh reasoning for cloud mutation that includes UML Board or table layout work",
         "verify every manifest table's content and widths, every diagram's rendered output, zero remaining diagram placeholders, sensitive-data hygiene, and exact deferred content",
         "wait for cloud save, reload the target page, and reconcile manifest counts before reporting completion"

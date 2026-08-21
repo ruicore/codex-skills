@@ -40,10 +40,12 @@ If the project already has a more specific generator that assembles appendices o
 ## 2. Browser And Target Preflight
 
 1. Prefer the Codex in-app browser, load `browser:control-in-app-browser`, and read its runtime documentation before browser actions. Fall back only under the conditions defined in `SKILL.md`, never silently.
-2. Open the exact target URL. Confirm title, current content, edit access, and whether the user authorized replacing it.
+2. Open the exact target URL. Confirm title, current content, edit access, and whether it is the initially blank destination supplied by the user.
 3. If the page already contains useful content, note the last-modified state and locate Edit History before a broad change.
 4. Do not change sharing or permissions as part of publishing unless requested.
 5. Reuse the logged-in session without inspecting credentials, cookies, storage, or profile files.
+
+When the supplied target is blank, record that once as standing publication authority and proceed through body insertion, diagrams, tables, cleanup, retries, and history-backed recovery without asking for confirmation at each stage. Reconfirm only when the page is unexpectedly populated, unrelated content could be overwritten, or the requested scope expands beyond that page.
 
 ## 3. Native Block Insertion Order
 
@@ -192,7 +194,7 @@ If a broad selection or paste overwrites the document:
 5. Verify title, early sections, late appendices, representative tables, and diagrams before reapplying changes.
 6. Reapply only scoped edits, starting with the maintainable local draft.
 
-Do not attempt to reconstruct a long document from the remaining visible fragment when a known-good revision exists.
+For an initially blank target assigned to this publication, the original authorization covers this restore-and-retry sequence; do not pause for another confirmation. Do not attempt to reconstruct a long document from the remaining visible fragment when a known-good revision exists. Ask for direction only when no safe revision exists or unrelated content would be affected.
 
 ## 9. Reload Verification
 

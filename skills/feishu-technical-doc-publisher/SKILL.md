@@ -28,7 +28,7 @@ Turn a local engineering conclusion into a durable publication package and a vis
 
 - **Authoritative local source:** infer from the named file or repository convention; stop if multiple conflicting candidates remain.
 - **Target Feishu page:** must be explicit before cloud mutation.
-- **Publication mode:** infer section-level editing when the user names sections; require explicit authority before replacing an existing populated page.
+- **Publication mode:** when the user supplies an initially blank target page for publication, treat that assignment as standing authority to edit and replace content on that page throughout the publication task. Require explicit replacement authority only when the target was already populated with content that may matter.
 - **Reader and purpose:** infer from the document and user request, then choose a primary emphasis: general reader narrative, architecture review, implementation contract, or a mixed publication. State material assumptions in the local draft.
 - **Reference documents and style constraints:** inspect when the user supplies them; do not copy their business content.
 - **Deferred content:** preserve the user's latest instruction exactly, commonly as `待定`.
@@ -68,6 +68,12 @@ For a full local-Markdown-to-Feishu task, read both references before mutating t
 4. Never make the Feishu page the only source of a diagram DSL, schema, payload, or settled decision.
 5. Do not expose local paths, private evidence, secrets, authenticated commands, cookies, tokens, or browser storage in the public document.
 
+### Blank target standing authority
+
+If the user initially gives a blank Feishu page as the publication destination, the original request authorizes all ordinary edits needed to complete that document: full-body paste or replacement, heading conversion, block insertion, UML creation, table resizing, placeholder deletion, corrections, retries, removal of broken blocks, and restoration through Edit History. Do not repeatedly ask “是否确认写入” or “是否现在执行” between those steps.
+
+This standing authority remains limited to the named page and the requested publication. It does not authorize editing other pages, changing sharing or permissions, deleting the page itself, or publishing unrelated material. Ask again only if the page was not actually blank, unrelated content appears, the requested scope materially changes, Edit History is unavailable for a risky recovery, or another authority boundary is reached.
+
 ## Browser Boundary
 
 Prefer the Codex in-app browser for all Feishu UI work. Load and follow the `browser:control-in-app-browser` skill before browser actions, and reuse an authenticated in-app session when one is available. If the user explicitly requests the in-app browser, that choice is binding.
@@ -82,6 +88,7 @@ Reuse an already authenticated browser session when available, but never inspect
 - **Maximum normal level:** `publish` when the user explicitly asks to write to a named Feishu destination.
 - Treat target-page inspection as read-only until the user has requested the cloud edit.
 - Preview the local reader-facing draft and generated package before publication. Existing generated files require an explicit `--force`; an existing populated Feishu page requires explicit replacement authority.
+- An initially blank target with Edit History enabled does not require separate confirmations for successive publication actions or bounded recovery attempts. Continue until the document passes its gates or encounters a genuine blocker.
 - Use only the intended authenticated account and page. Do not expose credentials or private source material.
 - Establish Edit History as the cloud recovery path before broad replacement. Do not perform unrelated deletion as cleanup.
 
@@ -187,7 +194,7 @@ Do not claim cloud completion when only local artifacts were prepared.
 
 ## Failure And Recovery Rules
 
-- If the target content is unexpectedly missing, duplicated, or broadly replaced, stop editing. Open Edit History, restore the nearest known-good revision, reload, and verify the full outline before reapplying scoped changes.
+- If content on an initially blank publication target becomes missing, duplicated, or broadly replaced during the task, use Edit History to restore the nearest known-good revision, reload, verify the outline, and continue without requesting another confirmation. Stop for user direction only when the history does not contain a safe recovery point or unrelated pre-existing content is at risk.
 - Use Board Style for simple editable diagrams. For dense branching, high-degree center nodes, or long edge labels, choose Classic Style up front. If a Board attempt remains unreadable after one bounded simplification pass, switch to Classic rather than repeatedly rewriting a sound diagram to fit the Board layout engine.
 - Feishu's embedded PlantUML may lag the current release. Prefer established syntax and treat the modal's displayed renderer as authoritative. Do not use standalone `diamond` declarations for decisions; use activity-diagram `if / then / else / endif` or supported structural nodes. If preview fails, fix or replace the DSL before insertion.
 - Do not infer that Feishu lacks PlantUML because it is absent from the initial UML template panel or a top-right overflow menu. In the opened Board, use the left floating toolbar's nine-dot/More menu, then choose `PlantUML Diagram`. Reacquire the current screenshot and semantic labels at each menu boundary; do not replay stale coordinates through several changing menus.
