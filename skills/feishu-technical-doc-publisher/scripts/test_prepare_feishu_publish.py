@@ -13,6 +13,35 @@ SPEC.loader.exec_module(publisher)
 
 
 class PublicationPreflightTests(unittest.TestCase):
+    def test_diagram_placeholder_is_generic_and_manifest_addressable(self) -> None:
+        placeholder = publisher.diagram_placeholder(1)
+
+        self.assertEqual(publisher.diagram_slot_id(1), "diagram-01")
+        self.assertEqual(placeholder, "【图位 01｜发布占位】")
+        self.assertNotIn(".puml", placeholder)
+        self.assertNotIn("请在飞书中插入", placeholder)
+        self.assertNotIn("完成后删除", placeholder)
+
+    def test_plantuml_extraction_maps_placeholder_to_dsl(self) -> None:
+        source = """\
+# Flow
+
+```plantuml
+@startuml
+Alice -> Bob
+@enduml
+```
+"""
+        publish_text, diagrams = publisher.extract_plantuml_diagrams(
+            source, Path("generated/diagrams")
+        )
+
+        self.assertIn("【图位 01｜发布占位】", publish_text)
+        self.assertNotIn("请在飞书中插入", publish_text)
+        self.assertEqual(diagrams[0]["slot_id"], "diagram-01")
+        self.assertEqual(diagrams[0]["placeholder"], "【图位 01｜发布占位】")
+        self.assertTrue(str(diagrams[0]["path"]).endswith("diagram-01.puml"))
+
     def test_table_inventory_and_widths_are_content_aware(self) -> None:
         source = """\
 | 阶段 | 执行位置 | 主要能力 | 平台记录 |

@@ -33,6 +33,12 @@ Turn a local engineering conclusion into a durable publication package and a vis
 - **Reference documents and style constraints:** inspect when the user supplies them; do not copy their business content.
 - **Deferred content:** preserve the user's latest instruction exactly, commonly as `待定`.
 
+## Execution Model Gate
+
+Full cloud publication is a high-interaction browser task when it includes UML Board insertion, content-aware table sizing, or recovery from partial edits. Prefer `gpt-5.6-sol` with `high` or `xhigh` reasoning for that mutation phase. An equivalent current frontier model is acceptable only when it can reliably inspect screenshots, reacquire changing UI state, and complete the validation gates below.
+
+Do not use `gpt-5.6-terra` at `medium` reasoning, or a weaker execution profile, for the final Feishu mutation phase. Such a profile may prepare the local package or perform read-only inspection, but it must stop before cloud edits and ask the user to continue with the recommended model/effort. A skill cannot silently change its own model, so state this requirement before beginning the publication mutation.
+
 ## Evidence Hierarchy
 
 1. The user's latest explicit instruction, including target and mutation scope.
@@ -92,9 +98,11 @@ python scripts/prepare_feishu_publish.py <source.md> --output-dir <publish-dir> 
 python scripts/prepare_feishu_publish.py <source.md> --output-dir <publish-dir>
 ```
 
-The script extracts PlantUML fences, generates rich-text-ready Markdown/HTML, records a source hash, and reports editorial warnings. It does not edit Feishu.
+The script extracts PlantUML fences, generates rich-text-ready Markdown/HTML, records a source hash, and reports editorial warnings. It does not edit Feishu. Diagram slots are local publication markers linked to manifest entries by ordinal/slot ID; their visible wording is not an API and must not be treated as a fixed string.
 
 Use the generated table inventory as a completion checklist. Its width percentages are starting suggestions, not proof of cloud layout. Resolve PlantUML compatibility warnings before insertion, and still require a successful Feishu preview because static checks cannot prove renderer compatibility.
+
+Before cloud mutation, create a publication ledger from the manifest with one pending row per table and diagram. Record identifying headers for tables and the manifest placeholder/DSL path for diagrams. Counts inferred from the visible first screen are not sufficient.
 
 ### 2. Rewrite For A No-Context Reader
 
@@ -123,7 +131,8 @@ Use [Editorial workflow](references/editorial-workflow.md) for the detailed narr
 
 - Inspect the target page and its current structure before changing it. When existing content matters, note the page title and last-modified state and know how to reach Edit History.
 - Prefer block-level operations and `Insert Below`. Use rich-text paste for ordinary headings, lists, tables, and code; insert extracted PlantUML diagrams separately through UML Board.
-- Complete an individual outer-width and content-aware column-width pass for every table in the generated inventory. Sampling representative tables is insufficient for publication completion.
+- Process every diagram as an atomic transaction: locate its manifest slot, insert and validate the diagram, return to the document, confirm the rendered block is in the intended position, then delete that entire slot block. Never leave a local insertion instruction or filename in the public page.
+- Complete an individual outer-width and content-aware column-width pass for every table in the generated inventory. Sampling representative tables is insufficient for publication completion. Clicking an autofit/distribute command is not completion until the resulting widths are visually checked in document view.
 - In the PlantUML modal, do not click `Insert` unless the preview shows the intended diagram with no syntax-error panel. A Board block existing in the document is not evidence that its diagram rendered.
 - Never use global `Ctrl+A` in the Feishu document, code block, or table editor. It can select and overwrite the entire document.
 - Use native Find/Replace only for narrowly scoped, exact replacements. After removing text, delete empty headings, numbered items, and table formatting left behind.
@@ -137,13 +146,15 @@ Verify the published page as a reader, not merely as an editor:
 
 - the first screen explains why the document exists and what it proposes;
 - the outline is coherent and Feishu numbering is continuous;
-- every inventoried table was individually adjusted, shares the document's chosen outer boundary, and allocates internal columns by content; a default equal-width import is incomplete unless the content is genuinely uniform;
+- every inventoried table retains its headers and representative cell content, was individually adjusted, shares the document's chosen outer boundary, and allocates internal columns by content; an empty-looking or default equal-width import is incomplete unless the content and uniform sizing are both intentionally correct;
 - every diagram rendered successfully in the Feishu preview and remains a real diagram after insertion and reload, with no syntax-error image, overlapping labels, or duplicate board objects;
 - unresolved sections say `待定` and no invented detail appears;
 - process-only phrases, local paths, diagram placeholders, and removed field names do not remain;
 - the page reports `Saved to cloud`.
 
 Reload the page and repeat targeted checks. A successful paste or visible save indicator before reload is not sufficient proof.
+
+Reconcile the manifest transactionally: `content-verified and adjusted tables == manifest tables`, `rendered diagrams == manifest diagrams`, and `remaining manifest placeholders == 0`. If any equality fails, publication is incomplete regardless of how much prose was successfully pasted.
 
 Feishu may virtualize off-screen blocks after reload. Verify the outline, then use native Find plus targeted anchor navigation or scrolling to inspect representative early, middle, and tail sections; a first-screen snapshot does not prove that the full document survived.
 
@@ -179,6 +190,8 @@ Do not claim cloud completion when only local artifacts were prepared.
 - If the target content is unexpectedly missing, duplicated, or broadly replaced, stop editing. Open Edit History, restore the nearest known-good revision, reload, and verify the full outline before reapplying scoped changes.
 - Use Board Style for simple editable diagrams. For dense branching, high-degree center nodes, or long edge labels, choose Classic Style up front. If a Board attempt remains unreadable after one bounded simplification pass, switch to Classic rather than repeatedly rewriting a sound diagram to fit the Board layout engine.
 - Feishu's embedded PlantUML may lag the current release. Prefer established syntax and treat the modal's displayed renderer as authoritative. Do not use standalone `diamond` declarations for decisions; use activity-diagram `if / then / else / endif` or supported structural nodes. If preview fails, fix or replace the DSL before insertion.
+- Do not infer that Feishu lacks PlantUML because it is absent from the initial UML template panel or a top-right overflow menu. In the opened Board, use the left floating toolbar's nine-dot/More menu, then choose `PlantUML Diagram`. Reacquire the current screenshot and semantic labels at each menu boundary; do not replay stale coordinates through several changing menus.
+- Do not silently substitute draw.io, Graphviz, or static images for requested native UML. If the documented PlantUML entry still cannot be reached after one fresh-state retry, leave the local slot intact, make no substitute cloud insertion, and report that diagram publication is incomplete.
 - If a table cannot show all used columns after width adjustment, reduce the table zoom or reopen full-screen editing; do not mistake the viewport edge for the table boundary.
 - If the user has not authorized overwriting a populated target, do not clear it. Prepare local artifacts and request that authority.
 - If authentication is missing in the selected browser, stop and ask the user to sign in there; do not bypass it through another account or browser.

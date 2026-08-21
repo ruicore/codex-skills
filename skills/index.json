@@ -481,8 +481,9 @@
       "validation_expectations": [
         "run the publication helper dry-run before writing generated artifacts and refuse unreviewed overwrites",
         "review narrative as a reader without prior conversation context before cloud mutation",
-        "verify native heading numbering, consistent table widths, diagram readability, sensitive-data hygiene, and exact deferred content",
-        "wait for cloud save, reload the target page, and inspect both the beginning and final sections before reporting completion"
+        "use a frontier execution model with high or xhigh reasoning for cloud mutation that includes UML Board or table layout work",
+        "verify every manifest table's content and widths, every diagram's rendered output, zero remaining diagram placeholders, sensitive-data hygiene, and exact deferred content",
+        "wait for cloud save, reload the target page, and reconcile manifest counts before reporting completion"
       ],
       "supporting_files": [
         "skills/feishu-technical-doc-publisher/references/editorial-workflow.md",
@@ -491,7 +492,7 @@
         "skills/feishu-technical-doc-publisher/scripts/prepare_feishu_publish.py"
       ],
       "agents_metadata_path": "skills/feishu-technical-doc-publisher/agents/openai.yaml",
-      "portability_notes": "Practice-derived from Feishu Docs editing through an authenticated browser. Future users should adapt to current Feishu labels and available browser or connector capabilities, but retain preview-before-publication, local source-of-truth, block-level editing, Edit History recovery, and reload verification."
+      "portability_notes": "Practice-derived from Feishu Docs editing through an authenticated browser. Full cloud mutation currently recommends gpt-5.6-sol with high or xhigh reasoning; adapt the named model as capabilities evolve, but retain the frontier-model gate, preview-before-publication, local source-of-truth, block-level editing, Edit History recovery, per-table/per-diagram transactions, and reload verification."
     },
     {
       "name": "genmedia",

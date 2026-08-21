@@ -33,6 +33,8 @@ PROCESS_PHRASES = (
     "现有表最小扩展",
     "（PlantUML）",
     "【图：",
+    "请在飞书中插入",
+    "完成后删除本行",
 )
 DEFERRED_MARKERS = ("待定", "TBD", "TODO")
 PLANTUML_COMPATIBILITY_PATTERNS = (
@@ -46,6 +48,15 @@ PLANTUML_COMPATIBILITY_PATTERNS = (
         "Remote PlantUML includes are not suitable for a durable Feishu document.",
     ),
 )
+
+
+def diagram_slot_id(ordinal: int) -> str:
+    return f"diagram-{ordinal:02d}"
+
+
+def diagram_placeholder(ordinal: int) -> str:
+    """Return a visible local slot without embedding an execution command."""
+    return f"【图位 {ordinal:02d}｜发布占位】"
 
 
 def split_markdown_row(line: str) -> list[str]:
@@ -162,6 +173,37 @@ def plantuml_compatibility_warnings(text: str) -> list[dict[str, object]]:
     return warnings
 
 
+def extract_plantuml_diagrams(
+    text: str, diagrams_dir: Path
+) -> tuple[str, list[dict[str, object]]]:
+    diagrams: list[dict[str, object]] = []
+
+    def replace_fence(match: re.Match[str]) -> str:
+        ordinal = len(diagrams) + 1
+        slot_id = diagram_slot_id(ordinal)
+        filename = f"{slot_id}.puml"
+        diagram_path = diagrams_dir / filename
+        diagram_text = match.group("body").strip() + "\n"
+        compatibility_warnings = plantuml_compatibility_warnings(diagram_text)
+        placeholder = diagram_placeholder(ordinal)
+        diagrams.append(
+            {
+                "ordinal": ordinal,
+                "slot_id": slot_id,
+                "placeholder": placeholder,
+                "path": str(diagram_path),
+                "sha256": sha256_bytes(diagram_text.encode("utf-8")),
+                "feishu_preview_status": "required",
+                "compatibility_warnings": compatibility_warnings,
+                "content": diagram_text,
+            }
+        )
+        return f"\n**{placeholder}**\n"
+
+    publish_text = PLANTUML_FENCE.sub(replace_fence, text).rstrip() + "\n"
+    return publish_text, diagrams
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Generate Markdown/HTML and extracted PlantUML for Feishu publishing."
@@ -234,27 +276,7 @@ def main() -> None:
     diagrams_dir = output_dir / "diagrams"
 
     stem = args.name or source.stem
-    diagrams: list[dict[str, object]] = []
-
-    def extract_diagram(match: re.Match[str]) -> str:
-        ordinal = len(diagrams) + 1
-        filename = f"diagram-{ordinal:02d}.puml"
-        diagram_path = diagrams_dir / filename
-        diagram_text = match.group("body").strip() + "\n"
-        compatibility_warnings = plantuml_compatibility_warnings(diagram_text)
-        diagrams.append(
-            {
-                "ordinal": ordinal,
-                "path": str(diagram_path),
-                "sha256": sha256_bytes(diagram_text.encode("utf-8")),
-                "feishu_preview_status": "required",
-                "compatibility_warnings": compatibility_warnings,
-                "content": diagram_text,
-            }
-        )
-        return f"\n**图位 {ordinal:02d}：请在飞书中插入 `{filename}`，完成后删除本行。**\n"
-
-    publish_text = PLANTUML_FENCE.sub(extract_diagram, text).rstrip() + "\n"
+    publish_text, diagrams = extract_plantuml_diagrams(text, diagrams_dir)
 
     publish_md = output_dir / f"{stem}.publish.md"
     publish_html = output_dir / f"{stem}.publish.html"
@@ -322,7 +344,7 @@ def main() -> None:
         for diagram in diagrams
     ]
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source": {
             "path": str(source),

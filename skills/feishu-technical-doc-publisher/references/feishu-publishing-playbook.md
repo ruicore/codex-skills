@@ -51,7 +51,7 @@ A stable order is:
 
 1. Insert or paste the ordinary body: headings, paragraphs, lists, tables, and code blocks.
 2. Convert headings to the intended native H1/H2/H3 levels and enable native numbering.
-3. Insert PlantUML diagrams at their markers through UML Board, then remove the visible markers.
+3. For each manifest diagram, insert it at its slot through UML Board, verify the inserted block, and only then remove the entire visible slot block.
 4. Convert short positioning text to Callout/quote and create any deliberate two-column or Timeline blocks.
 5. Adjust every table's outer and inner widths, using the generated table inventory as an `adjusted/total` checklist.
 6. Perform editorial search, visual QA, save verification, and reload verification.
@@ -110,10 +110,23 @@ The generated manifest inventories every Markdown table and provides a suggested
 - Compare all major tables in document view for a common outer left/right boundary.
 - Reopen each table at normal viewing width and confirm that labels do not wrap one character per line, explanation columns receive the remaining space, and large unused right-side gaps are gone.
 - If even one table remains at an unreviewed default layout, the visual publication gate is incomplete.
+- Treat each table as a transaction and record its ordinal, identifying headers, representative cell-content check, adjustment method, outer-boundary result, and document-view visual check. `Autofit Column Width` or `Distribute Columns` is an action, not evidence of the final layout.
+- If the imported table looks blank, verify headers and sample cells before changing widths. Missing or invisible content is a publication failure, not a layout state to count as adjusted.
+- After the last table, navigate back through the document and visually compare all table outer boundaries. If a table is still visibly narrow, leaves a large unused right area, or wraps a short label vertically, keep its status `required` rather than counting it as adjusted.
 
 ## 6. PlantUML And UML Board
 
-Open `UML Diagram`, then use the Board menu's `PlantUML Diagram` entry. Paste the extracted `.puml`, preview, choose a style, and insert.
+Open `UML Diagram`. This first opens a blank Board and its template panel; the PlantUML entry is not in that initial template list. In the Board's left floating toolbar, open the nine-dot/More menu and select `PlantUML Diagram`. Paste the extracted `.puml`, preview, choose a style, and insert.
+
+Do not search the top-right document overflow menu or `More Templates` for PlantUML, and do not conclude that the feature is unavailable from those panels. Prefer semantic text/role locators after each menu opens. When a semantic locator is unavailable, take a fresh screenshot immediately before the single coordinate action; never chain coordinates learned from an earlier layout state.
+
+### Diagram slot contract
+
+- A local source or generated publication draft may contain a human-readable slot such as `图位 01`, an HTML comment, or another clearly temporary block. The exact sentence is not fixed and must never be used as the workflow contract.
+- The generated manifest maps each slot ID/ordinal to its retained DSL path. Locate diagrams from that mapping, not by assuming a filename embedded in the visible prose.
+- Keep the slot until the corresponding diagram has rendered in the Feishu modal, been inserted, and been confirmed in the intended document position.
+- Delete the entire slot block after insertion. Do not edit fragments of the sentence, which can leave suffixes or formatting debris.
+- Before completion, search for every manifest placeholder value plus generic temporary-marker forms such as `图位`, `发布占位`, local diagram extensions, and insertion-instruction language. Expected result: zero public remnants.
 
 ### Renderer compatibility gate
 
@@ -146,6 +159,16 @@ If the diagram remains unreadable after that pass, select Classic Style. Do not 
 `Insert` adds a new board object; it does not reliably replace the old one. Zoom out after reinsertion, identify duplicate objects, delete only the obsolete object, then return to the document and verify the embedded board.
 
 After reload, navigate to every diagram and visually confirm the drawing still renders. An embedded Board container, block id, expected width, or comment button does not prove the PlantUML content rendered successfully.
+
+For each diagram, use this transaction:
+
+1. Navigate to the manifest slot and open that block's `Insert Below` menu.
+2. Select `UML Diagram`; wait for the Board to finish opening.
+3. Open the left-toolbar nine-dot/More menu and select `PlantUML Diagram`.
+4. Paste the mapped DSL, inspect the preview, and choose Board or Classic Style by complexity.
+5. Click `Insert`, return to the document, and visually confirm the drawing is directly associated with the intended section.
+6. Delete the whole slot block through its block menu.
+7. Search the manifest placeholder and local diagram filename; both must return zero matches.
 
 Keep public captions semantic. Do not show `PlantUML`, DSL instructions, or local insertion markers in the final page.
 
@@ -183,6 +206,7 @@ Before declaring completion:
 - use Find for removed field names, process-only phrases, diagram markers, and local paths;
 - inspect every inventoried table for the common outer width and readable internal widths, and reconcile the `adjusted/total` count;
 - inspect every diagram for an actual rendered drawing, syntax-error images, overlap, and duplicate board objects, and reconcile the `rendered/total` count;
+- search every manifest diagram placeholder and generic placeholder/instruction patterns; all must be absent from the public page;
 - confirm code blocks contain the intended full payload/schema rather than a partial paste;
 - verify deliberately undecided sections contain only the agreed placeholder, commonly `待定`.
 
