@@ -44,7 +44,7 @@ I use Codex as an engineering partner, not only as a code generator. The work th
 - analyzing reviewed radar history for monthly, quarterly, theme, and idea-mining reports
 - researching current AI engineering career signals and content opportunities
 - turning sponsorship emails into prioritized brand-deal lead lists
-- operating specialized tools such as Buffer, Feishu Docs, Paper, Readwise, Excalidraw, and genmedia with repeatable guardrails
+- operating specialized tools such as Buffer, Feishu Docs, Medium, Paper, Readwise, Excalidraw, and genmedia with repeatable guardrails
 
 The skills are intentionally written as operating procedures because the target outcome is repeatable engineering behavior, not clever wording.
 
@@ -117,9 +117,9 @@ Some category memberships are secondary; the registry records those in `secondar
 | <code>planning&#8209;execution</code> | `agentic-repository-execution`, `prd-to-issues`, `repository-layout-refactor`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts and migration slices. |
 | <code>agent&#8209;memory</code> | `decision-trace-writer`, `radar-analysis`, `weekly-radar-ingestion` | Preserving durable context or analyzing stored agent-readable records. |
 | <nobr><code>research</code></nobr> | `ai-career-signal-researcher`, `brand-deal-researcher` | Gathering, evaluating, synthesizing, or prioritizing external signals. |
-| <code>tool&#8209;ops</code> | `buffer-publisher`, `feishu-issue-debugger`, `feishu-technical-doc-publisher`, `genmedia`, `paper-mcp`, `readwise-cli-control` | Operating a specific external tool, local service, CLI, API, or connected account. |
+| <code>tool&#8209;ops</code> | `buffer-publisher`, `feishu-issue-debugger`, `feishu-technical-doc-publisher`, `genmedia`, `medium-publisher`, `paper-mcp`, `readwise-cli-control` | Operating a specific external tool, local service, CLI, API, or connected account. |
 | <code>visual&#8209;artifacts</code> | `excalidraw-diagrams`, `paper-deck-style` | Creating, editing, or styling visual deliverables. |
-| <nobr><code>publishing</code></nobr> | `buffer-publisher`, `brand-deal-researcher`, `feishu-technical-doc-publisher`, `genmedia` | Preparing, scheduling, queueing, publishing, or packaging outward-facing artifacts. |
+| <nobr><code>publishing</code></nobr> | `buffer-publisher`, `brand-deal-researcher`, `feishu-technical-doc-publisher`, `genmedia`, `medium-publisher` | Preparing, scheduling, queueing, publishing, or packaging outward-facing artifacts. |
 
 ## Skills and Engineering Outcomes
 
@@ -148,6 +148,7 @@ Some category memberships are secondary; the registry records those in `secondar
 | <nobr><a href="skills/feishu-issue-debugger/"><code>feishu&#8209;issue&#8209;debugger</code></a></nobr> | Investigates Feishu Project issues against rendered evidence and exact local code baselines while keeping the issue read-only. | Missing comments or attachments, mismatched versions, shared-download evidence collisions, speculative root causes, and accidental issue mutation. |
 | <nobr><a href="skills/feishu-technical-doc-publisher/"><code>feishu&#8209;technical&#8209;doc&#8209;publisher</code></a></nobr> | Publishes authoritative local Markdown as reader-ready native Feishu technical documentation. | Context-dependent prose, stale cloud-only edits, unsafe whole-document replacement, unreadable tables or diagrams, and unverified saves. |
 | <nobr><a href="skills/genmedia/"><code>genmedia</code></a></nobr> | Uses the genmedia CLI to discover, inspect, run, and manage fal.ai model endpoints. | Invented endpoint IDs, schema guessing, credential leakage, and untracked generated media. |
+| <nobr><a href="skills/medium-publisher/"><code>medium&#8209;publisher</code></a></nobr> | Prepares, formats, verifies, and safely publishes Medium stories through an authenticated browser. | Accidental publication, sensitive-content leakage, broken title hierarchy, misplaced media, and unverified draft saves. |
 | <nobr><a href="skills/paper-deck-style/"><code>paper&#8209;deck&#8209;style</code></a></nobr> | Guides minimal, spacious, high-end Paper slide deck design. | Crowded slides, text-heavy decks, mismatched section styles, and weak visual hierarchy. |
 | <nobr><a href="skills/paper-mcp/"><code>paper&#8209;mcp</code></a></nobr> | Edits open Paper boards through the local Paper MCP server with inspection and screenshot verification. | Fragile UI automation, unverified board edits, raw node-ID leakage, and accidental destructive canvas changes. |
 | <nobr><a href="skills/readwise-cli-control/"><code>readwise&#8209;cli&#8209;control</code></a></nobr> | Searches, exports, organizes, and automates Readwise or Reader through the official CLI. | Browser-auth dead ends, missing source links, raw result dumps, and unconfirmed library writes. |

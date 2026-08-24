@@ -670,6 +670,48 @@
       "portability_notes": "Repository-grounded critique workflow. It defaults to read-only Critique Mode, discovers local documentation conventions instead of assuming .manifest, CONTEXT, or ADR paths, and enters Persistence Mode only with explicit user or applicable repository-rule authority."
     },
     {
+      "name": "medium-publisher",
+      "path": "skills/medium-publisher",
+      "category": "publishing",
+      "secondary_categories": [
+        "tool-ops"
+      ],
+      "maturity": "personal-skill",
+      "purpose": "Prepares, formats, verifies, and safely publishes Medium stories through an authenticated browser while preserving separate authority for drafting, scheduling, submission, sharing, and final publication.",
+      "triggers": [
+        "prepare or format an article specifically for Medium",
+        "create or edit a Medium cloud draft through an authenticated browser",
+        "publish, schedule, or submit a reviewed Medium story after an action-specific confirmation"
+      ],
+      "do_not_use_for": [
+        "generic blog writing with no Medium delivery",
+        "publishing, scheduling, submission, or sharing without an immediate action-specific confirmation",
+        "uploading unapproved local assets or sensitive, private, proprietary, or credential-bearing content",
+        "claiming unobserved editor controls, save success, distribution eligibility, or publication outcomes"
+      ],
+      "default_side_effect_level": "local-files",
+      "side_effect_level": "publish",
+      "requires_credentials": true,
+      "primary_outputs": [
+        "reviewable local article draft",
+        "formatted Medium cloud draft when authorized",
+        "verified story URL and draft or publication state",
+        "published, scheduled, or publication-submitted Medium story when explicitly confirmed"
+      ],
+      "validation_expectations": [
+        "run a sensitive-content and publication-target preflight before any external write",
+        "verify the native title, body hierarchy, links, media order, captions, alt text, and save state in the live editor",
+        "reload the saved draft and distinguish observed editor behavior from unverified capability assumptions",
+        "require a fresh confirmation immediately before publish, schedule, submit, or share actions and verify the resulting state"
+      ],
+      "supporting_files": [
+        "skills/medium-publisher/references/editor-capabilities.md",
+        "skills/medium-publisher/references/layout-recommendations.md"
+      ],
+      "agents_metadata_path": "skills/medium-publisher/agents/openai.yaml",
+      "portability_notes": "Practice-derived from Medium editing through an authenticated browser. The editor baseline is dated and must yield to current live controls; browser choice, account access, publication targets, asset authorization, and final publication confirmation remain user-controlled."
+    },
+    {
       "name": "paper-deck-style",
       "path": "skills/paper-deck-style",
       "category": "visual-artifacts",

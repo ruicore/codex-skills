@@ -1,0 +1,7 @@
+interface:
+  display_name: "Medium Publisher"
+  short_description: "Draft, format, and safely publish Medium stories"
+  default_prompt: "Use $medium-publisher to prepare this article as a polished Medium draft without publishing it."
+
+policy:
+  allow_implicit_invocation: true
