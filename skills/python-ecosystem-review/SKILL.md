@@ -23,6 +23,37 @@ Do not modify code unless the user explicitly asks for fixes. If fixes are allow
 - Prefer the repository's actual library versions, local conventions, and integration tests over generic best-practice assumptions.
 - Recommend changes only when they improve correctness, maintainability, operational safety, migration safety, or safe modification enough to justify migration, review, testing, and rollback cost.
 
+### Reuse Versus Focused Custom Implementation
+
+Do not assume that reuse is better merely because a library or repository
+component exists, and do not assume that locally generated code is simpler
+merely because it is quicker to write. Evaluate the concrete semantic and
+integration fit:
+
+- Compare the requested behavior with the smallest relevant public capability
+  or extension point, not only with a library's bundled high-level components.
+- Prefer direct reuse when it matches the required semantics and keeps the
+  integration, change, and test surface smaller.
+- Prefer a thin adapter when the library owns a standard or general mechanism
+  and its public extension points can express the required selection or policy.
+- A focused custom implementation can be the better choice when available
+  components force unrelated behavior that cannot be disabled, impose broader
+  coupling, lifecycle, or side effects, or cost more to integrate and verify
+  than a small domain-local implementation.
+- Apply a stronger reuse bias to semantically deep concerns such as standards,
+  protocols, schema engines, cryptography, concurrency, parsing, and framework
+  lifecycle behavior. Small-looking replacements in these areas often inherit
+  a large hidden edge-case surface.
+- When substantial custom machinery is proposed around a library-owned
+  concern, require evidence from the detected version and public API, a concise
+  explanation of why exact reuse or thin adaptation does not fit, and tests for
+  both required behavior and explicitly unwanted bundled behavior.
+
+During the disproof pass, reject a finding based only on the existence of an
+equivalent-looking library feature. Verify that it matches the repository's
+actual semantics without introducing behavior, coupling, or validation cost
+that the task does not require.
+
 ## Inputs
 
 Support these optional inputs:
