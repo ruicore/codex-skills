@@ -1,11 +1,14 @@
 ---
 name: python-ecosystem-review
-description: Review Python repositories as the Python-specialist adapter for ecosystem review, automatically discovering important ecosystem libraries and evaluating concrete library usage against current best practices. Use when Codex needs a Python review of framework, validation, ORM, migration, dependency injection, async, background job, HTTP client, testing, LLM/agent, observability, or runtime-library integration points. Review-only by default; do not use for broad architecture, generic Python style, full agent-legibility, security, performance, or framework-only reviews.
+description: Review how Python repositories use important ecosystem libraries and integration boundaries, automatically discovering concrete usage and evaluating it against version-appropriate practices. Use when Codex needs a Python review of framework, validation, ORM, migration, dependency injection, async, background job, HTTP client, testing, LLM/agent, observability, or runtime-library integration points. Review-only by default; do not use for broad architecture, generic Python style, full agent-legibility, security, performance, or framework-only reviews.
 ---
 
 # Python Ecosystem Review
 
-Review one thing: how a Python repository actually uses important ecosystem libraries. Operate as the Python adapter to [`ecosystem-review`](../ecosystem-review/SKILL.md): apply its language-neutral, technology-appropriate evidence, version/effective-configuration precedence, disproof, uncertainty, official-source, and read-only rules while retaining the Python-specific discovery and checks below. Do not require users to rename a `$python-ecosystem-review` request.
+Review one thing: how a Python repository actually uses important ecosystem
+libraries. Apply technology-appropriate evidence, version and effective-
+configuration precedence, disproof, uncertainty, official-source, and read-only
+rules together with the Python-specific discovery and checks below.
 
 Do not modify code unless the user explicitly asks for fixes. If fixes are allowed, complete the review first, then make only the requested or clearly justified library-usage changes.
 

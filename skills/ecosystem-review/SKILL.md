@@ -7,9 +7,12 @@ description: Review how a repository in any language actually uses its ecosystem
 
 Review concrete technology usage, not an abstract dependency inventory. Keep the review read-only unless the user explicitly authorizes changes.
 
-## Routing
+## Scope
 
-Use this generic workflow for multi-language or polyglot reviews, or when no more-specific installed and applicable language adapter exists. Route Python-focused ecosystem requests to `$python-ecosystem-review`, which retains the Python-specialist discovery and integration checks. A direct `$ecosystem-review` request remains valid when its stated scope is multi-language/polyglot or no more-specific installed adapter applies.
+Use this workflow directly for focused single-language, multi-language, or
+polyglot ecosystem reviews. Apply only language-specific claims supported by
+the available repository and official-source evidence; otherwise continue with
+the language-neutral checks and state the scoped uncertainty.
 
 ## Inputs
 
@@ -31,7 +34,7 @@ Accept these optional inputs:
 2. Classify candidates.
    - Prioritize technologies that define application or request boundaries, validation, persistence, migrations, concurrency, background work, messaging, external clients, observability, testing, or runtime lifecycle.
    - Review heavily used boundary technologies next. Ignore tooling-only, trivial, and transitive dependencies unless user priority or concrete usage justifies review.
-   - Use a language-specific adapter only when an appropriate one is installed and applicable. Otherwise continue with this language-neutral workflow, avoid unsupported language-specific best-practice claims, and state the resulting scoped uncertainty. Do not impose a universal lifecycle or architecture pattern.
+   - Make language-specific best-practice claims only when repository evidence and authoritative sources support them. Otherwise retain the language-neutral review boundary and state the resulting scoped uncertainty. Do not impose a universal lifecycle or architecture pattern.
 
 3. Inspect usage and challenge findings.
    - Follow each prioritized technology through its setup, configuration, adapters, error handling, lifecycle, and integration tests.
