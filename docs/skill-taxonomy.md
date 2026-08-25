@@ -95,6 +95,7 @@ Current skills:
 - `feishu-issue-debugger` (secondary)
 - `feishu-technical-doc-publisher`
 - `genmedia`
+- `linkedin-publisher` (secondary)
 - `medium-publisher` (secondary)
 - `paper-mcp`
 - `readwise-cli-control`
@@ -119,6 +120,7 @@ Current skills:
 - `brand-deal-researcher`
 - `feishu-technical-doc-publisher`
 - `genmedia`
+- `linkedin-publisher`
 - `medium-publisher`
 
 `publishing` is often a secondary category. For example, `buffer-publisher` is

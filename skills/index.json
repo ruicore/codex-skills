@@ -670,6 +670,49 @@
       "portability_notes": "Repository-grounded critique workflow. It defaults to read-only Critique Mode, discovers local documentation conventions instead of assuming .manifest, CONTEXT, or ADR paths, and enters Persistence Mode only with explicit user or applicable repository-rule authority."
     },
     {
+      "name": "linkedin-publisher",
+      "path": "skills/linkedin-publisher",
+      "category": "publishing",
+      "secondary_categories": [
+        "tool-ops"
+      ],
+      "maturity": "personal-skill",
+      "purpose": "Prepares, attaches, saves, verifies, and safely publishes LinkedIn posts through an authenticated browser while keeping draft creation and final publication behind distinct authority gates.",
+      "triggers": [
+        "prepare or format copy specifically for a LinkedIn post",
+        "create, edit, or verify a LinkedIn post draft through an authenticated browser",
+        "attach approved media or publish a reviewed LinkedIn post",
+        "troubleshoot the current LinkedIn Shadow DOM composer after normal browser interactions fail"
+      ],
+      "do_not_use_for": [
+        "generic social copy with no LinkedIn delivery",
+        "publishing without fresh confirmation of the final body, media, audience, and link state",
+        "entering or uploading content that has not passed the public sensitive-information gate",
+        "using lower-level Shadow DOM fallbacks before reproducing and narrowly confirming the documented failure mode"
+      ],
+      "default_side_effect_level": "external-api-write",
+      "side_effect_level": "publish",
+      "requires_credentials": true,
+      "primary_outputs": [
+        "sanitized LinkedIn-ready post copy",
+        "verified LinkedIn cloud draft with approved media when authorized",
+        "draft persistence and audience verification result",
+        "published LinkedIn post when separately confirmed"
+      ],
+      "validation_expectations": [
+        "check for an existing Feed-level Draft preview before entering content and preserve it unless the user explicitly authorizes changing that draft",
+        "inspect the complete rendered public payload for secrets, private identifiers, internal details, unintended previews, and media metadata before transmission and again before publication",
+        "read back the logical post text, media state, alternative text, audience, hashtags, link state, and final button state",
+        "wait for the successful-draft notification, reopen the draft, and verify text and media persistence",
+        "require fresh confirmation before clicking Post and verify the resulting feed item or success notification"
+      ],
+      "supporting_files": [
+        "skills/linkedin-publisher/references/shadow-dom-workaround.md"
+      ],
+      "agents_metadata_path": null,
+      "portability_notes": "Practice-derived from LinkedIn desktop posting through an authenticated browser and a dated open-Shadow-DOM composer failure. Use current live labels and browser capabilities as authority, retain the public-content scan and final-publication confirmation, and stop rather than broadening lower-level selectors when LinkedIn changes its DOM."
+    },
+    {
       "name": "medium-publisher",
       "path": "skills/medium-publisher",
       "category": "publishing",
