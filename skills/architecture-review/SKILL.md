@@ -160,6 +160,32 @@ Use these checks to decide whether something is an architecture finding:
 
 Avoid turning local implementation concerns into architecture findings unless they affect ownership, authority, boundaries, concept lifecycle, architecture drift, or change surface.
 
+### Persistence Error Ownership
+
+When the reviewed architecture includes a persistence boundary, evaluate error
+translation as an ownership concern:
+
+- Database driver and ORM exception types, SQLSTATE values, constraint names,
+  and diagnostic objects belong inside the persistence adapter. Application or
+  domain services should not parse or depend on those details.
+- Translate expected constraint, uniqueness, and concurrency outcomes at the
+  repository, DAO, persistence-adapter, or unit-of-work boundary into semantic
+  outcomes or exceptions. Let the application/service layer map those semantics
+  to business errors, and let the transport layer serialize the public contract.
+- Keep unexpected persistence failures distinguishable from expected conflicts;
+  do not turn every integrity or database failure into a business conflict.
+- Raw persistence diagnostics may support safe internal logging or debugging
+  inside the persistence boundary, but should not become business or public API
+  fields.
+- Judge the responsibility boundary rather than requiring a module or class
+  literally named `Repository`; transaction scripts and other architectures may
+  assign the same responsibility differently.
+
+Use this only as an illustrative flow, not a required naming scheme or fixed
+error taxonomy:
+
+`Database/ORM detail -> persistence semantic outcome -> service business error -> transport response`
+
 ## Finding Disproof Pass
 
 Generate candidate findings first, then validate them adversarially before reporting them.
