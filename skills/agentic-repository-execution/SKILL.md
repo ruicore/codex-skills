@@ -324,6 +324,15 @@ Use the dispatch form in
 recommendations as routing guidance, not as claims that unavailable settings
 can be selected.
 
+When an assignment would introduce substantial custom validation, parsing,
+serialization, retry, protocol, lifecycle, or other framework-like machinery
+around an existing dependency, recommend the applicable ecosystem-review skill
+when available. Require the assignment to make an evidence-backed choice among
+exact reuse, a thin public-extension adapter, and a focused custom
+implementation. Do not mandate reuse when existing components bundle unrelated
+behavior or impose a larger integration and test surface, and do not accept
+custom machinery merely because it is quicker to generate.
+
 ### 5. Execute With Ownership And Handoffs
 
 Run independent assignments in parallel only when their write ownership does
@@ -427,6 +436,9 @@ verify:
 - scope and non-goals were preserved;
 - no parallel ownership conflict or unreviewed overwrite remains;
 - every forecast convergence set passed review against its recorded contract;
+- substantial custom machinery around an existing dependency passed the
+  reuse-versus-focused-custom check, when applicable, with required and
+  explicitly unwanted behavior covered by evidence;
 - repository tests and required checks passed;
 - checks in `NOT RUN` or `BLOCKED` are explicit;
 - public files contain no credentials or private identifiers;
