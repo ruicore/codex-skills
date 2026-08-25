@@ -326,8 +326,8 @@ can be selected.
 
 When an assignment would introduce substantial custom validation, parsing,
 serialization, retry, protocol, lifecycle, or other framework-like machinery
-around an existing dependency, recommend the applicable ecosystem-review skill
-when available. Require the assignment to make an evidence-backed choice among
+around an existing dependency, require the assignment to inspect the detected
+version and public extension points and make an evidence-backed choice among
 exact reuse, a thin public-extension adapter, and a focused custom
 implementation. Do not mandate reuse when existing components bundle unrelated
 behavior or impose a larger integration and test surface, and do not accept
