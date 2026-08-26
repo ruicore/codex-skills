@@ -13,7 +13,8 @@ validation while sub-agents make every code or production-file change.
 
 Protect against vague oversized assignments, conflicting parallel edits,
 context loss between phases, invented capabilities, weak validation evidence,
-and a master silently taking over implementation.
+an unreadable coordination site after execution, and a master silently taking
+over implementation.
 
 ## Boundaries
 
@@ -174,7 +175,10 @@ Keep these responsibilities with the master:
 - resolve worker Decision Requests only within existing authority, or escalate;
 - inspect returned artifacts, diffs, and validation evidence;
 - re-dispatch missing or insufficient work;
-- perform the final integrated review and report status.
+- perform the final integrated review;
+- leave the approved coordination location readable and recoverable for the
+  next agent;
+- report status.
 
 Keep delegation depth at one: make every worker, reviewer, validator, and
 remediation agent a peer dispatched directly by the Root Master. Permit workers
@@ -469,6 +473,45 @@ individual agent reported success.
 The Master final integrated review closes the control plane. It does not replace
 a required peer Independent Review.
 
+### 8. Close The Coordination Site
+
+Before the completion report, inspect the task's approved coordination location
+and leave it understandable without relying on chat history. Apply this step to
+`COMPLETED`, `PARTIAL`, and `BLOCKED` outcomes. It is control-plane hygiene, not
+a new Evidence Gate, and it must not change an existing gate result.
+
+Use the repository-defined or user-approved coordination convention; do not
+assume a directory name. When the skill created or used durable coordination
+artifacts, make the smallest useful update needed to expose:
+
+- the task purpose, final outcome, and current applicability;
+- the authoritative entry point and a short reading order;
+- the relationship from historical `FAIL` or `BLOCKED` evidence through
+  remediation and revalidation to the latest result;
+- current authority versus plans, handoffs, validation evidence, superseded
+  material, and remaining debt;
+- related predecessor, successor, or dependent tasks when those relationships
+  affect interpretation;
+- restricted areas such as credentials, backups, logs, database snapshots, or
+  binary artifacts that must be read only when the task requires them.
+
+Prefer updating or adding a small navigation index over moving or rewriting
+evidence. Preserve stable paths when handoffs, hashes, publication manifests,
+external references, or historical provenance depend on them. Do not rename,
+deduplicate, delete, sanitize, archive, or rewrite historical artifacts merely
+to make the directory look tidy. Those actions require their own authority and
+validation.
+
+The Root Master may edit coordination artifacts permitted by the Master
+Contract. Continue to delegate any cleanup that changes code, tests,
+configuration, migrations, public documentation, or other production
+deliverables. Treat repository-wide documentation reorganization as separate
+work rather than silently expanding task closure.
+
+If the coordination site is already legible, record that no structural change
+was needed. If no durable coordination location was used, report that fact and
+do not create one solely for cosmetic closure.
+
 ## Validation
 
 Define observable gates before implementation starts. Use repository-native
@@ -508,6 +551,8 @@ Return a concise completion report containing:
 - outcome: `COMPLETED`, `PARTIAL`, or `BLOCKED`;
 - delegated assignments and ownership;
 - files or artifacts changed;
+- coordination entry point and any closure updates, or confirmation that none
+  were needed;
 - validation commands and results;
 - non-`PASS` gates, risks, and skipped checks;
 - side effects performed and explicitly not performed;
