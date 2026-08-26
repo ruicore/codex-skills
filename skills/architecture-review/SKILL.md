@@ -154,6 +154,12 @@ Use these checks to decide whether something is an architecture finding:
 - Rule location: Does a rule live with the concept owner, or is it scattered across callers?
 - Decision consistency: Does implementation still follow documented or clearly implied architecture decisions?
 - Change surface: Would one concept change require broad edits because ownership is fragmented?
+- Schema and configuration authority: Does a component that only stores,
+  routes, exposes, or validates extensible data also redefine the owner's field
+  sets, enums, combinations, or lifecycle semantics?
+- New-variant test: When the authoritative owner adds one valid variant, which
+  components must change, and do any passive consumers change without owning or
+  interpreting the new meaning?
 - Abstraction fit: Does an abstraction clarify ownership or hide it?
 - Debt lifecycle: Is a known architecture compromise documented with rationale and a retirement condition?
 - Agent-facing boundary: Can a future agent identify the concept owner and expected impact surface from the architecture, or must it infer authority from unrelated files?

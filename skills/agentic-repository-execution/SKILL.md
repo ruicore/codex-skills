@@ -206,6 +206,20 @@ layout is in scope, identify the supported invocation modes and import roots;
 do not infer them from the current working directory or from one ad hoc script
 execution.
 
+Before planning or dispatching work that crosses component boundaries or
+handles extensible schemas, configuration, messages, or payloads owned outside
+the component being changed, run the **Concept Authority And Validation
+Boundary Gate** in
+[concept-authority-and-validation-boundary.md](references/concept-authority-and-validation-boundary.md).
+Use it to identify the concept owner and canonical source, decide whether each
+consumer should interpret or treat the data as opaque, separate generic
+boundary validation from owner-defined semantics, and simulate the change
+surface of a new valid variant. When triggered, require the gate to reach
+`PASS` before any production edit or implementation dispatch. Use a Decision
+Request when the owner, source, or responsibility boundary is materially
+uncertain; do not let workers resolve that uncertainty by duplicating semantic
+rules locally.
+
 Use repository-native code discovery before broad text search when available.
 Scan the runtime's actual skill inventory before recommending skills. Never
 invent a skill, model, reasoning effort, or tool.
@@ -226,7 +240,8 @@ agent-memory or task convention instead.
 
 Record goal, scope, non-goals, expected artifacts, task graph, ownership,
 validation gates, risk classification, authority and side-effect boundaries,
-stop conditions, and current status. Use the plan form in
+the concept-authority gate when triggered, stop conditions, and current status.
+Use the plan form in
 [execution-templates.md](references/execution-templates.md).
 
 For non-trivial serial or recovery-prone work, the Root Master may also maintain
@@ -434,6 +449,8 @@ verify:
 
 - requested behavior and artifacts are present;
 - scope and non-goals were preserved;
+- every triggered concept-authority gate passed, and no component became an
+  unrecorded semantic owner by duplicating another owner's extensible rules;
 - no parallel ownership conflict or unreviewed overwrite remains;
 - every forecast convergence set passed review against its recorded contract;
 - substantial custom machinery around an existing dependency passed the

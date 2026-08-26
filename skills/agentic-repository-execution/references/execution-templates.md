@@ -48,6 +48,25 @@ complex hierarchy merely to host templates.
 - Validator: <independent agent or eligible Low-risk Root Master>
 - Exception evidence: <all Medium waiver/merge conditions, or none>
 
+## Concept authority and validation boundary
+
+<Include this section only when the gate described in
+`concept-authority-and-validation-boundary.md` is triggered. The gate must reach
+`PASS` before production edits or implementation dispatch. Otherwise omit the
+section entirely.>
+
+- Concept or data shape: <what crosses the boundary>
+- Authoritative owner: <who owns meaning and evolution>
+- Canonical source: <schema, contract, code, generated artifact, or decision>
+- Current component responsibility: <create|interpret|store|route|expose|other>
+- Consumer responsibility: <owned downstream semantics>
+- Treatment: <opaque|partially interpreted|fully interpreted, with rationale>
+- Generic boundary validation: <locally owned invariants>
+- Owner-defined semantic validation: <where semantic rules are enforced>
+- Duplicate representations: <locations and justification, or none>
+- New-variant change simulation: <required component changes>
+- Gate: <NOT RUN|PASS|FAIL|BLOCKED>
+
 ## Gate states
 - `NOT RUN`: not attempted; do not start dependent work.
 - `PASS`: required evidence verified; dependent work may start.
@@ -144,6 +163,9 @@ Frozen conventions:
 - <explicit user/repository choices this worker must preserve>
 - Mechanical transformation boundary: <permitted categories and excluded
   categories, or none>
+- Concept-authority boundary: <owner, canonical source, opaque/interpreted
+  portions, permitted generic validation, and semantic rules this worker must
+  not redefine; or not triggered>
 
 <Include the following block only when this assignment is a member of a
 forecast convergence set.>
