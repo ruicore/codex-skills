@@ -30,10 +30,14 @@ Independent Review is a read-only adversarial correctness assessment. The
 reviewer inspects the current files and actual diff, challenges the change
 against scope and authoritative contracts, and searches for missed consumers,
 semantic drift, unsafe assumptions, compatibility breaks, and
-counter-evidence. It also verifies that frozen user or repository conventions
-were preserved. For a mechanical transformation, compare the actual diff with
-the authorized symbol or artifact categories and confirm that excluded
-categories did not change.
+counter-evidence. When the concept-authority gate was triggered, the reviewer
+first verifies that the named contract is owned by the correct component, then
+checks conformance to it. The reviewer challenges copied extensible rules,
+accidental interpretation of opaque data, and change surfaces that require
+passive consumers to track owner-defined variants. It also verifies that frozen
+user or repository conventions were preserved. For a mechanical
+transformation, compare the actual diff with the authorized symbol or artifact
+categories and confirm that excluded categories did not change.
 
 ### Validation
 
