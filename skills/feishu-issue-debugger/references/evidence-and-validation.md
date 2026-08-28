@@ -65,7 +65,7 @@ When a read-only structured activity source is available, preserve three separat
 
 ## Local Artifact Handling
 
-Discover the repository's ignored local evidence location. For processing service, the default candidate is `.manifest/issue-artifacts/<issue-id>/`; other repositories may use different names.
+Discover the repository's ignored local evidence location. A common candidate is `.manifest/issue-artifacts/<issue-id>/`; repositories may use different names.
 
 Before writing private evidence, verify that the proposed path is actually ignored by Git, for example with `git check-ignore`. A candidate directory name is not proof. If the path is not ignored, use another verified ignored local root or an external temporary directory. Do not edit `.gitignore` merely to store issue evidence unless the user separately authorizes that repository change.
 

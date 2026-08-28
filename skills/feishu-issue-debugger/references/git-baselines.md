@@ -25,7 +25,7 @@ Before choosing a checkout or interpreting a same-named symbol, record a compact
 
 Use `exact commit`, `tag/version only`, `incomplete`, or `unknown` for precision. An incomplete string such as `1.5.0+` does not select the local `v1.5.0` tag. A discovery or resolve version without component build evidence is a version-level clue, not proof of the deployed commit.
 
-Map the reported product action to its historical owner. If the issue action belonged to client application or a separate middleware at the tested version, do not claim that a similar current processing service symbol is the actual entrypoint. Record unavailable repositories and missing historical ownership as blockers, while still allowing ref-qualified inspection of components that are proven.
+Map the reported product action to its historical owner. If the issue action belonged to a client application or separate middleware at the tested version, do not claim that a similar current processing-service symbol is the actual entrypoint. Record unavailable repositories and missing historical ownership as blockers, while still allowing ref-qualified inspection of components that are proven.
 
 ## Clean Worktree
 
