@@ -281,8 +281,10 @@ produce a read-only report, or continue with a manual validation note.
 
 ## Preserving Practice While Removing Sensitive Details
 
-Real practice is the source material. Do not delete concrete workflow details
-just because they are personal, local, or tool-specific.
+Real practice can prove that a capability, invariant, authorization boundary, or
+failure mode matters. Private practice is not source material for public prose,
+code, examples, schemas, fixtures, or structure. Write the public skill
+clean-room from the abstract capability and use a neutral or synthetic domain.
 
 Remove or replace:
 
@@ -291,18 +293,20 @@ Remove or replace:
 - customer, employer, vendor, account, and project identifiers
 - raw private logs, request bodies, responses, screenshots, and datasets
 - machine-specific absolute paths in reusable examples
+- private code, prose, schemas, topology, filenames, and workflow structure,
+  including translated or lightly renamed versions
 
 Preserve when safe:
 
-- command shapes
+- generic command shapes
 - confirmation boundaries
-- validation commands
-- directory conventions
-- artifact names and expected file shapes
-- known failure modes
-- local assumptions that explain why the workflow works
+- validation properties and public-tool validation commands
+- generic artifact roles and expected properties
+- failure modes stated without identifying provenance
+- implementation-independent reasons why a guardrail matters
 
-Use placeholders that preserve meaning:
+Use placeholders that preserve a generic role without reproducing private
+structure:
 
 - `<repo>` for a repository
 - `<ticket_url>` for an issue or ticket
@@ -319,8 +323,11 @@ dry-run behavior. Future adopters should substitute the equivalent preview step
 for their tool, but should keep the preview-before-mutation rule.
 ```
 
-If a detail cannot be sanitized without losing the workflow, keep it out of the
-public repository and narrow the skill to the safe behavior.
+Changing names alone is not clean-room derivation. Change the domain,
+terminology, actors, data, fixtures, and implementation expression as needed so
+the result cannot be traced back to a private project. If that would destroy the
+workflow's value, keep the detail out of the public repository and narrow the
+skill to the safe behavior.
 
 ## Assigning Category And Maturity
 

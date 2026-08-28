@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+set -eu
+
+zero_sha="0000000000000000000000000000000000000000"
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$local_sha" = "$zero_sha" ]; then
+    continue
+  fi
+
+  if [ "$remote_sha" = "$zero_sha" ]; then
+    revision_range="$local_sha"
+  else
+    revision_range="$remote_sha..$local_sha"
+  fi
+
+  python scripts/check_public_hygiene.py --require-denylist --range "$revision_range"
+done

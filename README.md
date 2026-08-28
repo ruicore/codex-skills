@@ -196,5 +196,15 @@ This repository is versioned informally through Git history. When changing a ski
 - test scripts or templates locally when they are part of the workflow
 - keep [skills/index.json](skills/index.json) aligned when public skill metadata changes
 - run `python scripts/validate_skills.py` after changes that touch skills, docs, registry metadata, or README links
+- keep private employer, customer, and project identifiers in the ignored
+  `.manifest/public-hygiene-denylist.txt`, one literal identifier per line
+- enable the repository pre-push gate with
+  `git config core.hooksPath .githooks`; it scans every proposed commit rather
+  than only the final working tree
+- follow [AGENTS.md](AGENTS.md) and the
+  [public sanitization policy](docs/public-sanitization.md) when private work
+  informs a public skill; extract capabilities and use a clean-room public
+  implementation instead of copying, translating, or lightly renaming private
+  material
 
 Because these are practice-derived workflows, treat them as examples of agent operating design rather than universal best practices. Improve reuse incrementally: preserve behavior first, sanitize public-facing content, classify current maturity, and generalize only after repeated repository evidence supports it.
