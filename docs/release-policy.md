@@ -94,7 +94,7 @@ truth aligned:
 - update README tables when the public skill list, categories, or install
   guidance changes
 - update docs when policy or authoring expectations change
-- run `python scripts/validate_skills.py` after changes to skills, docs,
+- run `python scripts/validate_skills.py --require-denylist` after changes to skills, docs,
   registry metadata, schema, or README links
 
 If no automated validation covers a release-policy change, manually check local

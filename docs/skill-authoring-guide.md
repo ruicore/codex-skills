@@ -15,6 +15,7 @@ Before authoring or revising a skill, read:
 - `docs/skill-taxonomy.md`
 - `docs/side-effect-policy.md`
 - `docs/public-sanitization.md`
+- `docs/clean-room-review.md`
 - the relevant existing `skills/*/SKILL.md` files, references, scripts, and
   examples
 
@@ -392,8 +393,12 @@ Keep it as an extraction note when:
 - the practice overlaps several existing skills and needs classification first
 - the only improvement would be generic wording
 
-Use `templates/skill-extraction-note.md` for early practice capture. Use
-`templates/skill-proposal.md` when the workflow is ready to discuss as a skill.
+Copy `templates/skill-extraction-note.md` only into ignored
+`.manifest/skill-intake/` for early private practice capture; never commit a
+completed extraction note. Once only the abstract capability, invariants,
+authorization boundaries, and failure modes remain, start a separate
+clean-room draft from `templates/skill-proposal.md`. Do not keep the private note
+open as source material while writing the public proposal.
 
 ## Avoiding Generic Advice
 

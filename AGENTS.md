@@ -22,12 +22,18 @@ When private practice informs a skill:
 - keep private source material and private identifier lists under ignored local
   storage, never in a commit.
 
-Before committing, run `python scripts/validate_skills.py`. Before pushing,
+Before committing, run
+`python scripts/validate_skills.py --require-denylist`. Before pushing,
 configure the repository hook with `git config core.hooksPath .githooks` and
 maintain the private local denylist at
 `.manifest/public-hygiene-denylist.txt`. The pre-push check must inspect every
 commit being introduced to the remote, even when the final tree no longer
 contains the prohibited material.
+
+Tracked public content must be regular UTF-8 text. Do not add symlinks, screenshots, PDFs,
+archives, Office documents, databases, dumps, or other binary assets. If a
+future public skill genuinely requires a generated media asset, establish a
+separate reviewed allowlist and metadata-cleaning workflow before adding it.
 
 If public safety cannot be established without relying on private context,
 exclude the material and ask the user for direction. Do not weaken or bypass a

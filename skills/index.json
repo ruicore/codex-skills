@@ -491,7 +491,7 @@
         "skills/feishu-issue-debugger/references/git-baselines.md"
       ],
       "agents_metadata_path": "skills/feishu-issue-debugger/agents/openai.yaml",
-      "portability_notes": "Practice-derived from authenticated Feishu Project investigation on Windows. Requires access to the target issue and adaptation to repository-specific local context, version naming, evidence roots, and browser capabilities. The Feishu issue remains strictly read-only; local implementation and Git changes require separate explicit authority."
+      "portability_notes": "Uses the public Feishu Project product through an authenticated Windows browser. Requires access to the target issue and adaptation to repository-specific local context, version naming, evidence roots, and browser capabilities. The Feishu issue remains strictly read-only; local implementation and Git changes require separate explicit authority."
     },
     {
       "name": "feishu-technical-doc-publisher",
@@ -538,7 +538,7 @@
         "skills/feishu-technical-doc-publisher/scripts/prepare_feishu_publish.py"
       ],
       "agents_metadata_path": "skills/feishu-technical-doc-publisher/agents/openai.yaml",
-      "portability_notes": "Practice-derived from Feishu Docs editing through an authenticated browser. Full cloud mutation currently recommends gpt-5.6-sol with high or xhigh reasoning; adapt the named model as capabilities evolve, but retain the frontier-model gate, preview-before-publication, local source-of-truth, block-level editing, Edit History recovery, per-table/per-diagram transactions, and reload verification."
+      "portability_notes": "Uses the public Feishu Docs product through an authenticated browser. Full cloud mutation currently recommends gpt-5.6-sol with high or xhigh reasoning; adapt the named model as capabilities evolve, but retain the frontier-model gate, preview-before-publication, local source-of-truth, block-level editing, Edit History recovery, per-table/per-diagram transactions, and reload verification."
     },
     {
       "name": "genmedia",
@@ -710,7 +710,7 @@
         "skills/linkedin-publisher/references/shadow-dom-workaround.md"
       ],
       "agents_metadata_path": null,
-      "portability_notes": "Practice-derived from LinkedIn desktop posting through an authenticated browser and a dated open-Shadow-DOM composer failure. Use current live labels and browser capabilities as authority, retain the public-content scan and final-publication confirmation, and stop rather than broadening lower-level selectors when LinkedIn changes its DOM."
+      "portability_notes": "Uses the public LinkedIn desktop composer through an authenticated browser and accounts for a dated open-Shadow-DOM failure mode. Use current live labels and browser capabilities as authority, retain the public-content scan and final-publication confirmation, and stop rather than broadening lower-level selectors when LinkedIn changes its DOM."
     },
     {
       "name": "medium-publisher",
@@ -752,7 +752,7 @@
         "skills/medium-publisher/references/layout-recommendations.md"
       ],
       "agents_metadata_path": "skills/medium-publisher/agents/openai.yaml",
-      "portability_notes": "Practice-derived from Medium editing through an authenticated browser. The editor baseline is dated and must yield to current live controls; browser choice, account access, publication targets, asset authorization, and final publication confirmation remain user-controlled."
+      "portability_notes": "Uses the public Medium editor through an authenticated browser. The editor baseline is dated and must yield to current live controls; browser choice, account access, publication targets, asset authorization, and final publication confirmation remain user-controlled."
     },
     {
       "name": "paper-deck-style",
@@ -1061,7 +1061,7 @@
         "skills/repository-layout-refactor/examples/concept-owned-package-migration.md"
       ],
       "agents_metadata_path": "skills/repository-layout-refactor/agents/openai.yaml",
-      "portability_notes": "Practice-derived from repeated concept migrations in one backend refactor. Adapt public contracts, test commands, package conventions, and validation surfaces to the target repository."
+      "portability_notes": "Portable across repositories that need concept-owned package migration. Adapt public contracts, test commands, package conventions, and validation surfaces to the target repository."
     },
     {
       "name": "tdd",
