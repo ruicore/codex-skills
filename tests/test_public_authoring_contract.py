@@ -40,6 +40,57 @@ class PublicAuthoringContractTests(unittest.TestCase):
         self.assertIn("docs/clean-room-review.md", text)
         self.assertIn("--require-denylist", text)
         self.assertIn("not an authoritative approval", text)
+        self.assertIn("Automated checks do not replace", text)
+        self.assertIn("- Reviewer:", text)
+        self.assertIn("- Reviewed revision:", text)
+        self.assertIn("The review outcome is `pass`", text)
+        self.assertIn(
+            "- Outcome: exactly one of `pass`, `rewrite-required`, `remove`, "
+            "or `needs-public-source`",
+            text,
+        )
+
+    def test_authoring_surfaces_preserve_the_clean_room_boundary(self) -> None:
+        surfaces = [
+            REPO_ROOT / "README.md",
+            REPO_ROOT / "docs" / "repository-contract.md",
+            REPO_ROOT / "docs" / "skill-taxonomy.md",
+            REPO_ROOT / "docs" / "skill-authoring-guide.md",
+            REPO_ROOT / "docs" / "side-effect-policy.md",
+            REPO_ROOT / ".github" / "ISSUE_TEMPLATE" / "skill-proposal.yml",
+            REPO_ROOT / ".github" / "ISSUE_TEMPLATE" / "skill-improvement.yml",
+        ]
+
+        for path in surfaces:
+            with self.subTest(path=path.relative_to(REPO_ROOT)):
+                text = path.read_text(encoding="utf-8").lower()
+                self.assertIn("independently design", text)
+                self.assertTrue(
+                    "private practice" in text or "private source material" in text
+                )
+
+    def test_high_risk_identifier_only_guidance_does_not_return(self) -> None:
+        paths = [
+            REPO_ROOT / "README.md",
+            REPO_ROOT / "docs" / "repository-contract.md",
+            REPO_ROOT / "docs" / "skill-taxonomy.md",
+            REPO_ROOT / "docs" / "skill-authoring-guide.md",
+            REPO_ROOT / "docs" / "side-effect-policy.md",
+            REPO_ROOT / ".github" / "ISSUE_TEMPLATE" / "skill-proposal.yml",
+            REPO_ROOT / ".github" / "ISSUE_TEMPLATE" / "skill-improvement.yml",
+        ]
+        text = "\n".join(path.read_text(encoding="utf-8") for path in paths)
+
+        forbidden_guidance = [
+            "Replace private customer, employer, project, issue, URL, dashboard, hostname,",
+            "Do not remove specific practice-derived details only because they are local.",
+            "Prefer placeholders and portability notes over private examples.",
+            "Keep practice-derived material when it is useful and safe",
+            "keep practice-derived safety rules when they are useful",
+        ]
+        for phrase in forbidden_guidance:
+            with self.subTest(phrase=phrase):
+                self.assertNotIn(phrase, text)
 
 
 if __name__ == "__main__":

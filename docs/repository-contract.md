@@ -9,7 +9,7 @@ personal Codex skill library into a reusable engineering workflow library.
 
 `codex-skills` stores repeatable Codex engineering workflows: diagnosis,
 review, planning, validation, documentation, tool operation, and other
-agent-readable procedures that came from real engineering practice.
+agent-readable procedures written for unrestricted public use.
 
 The repository is not a prompt gallery and not a polished framework. A useful
 skill should help a Codex agent perform a concrete kind of work with evidence,
@@ -17,8 +17,8 @@ scope control, checkpoints, and validation.
 
 This contract should protect the repository from two opposite failures:
 
-- leaving practice-derived workflows too private, implicit, or unsafe for public
-  reuse
+- allowing private source material or structurally derived artifacts into the
+  public repository
 - sanding those workflows into generic abstractions that no longer preserve the
   behavior that made them useful
 
@@ -29,15 +29,16 @@ workflows.
 
 That direction should be reached incrementally:
 
-- preserve proven workflow behavior first
-- sanitize and classify practice-derived material before making it public-facing
+- preserve established public workflow behavior first
+- write new public artifacts from abstract capabilities through clean-room,
+  independent design
 - add metadata, examples, validation, and portability notes when they clarify
   existing behavior
 - generalize only after the repository shows a repeated pattern across skills
 
-Reusable does not mean universal. These skills may continue to encode opinionated
-defaults, specific operating disciplines, and practice-derived language when
-those details are part of the workflow's value.
+Reusable does not mean universal. These skills may continue to encode
+opinionated defaults and specific operating disciplines when those details were
+independently designed for the public workflow.
 
 ## 3. Grounded Evolution Principles
 
@@ -50,10 +51,13 @@ Future changes should follow these principles:
 - **Small additive moves first:** prefer new docs, metadata, examples, tests,
   validation, and portability notes before renaming, restructuring, or rewriting
   skills.
-- **Practice is signal:** personal or project-derived details may reveal the
-  real workflow. Do not remove them merely because they are specific.
-- **Contain specificity:** when a detail is useful but local, classify it, mark
-  assumptions, or explain how to adapt it instead of pretending it is generic.
+- **Private practice is signal, not source material:** it may establish only an
+  abstract capability, engineering invariant, authorization boundary, or
+  failure mode. Public prose, code, schemas, fixtures, examples, and workflow
+  expression must be independently designed.
+- **Contain public specificity:** when an independently designed public detail
+  is useful but local, classify it, mark assumptions, or explain how to adapt it
+  instead of pretending it is generic.
 - **Reviewable scope:** each change should be understandable from the issue that
   requested it. Avoid opportunistic cleanups across unrelated skills.
 - **Validation before confidence:** run available validation after edits. If no
@@ -67,7 +71,7 @@ The repository should not try to become these things in the near term:
 - a complete taxonomy of all possible Codex workflows
 - a normalized schema imposed on every existing skill before there is evidence
   that the schema fits
-- a marketing-ready package that hides its practice-derived origin
+- a marketing-ready package that presents opinionated workflows as universal
 - a place for private project data, credentials, customer details, private URLs,
   raw logs, or sensitive identifiers
 - a collection of cosmetic rewrites whose main purpose is consistency rather
@@ -76,41 +80,46 @@ The repository should not try to become these things in the near term:
 Do not rename, flatten, split, merge, or restructure skills just to make the
 repository look more polished.
 
-## 5. Personal Practice To Reusable Workflow Lifecycle
+## 5. Abstract Capability To Reusable Workflow Lifecycle
 
-Practice-derived material is allowed, but it should move through a clear
-lifecycle as it becomes more reusable.
+Private practice may identify only abstract capabilities, engineering
+invariants, authorization boundaries, and failure modes. It is never source
+material for tracked public artifacts. Public workflow content moves through
+this lifecycle only after independent clean-room design.
 
-### 1. Personal Practice Seed
+### 1. Abstract Capability Seed
 
-A workflow starts as something that worked in a real task, project, tool, or
-operating habit.
+A workflow starts from a public need or an abstract capability that can be
+described without identifying or reconstructing private work.
 
 Acceptable contents:
 
-- concrete steps
-- local assumptions
-- tool-specific commands
-- examples from practice, after sanitization
-- opinionated defaults
+- abstract capabilities and invariants
+- authorization boundaries
+- generic failure modes
+- public tool contracts or cited public sources
 
 Expected handling:
 
-- preserve the working behavior
-- identify private or brittle details
-- avoid presenting local assumptions as universal rules
+- keep private intake under ignored local storage
+- do not use private prose, code, schemas, fixtures, examples, or structure as
+  drafting material
+- decide whether an independently designed public workflow is justified
 
-### 2. Sanitized Practice Skill
+### 2. Clean-Room Public Skill
 
 The workflow is safe to keep in a public repository, but may still be clearly
-personal or project-derived.
+personal or opinionated.
 
 Expected handling:
 
-- remove secrets, credentials, private URLs, raw logs, and sensitive identifiers
-- replace private examples with neutral or synthetic examples when needed
-- keep details that explain the real workflow
-- add adaptation notes when a command, tool, or environment assumption is local
+- independently design the domain, actors, terminology, data, fixtures,
+  filenames, workflow expression, and implementation
+- keep secrets, private identifiers, raw artifacts, and provenance mappings out
+  of tracked files
+- use cited public sources when a public tool or API contract is required
+- add adaptation notes when a public command, tool, or environment assumption is
+  local
 
 ### 3. Portable Workflow Candidate
 
@@ -155,12 +164,13 @@ Before adding or editing a skill, check for:
 - personal data that is not necessary to understand the workflow
 - machine-specific absolute paths in reusable examples
 
-Sanitization should preserve learning value. Prefer neutral substitutions,
-synthetic examples, scoped placeholders, or portability notes over deleting the
-entire practice-derived section.
+Removing identifiers is necessary when they appear, but it does not establish
+clean-room independence. Do not copy, translate, lightly rename, substitute
+placeholders into, or structurally mirror private material. Create a neutral or
+synthetic public expression independently from the abstract capability.
 
-If a detail cannot be sanitized without losing the workflow, keep the public
-skill narrower and move the private detail out of the repository.
+If independence cannot be established without private context, keep the public
+skill narrower and exclude the detail from the repository.
 
 ## 7. When Not To Abstract
 
@@ -191,8 +201,9 @@ Before editing skills in this repository, a Codex agent should:
    documentation-only.
 4. Preserve existing behavior unless the issue explicitly requests a behavior
    change.
-5. Keep practice-derived material when it is useful and safe; classify, contain,
-   or add portability notes when it is too local.
+5. Preserve useful independently designed public specificity, but never retain
+   or reconstruct private material through sanitization, renaming, placeholders,
+   translation, or structural mirroring.
 6. Avoid broad renames, reorganizations, or schema introductions unless the issue
    asks for them and repository evidence supports them.
 7. Check public repository hygiene before finishing.

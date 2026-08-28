@@ -1,12 +1,18 @@
 # Codex Skills
 
-Reusable AI-assisted engineering workflows for Codex, evolving from a personal practice library toward a public reusable workflow library.
+Reusable AI-assisted engineering workflows for Codex, written for unrestricted
+public use through clean-room authoring.
 
 This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, database access audit, test-driven development, specification writing, PRD-to-issue planning, delegated repository execution, durable decision traces, reviewed weekly radar ingestion, radar history analysis, external research, visual artifacts, publishing workflows, and tool-specific operations.
 
 The goal is to make AI-assisted engineering more reliable under real project pressure. Each skill defines a workflow that an agent can follow with local repository evidence, explicit validation, and clear boundaries.
 
-The repository should become more reusable by preserving what has worked in real practice, then adding public hygiene, classification, portability notes, examples, metadata, and validation around that behavior. Reusable does not mean universal. Do not generalize, rename, restructure, or rewrite skills just to make the repository look more polished.
+Private practice may reveal an abstract capability, engineering invariant,
+authorization boundary, or failure mode. Public skills must express those
+lessons through independently designed domains, actors, terminology, data,
+fixtures, workflows, and implementations. Reusable does not mean universal.
+Do not generalize, rename, restructure, or rewrite skills just to make the
+repository look more polished.
 
 This is a personal skill library, not an official OpenAI project.
 
@@ -14,16 +20,16 @@ This is a personal skill library, not an official OpenAI project.
 
 This is:
 
-- a practice-derived library of Codex engineering workflows
+- a clean-room library of Codex engineering workflows
 - a place for concrete operating procedures, guardrails, evidence rules, and validation paths
-- a growing public toolkit whose reuse should stay grounded in observed skill behavior
-- a repository where personal or tool-specific workflow details can remain when they are safe, classified, and useful
+- a growing public toolkit grounded in public evidence and independently designed workflow behavior
+- a repository where personal or tool-specific defaults can remain when they are publicly safe, explicit, and useful
 
 This is not:
 
 - a prompt gallery
 - a generic framework for every possible Codex workflow
-- a marketing-polished package that hides its practice-derived origin
+- a marketing-polished package that presents opinionated workflows as universal
 - a place for secrets, credentials, private customer or project details, private URLs, raw logs, or sensitive identifiers
 - a reason to normalize every skill into the same structure before the repository has evidence that the structure fits
 
@@ -57,7 +63,7 @@ The repository direction is captured in a small set of docs:
 - [docs/public-sanitization.md](docs/public-sanitization.md) defines public repository hygiene.
 - [docs/clean-room-review.md](docs/clean-room-review.md) defines the semantic-independence review required for public skills.
 - [docs/side-effect-policy.md](docs/side-effect-policy.md) defines read, write, publishing, and destructive-operation guardrails.
-- [docs/skill-authoring-guide.md](docs/skill-authoring-guide.md) explains how to turn real practice into a skill without premature generalization.
+- [docs/skill-authoring-guide.md](docs/skill-authoring-guide.md) explains how to turn an abstract capability into an independently designed public skill.
 
 Use these docs to classify, contain, and validate existing behavior. Do not use them as permission for broad directory moves or cosmetic rewrites.
 
@@ -114,7 +120,7 @@ Some category memberships are secondary; the registry records those in `secondar
 | Category | Current skills | Primary use |
 |---|---|---|
 | <code>core&#8209;engineering</code> | `agentic-repository-execution`, `diagnose`, `feishu-issue-debugger`, `repository-layout-refactor`, `tdd` | Implementation, debugging, testing, refactoring, and feedback loops. |
-| <code>review&#8209;audit</code> | `agent-legibility-review`, `architecture-review`, `database-access-audit`, `grill-me`, `grill-with-docs`, `python-backend-review`, `python-ecosystem-review` | Evidence-first review, critique, architecture assessment, and audit work. |
+| <code>review&#8209;audit</code> | `agent-legibility-review`, `architecture-review`, `database-access-audit`, `ecosystem-review`, `grill-me`, `grill-with-docs`, `python-backend-review`, `python-ecosystem-review` | Evidence-first review, critique, architecture assessment, and audit work. |
 | <code>planning&#8209;execution</code> | `agentic-repository-execution`, `prd-to-issues`, `repository-layout-refactor`, `write-a-prd` | Turning ambiguous ideas, requirements, or plans into scoped execution artifacts and migration slices. |
 | <code>agent&#8209;memory</code> | `decision-trace-writer`, `radar-analysis`, `weekly-radar-ingestion` | Preserving durable context or analyzing stored agent-readable records. |
 | <nobr><code>research</code></nobr> | `ai-career-signal-researcher`, `brand-deal-researcher` | Gathering, evaluating, synthesizing, or prioritizing external signals. |
@@ -131,6 +137,7 @@ Some category memberships are secondary; the registry records those in `secondar
 | <nobr><a href="skills/architecture-review/"><code>architecture&#8209;review</code></a></nobr> | Reviews ownership, authority, boundaries, drift, change surface, and architecturally important future-agent edit paths. | Scattered rules, duplicated concepts, unclear module responsibility. |
 | <nobr><a href="skills/database-access-audit/"><code>database&#8209;access&#8209;audit</code></a></nobr> | Reviews database access patterns across stacks with read-only, evidence-first scope control. | Looped DB I/O, unsafe bulk writes, N+1 queries, missing scope predicates, transaction drift, and unverified rowcount assumptions. |
 | <nobr><a href="skills/agent-legibility-review/"><code>agent&#8209;legibility&#8209;review</code></a></nobr> | Finds repository navigation risks for future coding agents. | Hidden conventions, conflicting docs, ambiguous task entry points. |
+| <nobr><a href="skills/ecosystem-review/"><code>ecosystem&#8209;review</code></a></nobr> | Reviews concrete ecosystem technology usage and integration boundaries across languages. | Unsupported framework claims, missed cross-technology risks, and lifecycle advice detached from repository evidence. |
 | <nobr><a href="skills/agentic-repository-execution/"><code>agentic&#8209;repository&#8209;execution</code></a></nobr> | Coordinates delegated repository changes through scoped ownership, durable handoffs, and evidence gates. | Master-agent implementation drift, oversized assignments, conflicting edits, lost phase context, and unsupported completion claims. |
 | <nobr><a href="skills/repository-layout-refactor/"><code>repository&#8209;layout&#8209;refactor</code></a></nobr> | Migrates working repositories to concept-owned packages with behavior-preserving cutover and cleanup. | LOC-only splitting, folder proliferation, duplicate ownership, permanent wrappers. |
 | <nobr><a href="skills/grill-me/"><code>grill&#8209;me</code></a></nobr> | Applies direct senior-engineer critique to plans and implementation choices. | Weak assumptions, vague tradeoffs, under-specified risks. |
@@ -162,7 +169,7 @@ Some category memberships are secondary; the registry records those in `secondar
 - **Bounded scope:** each skill should do one kind of engineering work well.
 - **Observable outcomes:** a skill should produce a review, test, issue plan, decision trace, or verified fix.
 - **Validation before confidence:** claims should be backed by tests, repro loops, source inspection, or explicit uncertainty.
-- **Practice is signal:** personal or project-derived details can encode real guardrails; sanitize, classify, or add portability notes before deleting them.
+- **Private practice is signal, not source material:** it may establish only an abstract capability, invariant, authorization boundary, or failure mode; every public expression must be independently designed.
 - **Reusable but not universal:** these skills encode opinions and defaults; adapt them before using them in a different engineering culture.
 
 ## Example Workflow
@@ -210,4 +217,8 @@ This repository is versioned informally through Git history. When changing a ski
   implementation instead of copying, translating, or lightly renaming private
   material
 
-Because these are practice-derived workflows, treat them as examples of agent operating design rather than universal best practices. Improve reuse incrementally: preserve behavior first, sanitize public-facing content, classify current maturity, and generalize only after repeated repository evidence supports it.
+Treat these as examples of agent operating design rather than universal best
+practices. Improve reuse incrementally: preserve established public behavior,
+keep private source material out of the repository, independently design every
+new public artifact, classify current maturity, and generalize only after
+repeated public repository evidence supports it.

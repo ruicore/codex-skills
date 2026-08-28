@@ -11,6 +11,14 @@
 
 Public PR checks without the private denylist are not an authoritative approval.
 The repository owner must complete the protected local gate before merge.
+Automated checks do not replace the semantic clean-room review.
+
+Clean-room review record:
+
+- Reviewer:
+- Reviewed revision:
+- Outcome: exactly one of `pass`, `rewrite-required`, `remove`, or `needs-public-source`
+- Public-only evidence or rewrite notes:
 
 ## Change Summary
 

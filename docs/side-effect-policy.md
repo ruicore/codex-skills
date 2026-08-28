@@ -8,9 +8,10 @@ may have a safe default mode and a higher-risk optional mode. When that happens,
 document both the default level and the higher level that requires stronger
 guardrails.
 
-This policy follows the repository contract: preserve current workflow behavior,
-keep practice-derived safety rules when they are useful, and add classification
-before restructuring.
+This policy follows the repository contract: preserve established public
+workflow behavior, express safety lessons from private practice only as abstract
+invariants, and independently design every public rule, example, and workflow
+expression before restructuring.
 
 ## Level Summary
 

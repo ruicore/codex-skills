@@ -1,5 +1,5 @@
 name: Skill proposal
-description: Propose a grounded Codex skill from real practice or a repeated workflow.
+description: Propose a grounded public Codex skill from an abstract capability or repeated public need.
 title: "[Skill proposal]: "
 labels:
   - skill-proposal
@@ -95,7 +95,7 @@ body:
     id: portability
     attributes:
       label: Portability notes
-      description: Which details are local or practice-derived, and what should future adopters substitute?
+      description: Which independently designed public defaults are local or opinionated, and what should future adopters substitute?
   - type: textarea
     id: validation
     attributes:

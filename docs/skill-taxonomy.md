@@ -47,6 +47,7 @@ Current skills:
 - `agent-legibility-review`
 - `architecture-review`
 - `database-access-audit`
+- `ecosystem-review`
 - `grill-me`
 - `grill-with-docs`
 - `python-backend-review`
@@ -130,16 +131,22 @@ schedule public posts.
 ## Maturity Levels
 
 Maturity describes public-readiness and reuse confidence. It is not a judgment
-of usefulness. A low-maturity skill may be valuable because it preserves a real
-workflow that should not be generalized yet.
+of usefulness. A low-maturity skill may be valuable because it preserves an
+opinionated public workflow that should not be generalized yet.
+
+Private practice may identify only an abstract capability, invariant,
+authorization boundary, or failure mode. Every tracked maturity level requires
+independently designed public content; private practice is never source material
+for public prose, code, schemas, fixtures, examples, or workflow structure.
 
 ### practice-note
 
-Early extraction from real work, not yet a full skill.
+Early clean-room expression of an abstract capability, not yet a full skill.
 
 When to use it:
 
-- The workflow came from one concrete task, project, account, or local habit.
+- One observation identified an abstract capability, invariant, authorization
+  boundary, or failure mode, but the public workflow is still incomplete.
 - The useful behavior is visible, but triggers, boundaries, validation, or
   public examples are still incomplete.
 - The material may be closer to notes, commands, or a playbook than a reusable
@@ -149,8 +156,10 @@ Public repository hygiene required:
 
 - Remove secrets, tokens, session data, private keys, passwords, and raw
   credential material.
-- Replace private customer, employer, project, issue, URL, dashboard, hostname,
-  path, and account identifiers with neutral placeholders.
+- Do not transfer private prose, code, schemas, workflows, topology, filenames,
+  fixtures, examples, identifiers, or artifacts into the public note.
+- Use placeholders only for generic roles inside independently designed public
+  content; identifier replacement alone is not clean-room derivation.
 - Do not include raw logs, screenshots, datasets, request bodies, or responses
   that expose sensitive identifiers.
 - Mark local assumptions clearly instead of presenting them as general rules.
@@ -158,22 +167,24 @@ Public repository hygiene required:
 Before promoting to `personal-skill`:
 
 - The skill has a clear trigger and a concrete outcome.
-- The practice-derived steps are sanitized enough for public review.
+- The public steps and examples were independently designed from the abstract
+  capability and are ready for clean-room review.
 - The workflow can be followed without access to private context.
 - At least one non-goal or boundary is documented when the skill could be
   misused.
 
 What Codex should not change automatically:
 
-- Do not remove specific practice-derived details only because they are local.
+- Do not remove useful independently designed public details only because they
+  are local.
 - Do not rename the skill or rewrite it into generic advice.
-- Do not invent examples, validation, or tool support that did not come from the
-  workflow.
+- Do not invent unsupported tool behavior. Independently designed synthetic
+  examples and validation are encouraged when they exercise the public contract.
 - Do not promote it based on formatting alone.
 
 ### personal-skill
 
-Useful and sanitized, but still tied to the author's workflow.
+Useful and public-safe, but still tied to the author's workflow.
 
 When to use it:
 
@@ -186,7 +197,8 @@ Public repository hygiene required:
 
 - Keep all private identifiers and credential material out of the repository.
 - Label account-specific, machine-specific, or service-specific assumptions.
-- Prefer placeholders and portability notes over private examples.
+- Use independently designed neutral or synthetic examples. Placeholders may
+  name generic roles, but must not preserve private structure.
 - Keep mutation, publishing, and external-account operations behind explicit
   confirmation rules.
 
@@ -222,9 +234,10 @@ When to use it:
 
 Public repository hygiene required:
 
-- Public examples must be synthetic, neutral, or scrubbed.
+- Public examples must be independently designed synthetic or neutral content,
+  or be justified by cited public sources.
 - Tool commands must avoid real account IDs, private hostnames, and durable
-  machine-specific paths unless explicitly marked as local setup examples.
+  machine-specific absolute paths.
 - Validation scripts must not require private services by default.
 - Any required secrets must be referenced as environment variables or connector
   setup, never embedded values.

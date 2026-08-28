@@ -25,6 +25,8 @@ from urllib.parse import unquote
 REPO_ROOT = Path(__file__).resolve().parents[1]
 INDEX_PATH = REPO_ROOT / "skills" / "index.json"
 REGISTRY_SCHEMA_PATH = REPO_ROOT / "schemas" / "skill-registry.schema.json"
+README_PATH = REPO_ROOT / "README.md"
+SKILL_TAXONOMY_PATH = REPO_ROOT / "docs" / "skill-taxonomy.md"
 
 REQUIRED_ENTRY_FIELDS = {
     "name",
@@ -157,6 +159,7 @@ class Validator:
                 contexts.append(context)
 
         self.validate_skill_directory_coverage(contexts)
+        self.validate_reader_facing_skill_membership(seen_names)
 
         for context in contexts:
             self.validate_skill_markdown(context)
@@ -168,6 +171,47 @@ class Validator:
 
         self.skill_count = len(contexts)
         return self.finish()
+
+    def validate_reader_facing_skill_membership(self, registry_names: set[str]) -> None:
+        try:
+            readme_text = README_PATH.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            self.error(f"{rel(README_PATH)}: cannot read skill membership: {exc}")
+        else:
+            self.validate_membership_surface(
+                registry_names,
+                extract_readme_category_skill_names(readme_text),
+                "README.md: Skill Categories table",
+            )
+            self.validate_membership_surface(
+                registry_names,
+                extract_readme_outcome_skill_names(readme_text),
+                "README.md: Skills and Engineering Outcomes table",
+            )
+
+        try:
+            taxonomy_text = SKILL_TAXONOMY_PATH.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            self.error(f"{rel(SKILL_TAXONOMY_PATH)}: cannot read skill membership: {exc}")
+        else:
+            self.validate_membership_surface(
+                registry_names,
+                extract_taxonomy_category_skill_names(taxonomy_text),
+                "docs/skill-taxonomy.md: Categories lists",
+            )
+
+    def validate_membership_surface(
+        self,
+        registry_names: set[str],
+        documented_names: set[str],
+        label: str,
+    ) -> None:
+        missing = sorted(registry_names - documented_names)
+        extra = sorted(documented_names - registry_names)
+        if missing:
+            self.error(f"{label}: missing registry skills: {', '.join(missing)}")
+        if extra:
+            self.error(f"{label}: lists skills absent from registry: {', '.join(extra)}")
 
     def validate_public_hygiene(self) -> None:
         script = REPO_ROOT / "scripts" / "check_public_hygiene.py"
@@ -895,6 +939,130 @@ def find_markdown_files_for_link_validation() -> list[Path]:
             paths.update(path.resolve() for path in root.glob("**/*.md") if path.is_file())
 
     return sorted(paths, key=rel)
+
+
+def markdown_heading_section(text: str, heading: str) -> str:
+    visible_text = mask_markdown_fenced_code(text)
+    heading_match = re.search(
+        rf"(?m)^ {{0,3}}{re.escape(heading)}(?:[ \t]+#+)?[ \t]*$",
+        visible_text,
+    )
+    if heading_match is None:
+        return ""
+    section_start = heading_match.end()
+    next_heading = re.search(
+        r"(?m)^ {0,3}##(?:[ \t]+|$)", visible_text[section_start:]
+    )
+    if next_heading is None:
+        return visible_text[section_start:]
+    return visible_text[section_start : section_start + next_heading.start()]
+
+
+def mask_markdown_fenced_code(text: str) -> str:
+    masked_lines: list[str] = []
+    open_fence: tuple[str, int] | None = None
+    for line in text.splitlines(keepends=True):
+        body = line.rstrip("\r\n")
+        line_ending = line[len(body) :]
+        if open_fence is None:
+            opener = re.match(r"^ {0,3}(?P<fence>`{3,}|~{3,}).*$", body)
+            if opener is None:
+                masked_lines.append(line)
+                continue
+            marker = opener.group("fence")
+            open_fence = (marker[0], len(marker))
+        else:
+            marker, minimum_length = open_fence
+            if re.match(
+                rf"^ {{0,3}}{re.escape(marker)}{{{minimum_length},}}[ \t]*$",
+                body,
+            ):
+                open_fence = None
+        masked_lines.append(" " * len(body) + line_ending)
+    return "".join(masked_lines)
+
+
+def extract_readme_category_skill_names(text: str) -> set[str]:
+    section = markdown_heading_section(text, "## Skill Categories")
+    names: set[str] = set()
+    for cells in markdown_table_data_rows(section):
+        if len(cells) < 2:
+            continue
+        names.update(re.findall(r"`([a-z0-9][a-z0-9-]*)`", cells[1]))
+    return names
+
+
+def extract_readme_outcome_skill_names(text: str) -> set[str]:
+    section = markdown_heading_section(text, "## Skills and Engineering Outcomes")
+    names: set[str] = set()
+    for cells in markdown_table_data_rows(section):
+        if not cells:
+            continue
+        skill_cell = cells[0]
+        names.update(
+            re.findall(
+                r'''href\s*=\s*["']skills/([a-z0-9][a-z0-9-]*)/?["']''',
+                skill_cell,
+                re.IGNORECASE,
+            )
+        )
+        names.update(
+            re.findall(
+                r"\[[^\]]+\]\(\s*skills/([a-z0-9][a-z0-9-]*)/?\s*\)",
+                skill_cell,
+            )
+        )
+    return names
+
+
+def markdown_table_data_rows(text: str) -> list[list[str]]:
+    lines = text.splitlines()
+    data_rows: list[list[str]] = []
+    line_index = 0
+    while line_index + 1 < len(lines):
+        header_cells = split_markdown_table_row(lines[line_index])
+        delimiter_cells = split_markdown_table_row(lines[line_index + 1])
+        if (
+            header_cells is None
+            or delimiter_cells is None
+            or len(header_cells) != len(delimiter_cells)
+            or not delimiter_cells
+            or not all(is_markdown_table_delimiter(cell) for cell in delimiter_cells)
+        ):
+            line_index += 1
+            continue
+
+        line_index += 2
+        while line_index < len(lines):
+            row_cells = split_markdown_table_row(lines[line_index])
+            if row_cells is None:
+                break
+            data_rows.append(row_cells)
+            line_index += 1
+    return data_rows
+
+
+def split_markdown_table_row(line: str) -> list[str] | None:
+    row_match = re.match(r"^ {0,3}(\|.*)$", line)
+    if row_match is None:
+        return None
+    row = row_match.group(1).rstrip()
+    inner = row[1:-1] if row.endswith("|") else row[1:]
+    return [cell.strip() for cell in inner.split("|")]
+
+
+def is_markdown_table_delimiter(cell: str) -> bool:
+    return re.fullmatch(r":?-{3,}:?", cell) is not None
+
+
+def extract_taxonomy_category_skill_names(text: str) -> set[str]:
+    section = markdown_heading_section(text, "## Categories")
+    return set(
+        re.findall(
+            r"(?m)^ {0,3}[-*+][ \t]+`([a-z0-9][a-z0-9-]*)`(?: \(secondary\))?[ \t]*$",
+            section,
+        )
+    )
 
 
 def safe_pyc_name(script_path: Path) -> str:
