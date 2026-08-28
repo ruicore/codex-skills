@@ -26,8 +26,8 @@ body:
   - type: textarea
     id: evidence
     attributes:
-      label: Real practice or repeated workflow evidence
-      description: What existing behavior, validation failure, user request, repeated task, or public hygiene risk supports the change?
+      label: Public repository evidence or workflow need
+      description: Cite tracked public behavior, public sources, a validation failure, a user request, or an abstract capability. Do not include or reconstruct private source material or provenance.
       placeholder: "Use N/A for tiny typo, formatting, or broken-link fixes."
   - type: checkboxes
     id: change-type
@@ -87,13 +87,15 @@ body:
     id: sanitization
     attributes:
       label: Public sanitization considerations
-      description: What private data, URLs, raw logs, identifiers, or credential risks must be removed, avoided, or checked?
+      description: Confirm that no private source material is present. If private practice identified the abstract need, explain the independently designed public domain, actors, terminology, data, fixtures, and workflow expression. Identifier replacement alone is insufficient.
       placeholder: "Use N/A when not applicable."
+    validations:
+      required: true
   - type: textarea
     id: portability
     attributes:
       label: Portability notes
-      description: What local or practice-derived details should be kept, classified, or explained for future adopters?
+      description: Which independently designed public defaults are local or opinionated, and what should future adopters adapt?
   - type: textarea
     id: examples
     attributes:

@@ -1,13 +1,12 @@
 # Skill Authoring Guide
 
-This guide explains how to turn real engineering practice into a Codex skill
-without sanding it into generic advice too early.
+This guide explains how to turn an abstract engineering capability into an
+independently designed public Codex skill without sanding it into generic advice.
 
-A Codex skill in this repository should preserve a repeatable way of working:
-the trigger, evidence, sequence, guardrails, validation, and output shape that
-made the original practice reliable. The goal is not to make every skill look
-the same. The goal is to help a future Codex session do the same kind of work
-with less guessing.
+A Codex skill in this repository should define a repeatable public way of
+working: its trigger, evidence, sequence, guardrails, validation, and output
+shape. The goal is not to make every skill look the same. The goal is to help a
+future Codex session do the same kind of work with less guessing.
 
 Before authoring or revising a skill, read:
 
@@ -39,8 +38,8 @@ Good skills usually have these properties:
 - **Output contract:** the final deliverable has a predictable shape.
 - **Side-effect guardrails:** reads, writes, publication, and destructive actions
   are handled deliberately.
-- **Practice-derived detail:** real constraints, commands, examples, and failure
-  modes are retained when safe and useful.
+- **Operational specificity:** constraints, commands, examples, and failure
+  modes are concrete, publicly safe, and independently designed.
 
 Weak skills tend to be generic. Warning signs:
 
@@ -49,12 +48,13 @@ Weak skills tend to be generic. Warning signs:
   naming the evidence or validation path.
 - It reads like a checklist of values rather than a workflow a Codex agent can
   execute.
-- It removes local details even though those details encode the actual guardrail.
+- It removes useful public specificity even though that detail encodes the
+  actual guardrail.
 - It broadens the trigger beyond observed use.
 
 ## Prompt, Checklist, Workflow, Or Operating Procedure
 
-Use the smallest form that fits the practice.
+Use the smallest form that fits the public capability.
 
 ### Prompt
 
@@ -280,7 +280,7 @@ Useful failure modes include:
 For each failure mode, say whether to stop, ask the user, downgrade confidence,
 produce a read-only report, or continue with a manual validation note.
 
-## Preserving Practice While Removing Sensitive Details
+## Using Abstract Lessons Without Private Source Material
 
 Real practice can prove that a capability, invariant, authorization boundary, or
 failure mode matters. Private practice is not source material for public prose,
@@ -306,22 +306,22 @@ Preserve when safe:
 - failure modes stated without identifying provenance
 - implementation-independent reasons why a guardrail matters
 
-Use placeholders that preserve a generic role without reproducing private
+Generic placeholders may name roles inside independently designed public
+content, but they are not a sanitization method and must not reproduce private
 structure:
 
-- `<repo>` for a repository
-- `<ticket_url>` for an issue or ticket
-- `<service_name>` for a private service
-- `<account_id>` for an external account
-- `<internal_hostname>` for a private host
+- `<repository>` for a repository
+- `<public_issue_url>` for a public issue
+- `<external_service>` for a public service dependency
+- `<synthetic_account_id>` for an example account
 - `<artifact_path>` for a local output
 
 Add portability notes instead of vague rewrites:
 
 ```markdown
-Portability note: This workflow originally used `<tool_name>` for preview and
-dry-run behavior. Future adopters should substitute the equivalent preview step
-for their tool, but should keep the preview-before-mutation rule.
+Portability note: This workflow requires preview or dry-run behavior. Future
+adopters should use the equivalent preview step for their public tool while
+keeping the preview-before-mutation rule.
 ```
 
 Changing names alone is not clean-room derivation. Change the domain,
@@ -359,7 +359,8 @@ the skill currently does.
 
 Assign maturity by evidence, not formatting:
 
-- `practice-note`: extracted from one real task or habit; useful but incomplete.
+- `practice-note`: an abstract capability seed with an incomplete public
+  workflow.
 - `personal-skill`: safe and useful in the author's workflow; adaptation likely.
 - `portable-candidate`: mostly reusable, but still needs examples, validation,
   or de-personalization.
@@ -373,7 +374,7 @@ it just because it now has headings.
 
 Use this readiness test before creating a reusable skill directory.
 
-The practice is probably ready when:
+The abstract capability is probably ready for a public skill when:
 
 - it has been used more than once, or one use revealed a clearly repeatable
   operating discipline
@@ -382,7 +383,8 @@ The practice is probably ready when:
 - the required inputs and stop conditions are known
 - the output can be reviewed by another engineer
 - side effects and confirmation boundaries are understood
-- sensitive details can be sanitized without destroying the workflow
+- the public workflow can be independently designed without private source
+  material
 - at least one validation path exists, even if manual
 
 Keep it as an extraction note when:
@@ -409,7 +411,7 @@ Replace generic advice with operating detail:
 | Generic | Better |
 |---|---|
 | Validate the result. | Run the repository's validation command. If none exists, run `git diff --check` and manually verify links, headings, and placeholders. |
-| Be careful with credentials. | Use environment variables or connector auth. Never print, commit, or paste tokens. Replace account IDs with `<account_id>` in examples. |
+| Be careful with credentials. | Use environment variables or connector auth. Never print, commit, or paste tokens. Use independently invented synthetic account IDs in examples. |
 | Review the code thoroughly. | Identify project-specific primitives first, then search call sites and trace from public entry points. |
 | Avoid unsafe changes. | Default to read-only. Require explicit user instruction before file edits, commits, pushes, API writes, publication, or deletion. |
 | Produce a useful summary. | Report scope, evidence inspected, findings, validation run, skipped checks, and remaining uncertainty. |
@@ -422,8 +424,8 @@ When writing a skill, ask:
 - What must be previewed before mutation?
 - What can be validated automatically?
 - What should the final answer include?
-- Which concrete practice detail am I tempted to delete, and can I sanitize or
-  classify it instead?
+- Which public specificity is required for the guardrail, and how can I design
+  it independently without private source material?
 
 If the answer is still "follow best practices", the material is not ready for a
 skill.
