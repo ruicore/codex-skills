@@ -136,6 +136,7 @@ class Validator:
         self.warnings.append(message)
 
     def run(self) -> int:
+        self.validate_public_hygiene()
         registry = self.load_registry()
         if registry is None:
             return self.finish()
@@ -165,6 +166,29 @@ class Validator:
 
         self.skill_count = len(contexts)
         return self.finish()
+
+    def validate_public_hygiene(self) -> None:
+        script = REPO_ROOT / "scripts" / "check_public_hygiene.py"
+        if not script.is_file():
+            self.error("scripts/check_public_hygiene.py: required public-hygiene validator is missing")
+            return
+
+        completed = subprocess.run(
+            [sys.executable, str(script)],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if completed.returncode == 0:
+            return
+
+        details = [line for line in completed.stdout.splitlines() if line.strip()]
+        details.extend(line for line in completed.stderr.splitlines() if line.strip())
+        if not details:
+            details = [f"scanner exited with status {completed.returncode}"]
+        for detail in details:
+            self.error(f"public hygiene: {detail}")
 
     def load_registry(self) -> dict[str, object] | None:
         if not INDEX_PATH.exists():

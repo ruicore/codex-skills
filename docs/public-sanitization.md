@@ -12,8 +12,8 @@ Use this policy when adding or editing public repository content, including
 skills, references, examples, scripts, README entries, docs, templates, and
 generated artifacts that may be committed.
 
-This policy does not require editing existing skills by itself. Apply it when a
-future issue touches a file or asks for a public-readiness review.
+Apply this policy to every new or changed public file and to every commit being
+introduced to a public remote. Existing content does not create an exception.
 
 ## 1. Material That Must Never Appear
 
@@ -38,12 +38,11 @@ placeholders such as `<api_key>`, `<customer_name>`, `<private_url>`,
 
 ## 2. Material That Can Appear If Sanitized
 
-The following material can appear in the public repository when it has been
-sanitized and still helps explain the workflow:
+The following material can appear when it is independently written for public
+use and still helps explain the workflow:
 
-- personal workflow names
-- example repository names
-- tool-specific operating notes
+- neutral or synthetic workflow and repository names
+- public tool-specific operating notes
 - fictional examples
 
 Sanitized material should be safe for a public reader to see and useful for a
@@ -55,27 +54,25 @@ commands, preflight checks, confirmation boundaries, validation steps, or failur
 modes. They should not expose private accounts, private URLs, private data, or
 credential material.
 
-## 3. Project-Specific References
+## 3. Private Sources And Clean-Room Derivation
 
-Project-specific references are not automatically wrong. Handle them based on
-the intended maturity and reuse boundary of the skill or document.
+Employer, customer, and internal project material may establish that a general
+capability or engineering invariant matters. It must not be converted directly
+into public repository content. Public work derived from that experience must
+be written clean-room from the abstract capability, using unrelated or
+synthetic terminology, actors, data, fixtures, and examples.
 
-### Intentionally Personal Skills
+Do not copy, translate, lightly rename, or structurally mirror private code,
+prose, schemas, workflows, topology, filenames, identifiers, or artifacts. A
+project name replaced with a generic noun is not sufficient when the surrounding
+material still reproduces the private project.
 
-Keep project-specific references when the skill is intentionally personal and
-the reference is needed to preserve the workflow's meaning.
+Public third-party product, protocol, library, and API names may remain when
+they are necessary for correct use. Employer, customer, internal product,
+repository, service, issue, host, URL, account, and environment identifiers may
+not remain, even in a skill described as personal or practice-derived.
 
-Requirements:
-
-- mark the skill or note as personal, local, or practice-derived
-- remove or replace private identifiers
-- avoid presenting local assumptions as universal requirements
-- keep mutation or publishing operations behind explicit confirmation rules
-
-### Portable Workflows
-
-Replace project-specific references with placeholders when the workflow is meant
-to be portable.
+Use placeholders only when the operational role matters:
 
 Examples:
 
@@ -84,18 +81,16 @@ Examples:
 - use `<service_name>` instead of a customer or employer system name
 - use `<account_id>` instead of a real external account identifier
 
-The placeholder should preserve the shape of the workflow. If the distinction
-between a repository, service, account, ticket, or environment matters, keep that
-distinction in the placeholder.
+The placeholder should preserve the generic role, not a private implementation's
+distinctive structure. If a useful rule cannot be expressed without private
+context, exclude it from the public repository.
 
-### Transitional Skills
-
-Add portability notes when a skill is moving from personal practice toward a
-portable workflow but still contains local assumptions.
+Portability notes may explain public tool assumptions or which generic role an
+adopter must substitute. They must not preserve private provenance.
 
 A good portability note states:
 
-- which detail is local or practice-derived
+- which public tool or generic role is environment-specific
 - what a future adopter should substitute
 - which behavior must stay unchanged for the workflow to remain reliable
 
@@ -119,9 +114,9 @@ Concrete constraints are often the point of a skill. Preserve steps that protect
 against known failure modes, define confirmation boundaries, enforce read-only
 passes, identify validation commands, or prevent unsafe mutations.
 
-When a concrete detail is unsafe to publish, sanitize the detail. When it is too
-local for portable reuse, classify it or add an adaptation note. Remove it only
-when it is both unsafe and unnecessary to the workflow.
+When a concrete detail comes from private work, extract only the capability or
+invariant and express it independently. Classification or an adaptation note
+does not make a private identifier or implementation safe to publish.
 
 ## 5. Checklist For Future Skill Edits
 
@@ -133,17 +128,20 @@ Before committing a future skill edit, check:
 3. Are all secrets, API keys, credentials, private URLs, private data, raw logs,
    and sensitive identifiers absent?
 4. Are examples synthetic, neutral, or clearly sanitized?
-5. Are personal workflow names and tool-specific notes safe to publish?
-6. Are project-specific references intentionally kept, replaced with
-   placeholders, or explained with portability notes?
-7. Does any placeholder preserve the operational meaning of the original
-   workflow?
+5. Are tool-specific names limited to necessary public third-party products?
+6. Was any private source reduced to abstract capabilities and invariants before
+   clean-room writing began?
+7. Does every placeholder preserve only a generic operational role rather than
+   a private implementation's distinctive structure?
 8. Has grounded, concrete workflow language been preserved where it protects
    reliability?
 9. Did the edit avoid unrelated renames, restructures, taxonomy changes, and
    broad abstractions?
-10. Did validation run where available?
-11. If validation is unavailable or not applicable, were manual checks stated?
+10. Did `python scripts/validate_skills.py` run successfully with the private
+    local denylist available?
+11. Was every commit in the proposed push range scanned, including intermediate
+    commits whose prohibited content was later removed?
+12. If validation is unavailable or not applicable, were manual checks stated?
 
 The preferred outcome is a repository that is safe to publish and still honest
 about the real engineering practice that produced the skills.
