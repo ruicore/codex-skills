@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use this for new or extracted skills. Keep it concise and grounded in observed work, not imagined future polish.
+        Use this only for public clean-room proposals. Do not paste or summarize employer, customer, internal project, source task, incident, conversation, ticket, log, schema, topology, filename, workflow, or other private material. Start from an abstract capability and an independently designed public or synthetic domain.
   - type: input
     id: proposed-skill
     attributes:
@@ -19,9 +19,9 @@ body:
   - type: textarea
     id: evidence
     attributes:
-      label: Real practice or repeated workflow evidence
-      description: What task, repeated workflow, failure mode, or prior use shows this should become a skill?
-      placeholder: "Observed in: ... / repeated because: ..."
+      label: Abstract capability and public need
+      description: Describe the implementation-independent capability, invariant, authorization boundary, or failure mode. Do not identify or reconstruct the private work that motivated it.
+      placeholder: "Capability: ... / public need: ..."
     validations:
       required: true
   - type: textarea
@@ -78,10 +78,19 @@ body:
     id: sanitization
     attributes:
       label: Public sanitization considerations
-      description: Note any private names, URLs, raw logs, account data, credentials, or identifiers that must be removed or replaced.
-      placeholder: "Use placeholders for: ..."
+      description: Confirm that no private source material is present and explain the unrelated public or synthetic domain, actors, terminology, data, fixtures, and workflow expression used for clean-room design. Replacing identifiers alone is not sufficient.
+      placeholder: "Private material present: no / synthetic domain: ... / structural independence review: ..."
     validations:
       required: true
+  - type: checkboxes
+    id: clean-room
+    attributes:
+      label: Clean-room declaration
+      options:
+        - label: I did not include or reconstruct private prose, code, schemas, workflows, topology, filenames, fixtures, examples, identifiers, or artifacts.
+          required: true
+        - label: The proposal uses independently designed public or synthetic actors, terminology, data, fixtures, and workflow expression.
+          required: true
   - type: textarea
     id: portability
     attributes:

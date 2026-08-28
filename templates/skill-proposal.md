@@ -1,8 +1,11 @@
 # Skill Proposal
 
 Use this template when a captured practice is ready to discuss as a reusable
-Codex skill. Keep the proposal grounded in observed behavior. Do not promote the
-skill based on formatting alone.
+Codex skill. This is a public clean-room artifact. Draft it from an abstract
+capability statement, not from private source material. Do not include a source
+task, incident, employer, customer, internal project, or mapping back to private
+material. Do not copy, translate, lightly rename, or structurally mirror private
+prose, code, schemas, workflows, topology, filenames, fixtures, or examples.
 
 ## Proposed Skill
 
@@ -18,6 +21,21 @@ skill based on formatting alone.
 ## Purpose
 
 What concrete work should this skill perform, and what failure does it prevent?
+
+## Abstract Capability
+
+- Capability:
+- Engineering invariants:
+- Authorization boundaries:
+- Failure modes that must be prevented:
+
+## Independent Public Problem Domain
+
+- Unrelated public or synthetic domain:
+- Independently designed actors:
+- Independently designed terminology:
+- Synthetic data and fixtures:
+- Public specifications or official documentation used, if any:
 
 ## When To Use
 
@@ -89,17 +107,15 @@ The final response or artifact must include:
 | Sensitive data appears in source material |  |
 | Target is ambiguous |  |
 
-## Practice-Derived Details To Keep
+## Clean-Room Design Declaration
 
-List concrete details that should remain because they carry workflow semantics.
-
-- `<detail>`
-
-## Details To Sanitize Or Generalize
-
-| Detail | Treatment | Reason |
-|---|---|---|
-|  |  |  |
+- Private material present in the public authoring workspace: no
+- Public draft written from abstract capability only:
+- Domain, actors, terminology, data, fixtures, filenames, and workflow expression independently designed:
+- Private-to-public mapping included: no
+- Structural independence reviewed:
+- Reviewer or review method:
+- Review result:
 
 ## Examples Or Supporting Files Needed
 

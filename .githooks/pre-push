@@ -3,6 +3,8 @@ set -eu
 
 zero_sha="0000000000000000000000000000000000000000"
 
+python scripts/validate_skills.py --require-denylist
+
 while read -r local_ref local_sha remote_ref remote_sha; do
   if [ "$local_sha" = "$zero_sha" ]; then
     continue
@@ -14,5 +16,5 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     revision_range="$remote_sha..$local_sha"
   fi
 
-  python scripts/check_public_hygiene.py --require-denylist --range "$revision_range"
+  python scripts/check_public_hygiene.py --mode protected --range "$revision_range"
 done

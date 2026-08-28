@@ -1,8 +1,16 @@
 # Skill Extraction Note
 
-Use this note to capture real engineering practice before turning it into a
-Codex skill. Keep the concrete workflow details that made the practice work, but
-sanitize private information before committing this file.
+Use this note only inside ignored private storage, for example
+`.manifest/skill-intake/<candidate>.md`, to capture real engineering practice
+before reducing it to an abstract capability. Never commit a completed copy of
+this note, even after replacing names or identifiers. Private practice is not
+source material for public prose, code, schemas, fixtures, workflow structure,
+or examples.
+
+Before drafting anything public, produce a separate clean-room proposal from
+only the abstract capability, engineering invariants, authorization boundaries,
+and failure modes recorded here. Do not copy, translate, lightly rename, or
+structurally mirror the private material.
 
 ## Source Practice
 
@@ -24,21 +32,24 @@ Briefly describe the real task and why the workflow mattered.
 - Validation used:
 - Output produced:
 
-## Concrete Details To Preserve
+## Abstract Properties That May Inform A Clean-Room Design
 
-List commands, file shapes, evidence sources, naming conventions, confirmation
-rules, or failure modes that are safe and useful to keep.
+Record only implementation-independent capabilities, invariants, authorization
+boundaries, validation properties, and failure modes. Do not mark private
+commands, file shapes, schemas, names, topology, or workflow ordering for reuse.
 
 - `<detail>`
 
-## Sensitive Details Removed Or Replaced
+## Private Material Boundary
 
-Record what was sanitized so future authors know what the placeholders mean.
+Record which kinds of private material must remain confined to this ignored
+note. A placeholder does not make private structure safe to publish.
 
-| Original kind of detail | Replacement | Notes |
+| Private kind of detail | Public treatment | Notes |
 |---|---|---|
-| private URL | `<private_url>` |  |
-| account or project ID | `<account_id>` |  |
+| private URL | Exclude; introduce a generic role only if required |  |
+| account or project ID | Exclude |  |
+| private workflow or schema | Re-design independently in an unrelated domain |  |
 
 ## Inputs Needed
 
@@ -82,6 +93,8 @@ Answer honestly.
 - Has this happened more than once?
 - Is the trigger specific enough?
 - Can the workflow run without private context?
+- Can a public proposal be written without consulting this note again?
+- Will the public design use unrelated actors, terminology, data, fixtures, and structure?
 - Is there a validation path?
 - Are non-goals clear?
 - What is still too local or uncertain?

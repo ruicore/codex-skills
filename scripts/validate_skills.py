@@ -7,6 +7,7 @@ be a full JSON Schema, YAML, or Markdown implementation.
 
 from __future__ import annotations
 
+import argparse
 import ast
 import json
 import os
@@ -119,7 +120,8 @@ class SkillContext:
 
 
 class Validator:
-    def __init__(self) -> None:
+    def __init__(self, *, require_denylist: bool = False) -> None:
+        self.require_denylist = require_denylist
         self.errors: list[str] = []
         self.warnings: list[str] = []
         self.skill_count = 0
@@ -173,8 +175,11 @@ class Validator:
             self.error("scripts/check_public_hygiene.py: required public-hygiene validator is missing")
             return
 
+        command = [sys.executable, str(script), "--mode", "public"]
+        if self.require_denylist:
+            command = [sys.executable, str(script), "--mode", "protected"]
         completed = subprocess.run(
-            [sys.executable, str(script)],
+            command,
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
@@ -974,8 +979,14 @@ def script_references_for_context(text: str, context: SkillContext) -> set[Path]
 
 
 def main(argv: Iterable[str] | None = None) -> int:
-    _ = argv
-    return Validator().run()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--require-denylist",
+        action="store_true",
+        help="Require the ignored private identifier denylist during public-hygiene validation.",
+    )
+    args = parser.parse_args(argv)
+    return Validator(require_denylist=args.require_denylist).run()
 
 
 if __name__ == "__main__":
