@@ -44,10 +44,10 @@ Alice -> Bob
 
     def test_table_inventory_and_widths_are_content_aware(self) -> None:
         source = """\
-| 阶段 | 执行位置 | 主要能力 | 平台记录 |
+| 季节 | 活动地点 | 观察重点 | 随身物品 |
 | --- | --- | --- | --- |
-| 一期 | Edge Uploader 端侧 | 参数下发、端侧执行、对象级精简结果、Dataset 入库血缘 | 模板、不可变 profile、对象及 Dataset 的 ingest 结果 |
-| 二期 | 平台 Worker | 对已上传 Dataset 重检、集中统计、审计和算法演进 | quality_run 与 quality_run_item 历史 |
+| 春季 | 城市公园 | 记录开花时间、花瓣颜色与授粉昆虫的活动 | 放大镜、素描本和可重复使用的水杯 |
+| 秋季 | 湖边步道 | 比较迁徙鸟类的停留时段与觅食方式 | 双筒望远镜、铅笔和轻便雨衣 |
 """
         tables = publisher.extract_markdown_tables(source)
 
