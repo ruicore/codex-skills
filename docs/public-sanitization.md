@@ -88,6 +88,27 @@ context, exclude it from the public repository.
 Portability notes may explain public tool assumptions or which generic role an
 adopter must substitute. They must not preserve private provenance.
 
+Use this mandatory authoring boundary:
+
+1. Capture private practice only in ignored `.manifest/skill-intake/` storage.
+2. Reduce it to an abstract capability, invariants, authorization boundaries,
+   and failure modes.
+3. Close the private material before public authoring begins.
+4. Design an unrelated public or synthetic domain, actors, terminology, data,
+   fixtures, filenames, workflow expression, and tests.
+5. Have an independent reviewer assess the public draft without access to the
+   private source or a private-to-public mapping.
+
+Public issues, proposals, review notes, and commit messages must not identify or
+summarize the private source. The private derivation record remains ignored.
+Use `docs/clean-room-review.md` for the required semantic-independence review.
+
+Tracked public content must be regular UTF-8 text. Symlinks, binary files, and non-UTF-8 content
+are rejected by default, including screenshots, PDFs, Office documents,
+archives, databases, dumps, and opaque generated artifacts. Introduce a future
+binary asset only after a separate reviewed allowlist and metadata-cleaning
+workflow exists; do not bypass the scanner for an individual file.
+
 A good portability note states:
 
 - which public tool or generic role is environment-specific
@@ -137,11 +158,16 @@ Before committing a future skill edit, check:
    reliability?
 9. Did the edit avoid unrelated renames, restructures, taxonomy changes, and
    broad abstractions?
-10. Did `python scripts/validate_skills.py` run successfully with the private
-    local denylist available?
+10. Did `python scripts/validate_skills.py --require-denylist` run successfully
+    with the private local denylist available?
 11. Was every commit in the proposed push range scanned, including intermediate
     commits whose prohibited content was later removed?
 12. If validation is unavailable or not applicable, were manual checks stated?
+13. Was the private extraction note kept under ignored `.manifest` storage and
+    closed before public authoring began?
+14. Did an independent semantic review confirm that domain, actors,
+    terminology, data, fixtures, filenames, and workflow expression were
+    independently designed?
 
 The preferred outcome is a repository that is safe to publish and still honest
 about the real engineering practice that produced the skills.

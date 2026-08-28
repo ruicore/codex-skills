@@ -24,7 +24,15 @@ jobs:
       - name: Validate skill registry and files
         env:
           PUBLIC_HYGIENE_DENYLIST: ${{ secrets.PUBLIC_HYGIENE_DENYLIST }}
-        run: python scripts/validate_skills.py
+          EVENT_NAME: ${{ github.event_name }}
+        shell: bash
+        run: |
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            python scripts/validate_skills.py
+            echo "::notice::Public PR checks are not authoritative until the protected private-denylist gate passes."
+          else
+            python scripts/validate_skills.py --require-denylist
+          fi
 
       - name: Test public hygiene scanner
         run: python -m unittest discover -s tests -p "test_*.py"
@@ -45,7 +53,12 @@ jobs:
           else
             revision_range="$HEAD_SHA"
           fi
-          python scripts/check_public_hygiene.py --range "$revision_range"
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            python scripts/check_public_hygiene.py --mode public --range "$revision_range"
+            echo "::notice::A protected private-denylist scan is still required before merge."
+          else
+            python scripts/check_public_hygiene.py --mode protected --range "$revision_range"
+          fi
 
       - name: List all skills
         run: python scripts/list_skills.py

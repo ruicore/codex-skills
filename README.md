@@ -55,6 +55,7 @@ The repository direction is captured in a small set of docs:
 - [docs/repository-contract.md](docs/repository-contract.md) defines the grounded evolution contract.
 - [docs/skill-taxonomy.md](docs/skill-taxonomy.md) defines category and maturity labels.
 - [docs/public-sanitization.md](docs/public-sanitization.md) defines public repository hygiene.
+- [docs/clean-room-review.md](docs/clean-room-review.md) defines the semantic-independence review required for public skills.
 - [docs/side-effect-policy.md](docs/side-effect-policy.md) defines read, write, publishing, and destructive-operation guardrails.
 - [docs/skill-authoring-guide.md](docs/skill-authoring-guide.md) explains how to turn real practice into a skill without premature generalization.
 
@@ -102,7 +103,7 @@ Use a skill when the task matches the workflow, not because the skill name sound
 Run the repository validation command after skill, docs, registry, or README changes:
 
 ```bash
-python scripts/validate_skills.py
+python scripts/validate_skills.py --require-denylist
 ```
 
 ## Skill Categories
@@ -195,12 +196,14 @@ This repository is versioned informally through Git history. When changing a ski
 - remove stale instructions rather than layering exceptions
 - test scripts or templates locally when they are part of the workflow
 - keep [skills/index.json](skills/index.json) aligned when public skill metadata changes
-- run `python scripts/validate_skills.py` after changes that touch skills, docs, registry metadata, or README links
+- run `python scripts/validate_skills.py --require-denylist` after changes that touch skills, docs, registry metadata, or README links
 - keep private employer, customer, and project identifiers in the ignored
   `.manifest/public-hygiene-denylist.txt`, one literal identifier per line
 - enable the repository pre-push gate with
   `git config core.hooksPath .githooks`; it scans every proposed commit rather
   than only the final working tree
+- use `python scripts/setup_public_repo.py` to check the local hook and private
+  denylist setup, or add `--apply` to configure the repository hook explicitly
 - follow [AGENTS.md](AGENTS.md) and the
   [public sanitization policy](docs/public-sanitization.md) when private work
   informs a public skill; extract capabilities and use a clean-room public
