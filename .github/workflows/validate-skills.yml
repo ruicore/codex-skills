@@ -48,7 +48,9 @@ jobs:
         run: |
           if [[ "$EVENT_NAME" == "pull_request" ]]; then
             revision_range="$BASE_SHA..$HEAD_SHA"
-          elif [[ -n "$BEFORE_SHA" && ! "$BEFORE_SHA" =~ ^0+$ ]]; then
+          elif [[ -n "$BEFORE_SHA" && ! "$BEFORE_SHA" =~ ^0+$ ]] &&
+            git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null &&
+            git merge-base --is-ancestor "$BEFORE_SHA" "$HEAD_SHA"; then
             revision_range="$BEFORE_SHA..$HEAD_SHA"
           else
             revision_range="$HEAD_SHA"

@@ -44,6 +44,29 @@ class PublicHygieneTests(unittest.TestCase):
 
         self.assertIn("private_identifier", [finding.category for finding in findings])
 
+    def test_word_rule_matches_identifier_without_cross_word_false_positive(self) -> None:
+        denylist = parse_denylist("word:ABCD\n")
+
+        exact = scan_value(
+            "ABCD and ABCD_data are private identifiers.",
+            scope="worktree",
+            location="example.md",
+            line=1,
+            denylist=denylist,
+        )
+        ordinary_prose = scan_value(
+            "A B C D sequence remains unchanged.",
+            scope="worktree",
+            location="LICENSE",
+            line=151,
+            denylist=denylist,
+        )
+
+        self.assertIn("private_identifier", [finding.category for finding in exact])
+        self.assertNotIn(
+            "private_identifier", [finding.category for finding in ordinary_prose]
+        )
+
     def test_generic_private_ip_is_rejected(self) -> None:
         findings = scan_value(
             "Connect to " + "192." + "168.40.12 before running the job.",

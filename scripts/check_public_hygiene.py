@@ -19,6 +19,7 @@ DENYLIST_ENV = "PUBLIC_HYGIENE_DENYLIST"
 DENYLIST_FILE_ENV = "PUBLIC_HYGIENE_DENYLIST_FILE"
 PUBLIC_MODE = "public"
 PROTECTED_MODE = "protected"
+WORD_RULE_PREFIX = "word:"
 
 GENERIC_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     (
@@ -79,13 +80,31 @@ def parse_denylist(text: str) -> tuple[str, ...]:
         line = raw_line.strip()
         if not line or line.startswith("#"):
             continue
-        value = normalized_identifier(line)
+        word_rule = line.casefold().startswith(WORD_RULE_PREFIX)
+        raw_value = line[len(WORD_RULE_PREFIX) :].strip() if word_rule else line
+        value = normalized_identifier(raw_value)
         if len(value) < 4:
             raise HygieneConfigurationError(
                 "private denylist entries must contain at least four letters or digits"
             )
-        normalized.add(value)
+        normalized.add(f"{WORD_RULE_PREFIX}{value}" if word_rule else value)
     return tuple(sorted(normalized))
+
+
+def denylist_matches_value(value: str, denylist: Sequence[str]) -> bool:
+    normalized = normalized_identifier(value)
+    for rule in denylist:
+        if rule.startswith(WORD_RULE_PREFIX):
+            word = rule[len(WORD_RULE_PREFIX) :]
+            if re.search(
+                rf"(?<![^\W_]){re.escape(word)}(?![^\W_])",
+                value,
+                flags=re.IGNORECASE,
+            ):
+                return True
+        elif rule in normalized:
+            return True
+    return False
 
 
 def load_denylist(repo_root: Path, explicit_path: Path | None = None) -> tuple[str, ...]:
@@ -121,8 +140,7 @@ def scan_value(
     denylist: Sequence[str],
 ) -> list[Finding]:
     findings: list[Finding] = []
-    normalized = normalized_identifier(value)
-    if any(term in normalized for term in denylist):
+    if denylist_matches_value(value, denylist):
         findings.append(Finding(scope, location, line, "private_identifier"))
 
     for category, pattern in GENERIC_PATTERNS:
@@ -170,7 +188,10 @@ def scan_blob(
             )
         )
     normalized_text = normalized_identifier(text)
-    if any(term in normalized_text for term in denylist) and not any(
+    substring_rules = tuple(
+        rule for rule in denylist if not rule.startswith(WORD_RULE_PREFIX)
+    )
+    if any(term in normalized_text for term in substring_rules) and not any(
         finding.category == "private_identifier" for finding in findings
     ):
         findings.append(Finding(scope, location, None, "private_identifier"))

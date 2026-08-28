@@ -205,7 +205,9 @@ This repository is versioned informally through Git history. When changing a ski
 - keep [skills/index.json](skills/index.json) aligned when public skill metadata changes
 - run `python scripts/validate_skills.py --require-denylist` after changes that touch skills, docs, registry metadata, or README links
 - keep private employer, customer, and project identifiers in the ignored
-  `.manifest/public-hygiene-denylist.txt`, one literal identifier per line
+  `.manifest/public-hygiene-denylist.txt`, one literal identifier per line; use
+  `word:<identifier>` when a short identifier needs token-boundary matching
+  instead of normalized substring matching
 - enable the repository pre-push gate with
   `git config core.hooksPath .githooks`; it scans every proposed commit rather
   than only the final working tree
