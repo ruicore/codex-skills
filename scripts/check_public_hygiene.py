@@ -17,6 +17,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DENYLIST = Path(".manifest/public-hygiene-denylist.txt")
 DENYLIST_ENV = "PUBLIC_HYGIENE_DENYLIST"
 DENYLIST_FILE_ENV = "PUBLIC_HYGIENE_DENYLIST_FILE"
+PUBLIC_MODE = "public"
+PROTECTED_MODE = "protected"
 
 GENERIC_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     (
@@ -143,7 +145,20 @@ def scan_blob(
         line=None,
         denylist=denylist,
     )
-    text = data.decode("utf-8", errors="ignore")
+    normalized_location = location.replace("\\", "/").casefold()
+    if normalized_location == ".manifest" or normalized_location.startswith(".manifest/"):
+        findings.append(Finding(scope, location, None, "forbidden_private_storage_path"))
+
+    if b"\0" in data:
+        findings.append(Finding(scope, location, None, "binary_or_non_utf8_content"))
+        return findings
+
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        findings.append(Finding(scope, location, None, "binary_or_non_utf8_content"))
+        return findings
+
     for line_number, line in enumerate(text.splitlines(), start=1):
         findings.extend(
             scan_value(
@@ -154,6 +169,39 @@ def scan_blob(
                 denylist=denylist,
             )
         )
+    normalized_text = normalized_identifier(text)
+    if any(term in normalized_text for term in denylist) and not any(
+        finding.category == "private_identifier" for finding in findings
+    ):
+        findings.append(Finding(scope, location, None, "private_identifier"))
+    return findings
+
+
+def scan_repository_refs(
+    repo_root: Path,
+    denylist: Sequence[str],
+    *,
+    scope: str,
+) -> list[Finding]:
+    findings: list[Finding] = []
+    refs = run_git(repo_root, "for-each-ref", "--format=%(refname)")
+    findings.extend(
+        scan_blob(
+            refs,
+            scope=scope,
+            location="<git-refs>",
+            denylist=denylist,
+        )
+    )
+    tag_contents = run_git(repo_root, "for-each-ref", "--format=%(contents)", "refs/tags")
+    findings.extend(
+        scan_blob(
+            tag_contents,
+            scope=scope,
+            location="<tag-annotations>",
+            denylist=denylist,
+        )
+    )
     return findings
 
 
@@ -179,10 +227,13 @@ def worktree_paths(repo_root: Path) -> list[str]:
 
 
 def scan_worktree(repo_root: Path, denylist: Sequence[str]) -> ScanResult:
-    findings: list[Finding] = []
+    findings = scan_repository_refs(repo_root, denylist, scope="repository-metadata")
     paths = worktree_paths(repo_root)
     for relative_path in paths:
         path = repo_root / relative_path
+        if path.is_symlink():
+            findings.append(Finding("worktree", relative_path, None, "tracked_symlink"))
+            continue
         if not path.is_file():
             continue
         findings.extend(
@@ -223,6 +274,18 @@ def read_blob_at_commit(repo_root: Path, commit: str, relative_path: str) -> byt
     return completed.stdout
 
 
+def file_mode_at_commit(repo_root: Path, commit: str, relative_path: str) -> str | None:
+    completed = subprocess.run(
+        ["git", "ls-tree", "-z", commit, "--", relative_path],
+        cwd=repo_root,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0 or not completed.stdout:
+        return None
+    return completed.stdout.split(maxsplit=1)[0].decode("ascii", errors="ignore")
+
+
 def scan_history(repo_root: Path, revision_range: str, denylist: Sequence[str]) -> ScanResult:
     commits = run_git(repo_root, "rev-list", "--reverse", revision_range).decode().splitlines()
     findings: list[Finding] = []
@@ -231,18 +294,20 @@ def scan_history(repo_root: Path, revision_range: str, denylist: Sequence[str]) 
     for commit in commits:
         short_commit = commit[:12]
         scope = f"commit-{short_commit}"
-        message = run_git(repo_root, "show", "-s", "--format=%B", commit)
+        metadata = run_git(repo_root, "show", "-s", "--format=%an%n%ae%n%cn%n%ce%n%B", commit)
         findings.extend(
             scan_blob(
-                message,
+                metadata,
                 scope=scope,
-                location="<commit-message>",
+                location="<commit-metadata>",
                 denylist=denylist,
             )
         )
 
         paths = changed_paths(repo_root, commit)
         for relative_path in paths:
+            if file_mode_at_commit(repo_root, commit, relative_path) == "120000":
+                findings.append(Finding(scope, relative_path, None, "tracked_symlink"))
             data = read_blob_at_commit(repo_root, commit, relative_path)
             if data is None:
                 findings.extend(
@@ -265,6 +330,7 @@ def scan_history(repo_root: Path, revision_range: str, denylist: Sequence[str]) 
                 )
             )
 
+    findings.extend(scan_repository_refs(repo_root, denylist, scope="repository-metadata"))
     return ScanResult(tuple(findings), files_scanned, len(commits))
 
 
@@ -293,6 +359,15 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Fail when neither a local nor environment-provided private denylist exists.",
     )
+    parser.add_argument(
+        "--mode",
+        choices=(PUBLIC_MODE, PROTECTED_MODE),
+        default=PUBLIC_MODE,
+        help=(
+            "public runs generic checks and any available denylist; protected also "
+            "requires a private denylist (default: public)."
+        ),
+    )
     return parser
 
 
@@ -301,7 +376,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     repo_root = args.repo_root.resolve()
     try:
         denylist = load_denylist(repo_root, args.denylist)
-        if args.require_denylist and not denylist:
+        if (args.require_denylist or args.mode == PROTECTED_MODE) and not denylist:
             raise HygieneConfigurationError("a private denylist is required for this scan")
         result = (
             scan_history(repo_root, args.revision_range, denylist)
@@ -323,7 +398,8 @@ def main(argv: Iterable[str] | None = None) -> int:
 
     print(
         f"Public hygiene passed: {result.files_scanned} file snapshot(s), "
-        f"{result.commits_scanned} commit(s), {len(denylist)} private identifier rule(s)."
+        f"{result.commits_scanned} commit(s), {len(denylist)} private identifier rule(s), "
+        f"{args.mode} mode."
     )
     return 0
 

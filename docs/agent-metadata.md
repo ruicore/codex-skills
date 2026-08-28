@@ -47,4 +47,4 @@ files.
 - Avoid broad prompt rewrites or naming changes unless local evidence shows the
   current metadata is misleading.
 
-Run `python scripts/validate_skills.py` after changing agent metadata.
+Run `python scripts/validate_skills.py --require-denylist` after changing agent metadata.
