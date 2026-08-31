@@ -449,6 +449,48 @@
       "portability_notes": "Tool-specific workflow that assumes excalidraw-cli is installed and, for local previews, may depend on platform-specific preview tooling."
     },
     {
+      "name": "feishu-doc-archiver",
+      "path": "skills/feishu-doc-archiver",
+      "category": "tool-ops",
+      "secondary_categories": [],
+      "maturity": "personal-skill",
+      "purpose": "Creates traceable offline Feishu document archives with original-quality media and explicitly authorized consolidation of verified duplicates.",
+      "triggers": [
+        "archive a Feishu document and requested linked documents locally",
+        "re-export blurry document images through the selected authenticated browser",
+        "keep only verified high-quality copies in an existing document archive"
+      ],
+      "do_not_use_for": [
+        "cloud document publication or editing",
+        "software bug investigation",
+        "unrequested account-wide crawling or data-folder mirroring",
+        "cleanup of unrelated downloads or existing files without authority"
+      ],
+      "default_side_effect_level": "external-api-read",
+      "side_effect_level": "destructive",
+      "requires_credentials": true,
+      "primary_outputs": [
+        "offline reading copies with local links",
+        "preferred media files and source-to-file records",
+        "verified cleanup receipt when consolidation is requested",
+        "coverage, quality, and incomplete-item report"
+      ],
+      "validation_expectations": [
+        "inspect each illustration occurrence, including embedded objects outside ordinary image galleries",
+        "verify native full-size acquisition, actual file decoding, and ambiguous visual equivalence",
+        "run the read-only media inspection helper before reviewing duplicate candidates",
+        "validate all replacement references before and after authorized cleanup",
+        "report unvisited links and source-quality limitations without claiming complete coverage"
+      ],
+      "supporting_files": [
+        "skills/feishu-doc-archiver/references/browser-acquisition.md",
+        "skills/feishu-doc-archiver/references/retention-and-verification.md",
+        "skills/feishu-doc-archiver/scripts/inspect_media.py"
+      ],
+      "agents_metadata_path": "skills/feishu-doc-archiver/agents/openai.yaml",
+      "portability_notes": "Requires the selected browser integration and an existing Feishu session with export permission. UI labels and export formats must be inspected live. The optional local inspection helper requires Pillow and is read-only. Local consolidation reaches destructive scope only after explicit target-scoped authorization; independent semantic review is still required before public release."
+    },
+    {
       "name": "feishu-issue-debugger",
       "path": "skills/feishu-issue-debugger",
       "category": "core-engineering",

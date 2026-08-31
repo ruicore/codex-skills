@@ -93,6 +93,7 @@ connected account with repeatable guardrails.
 Current skills:
 
 - `buffer-publisher`
+- `feishu-doc-archiver`
 - `feishu-issue-debugger` (secondary)
 - `feishu-technical-doc-publisher`
 - `genmedia`
