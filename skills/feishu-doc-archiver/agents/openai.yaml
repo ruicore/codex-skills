@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Doc Archiver"
+  short_description: "Archive Feishu docs with full-quality, deduplicated images"
+  default_prompt: "Use $feishu-doc-archiver to archive this Feishu document and its linked documents locally, export images at the best available quality, retain only verified preferred copies, and report anything incomplete."
