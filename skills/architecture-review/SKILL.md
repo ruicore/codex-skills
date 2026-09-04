@@ -37,6 +37,10 @@ It is not:
 - Drift matters when implementation no longer follows the repository's stated or implied architecture.
 - Change surface is architectural when one concept change requires many unrelated modules to change.
 - Do not recommend abstraction unless it reduces real duplication, clarifies ownership, or narrows a boundary.
+- Match review-document structure to review complexity. A small, bounded review may be best kept in one concise document; multiple files are not a requirement by themselves.
+- Split a large review only when independent owners, lifecycles, decision axes, or validation boundaries make separate documents materially easier to find, maintain, or update.
+- For a genuinely cross-cutting review, use a small entry document for navigation and frozen cross-module points, with one cohesive document per meaningful module. Do not turn the entry document into a duplicate of every module.
+- Do not split documents merely because a file is long, and do not merge independent modules merely to keep a single-file convention. The boundary must reduce ambiguity or change surface.
 - Do not repeatedly report intentional architecture debt as a new defect; record its rationale and retirement condition.
 - Prefer local evidence over intended architecture: inspect code, docs, configs, generated artifacts, runtime wiring, validation signals, and recent diffs when relevant.
 - Every finding is a hypothesis. Before reporting it, actively attempt to disprove it. A finding should only survive if the available repository evidence does not invalidate it.
@@ -96,6 +100,33 @@ hide authority behind indirection. File size and flat layout are investigation
 signals only. Report an architecture finding when evidence shows mixed reasons
 to change, ambiguous authority, fragmented lifecycle ownership, or a broad
 change surface.
+
+## Review Documentation Shape
+
+Choose the documentation shape after the architecture map and finding
+disproof pass, not before:
+
+- **Simple review:** Keep one document when the scope is narrow, the owner is
+  clear, the evidence is small, and the decision can be understood without
+  unrelated context.
+- **Complex review:** Use one entry document plus cohesive module documents
+  when the review crosses independent owners, lifecycles, decision axes, or
+  validation boundaries. The entry document should provide reading order,
+  module links, and a short cross-module summary.
+- **Existing repository convention:** Follow the repository's established
+  documentation or ADR convention when one exists. Do not create a new
+  hierarchy just to satisfy a preferred format.
+
+For a modular review, each module document should state its scope, owner,
+authoritative evidence, decision, prohibited behavior, validation boundary,
+and revisit trigger. Cross-reference the other modules instead of copying
+their full conclusions. When one later finding changes only one module, update
+that module and the entry index; update the aggregate review only when the
+cross-module conclusion actually changes.
+
+This is a complexity-sensitive option, not a mandatory multi-file workflow.
+The goal is high cohesion and low coupling in the review record, while keeping
+small reviews compact and easy to consume.
 
 ## Review Process
 
