@@ -72,8 +72,8 @@ Use these docs to classify, contain, and validate existing behavior. Do not use 
 Copy the skill directory you want into your Codex skills directory:
 
 ```bash
-mkdir -p ~/.codex/skills
-cp -R skills/diagnose ~/.codex/skills/
+mkdir -p ~/.agents/skills
+cp -R skills/diagnose ~/.agents/skills/
 ```
 
 Then review the copied `SKILL.md` before relying on it in another repository. Some skills include supporting notes or scripts; keep those files with the skill directory.
@@ -88,10 +88,15 @@ python scripts/list_skills.py --show-secondary
 
 python scripts/install_skill.py diagnose --dry-run
 python scripts/install_skill.py diagnose
-python scripts/install_skill.py --category review-audit --target ~/.codex/skills --dry-run
+python scripts/install_skill.py diagnose --verify
+python scripts/install_skill.py --category review-audit --target ~/.agents/skills --dry-run
 ```
 
-`install_skill.py` copies the full skill directory, including supporting files and scripts. Existing destination directories are left untouched unless `--overwrite` is passed explicitly.
+`install_skill.py` copies selected skill directories, verifies their content, and
+stores source-commit and file-hash receipts outside the discovery directory.
+`--overwrite` refuses locally modified destinations. See
+[local workflow tools](docs/local-workflow-tools.md) for installation details and
+the read-only task-start snapshot and staged commit-scope checker.
 
 ## Use
 
