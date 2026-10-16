@@ -1,11 +1,13 @@
 ---
 name: decision-trace-writer
-description: Secondary persistence workflow for durably recording a stable engineering decision, finding, or user-clarified constraint after the primary review, diagnosis, architecture, or implementation work establishes it. Use when the user or repository explicitly requests a decision trace, or when a settled decision should be preserved for future agents; do not use as the primary workflow for every review, diagnosis, or architecture task.
+description: Record a settled engineering decision, finding, or user-clarified constraint in repository-local context when the user requests persistence or repository rules authorize it. A secondary workflow after review, diagnosis, or implementation; not a general review process or authority to change product-level memory.
 ---
 
 # Decision Trace Writer
 
-Write a local, agent-facing decision trace that lets a future Codex instance recover what happened, why it mattered, which constraints were clarified, what was decided, and what remains. Follow the current repository's durable-memory convention rather than inventing one.
+Write a repository-local decision trace that lets a future agent recover what
+happened, the evidence and constraints, the decision, and remaining work. Follow
+the repository's existing convention.
 
 Use this as a secondary persistence workflow. Complete the relevant review, diagnosis, architecture, or implementation reasoning first; then preserve only a stable result that passes the gate below. Do not create a trace merely because the skill loaded or to manufacture training data.
 
@@ -21,23 +23,29 @@ Load only the reference needed for the current trace:
 
 Do not load the example just to write an ordinary trace. Load the TraceGym reference only when the trace has reusable workflow, eval, evaluator, benchmark, or skill-improvement value.
 
-## Worth-Recording Gate
+## Authorization And Recording Value
 
-Before inspecting placement or writing files, decide whether a durable trace is warranted.
+Create or update a trace only when the user has requested persistence or an
+applicable repository rule authorizes it. An existing authorization covers the
+scoped work; do not ask again merely because this skill loaded. A useful finding
+alone is not permission to write a file.
 
-Record or update a trace when at least one condition holds:
+This skill governs repository-local traces, not the product's global memory or a
+cross-project memory store. It grants no authority to access or update those
+stores; their separate tool and authorization rules still apply.
 
-- The user explicitly asks to preserve context for future Codex runs, agent memory, durable local guidance, or a decision trace.
-- A stable engineering decision, finding, or constraint has been clarified and future agents are likely to need it.
-- Local evidence confirmed, weakened, or disproved a review claim, bug hypothesis, or architecture concern that should not be re-litigated.
-- The decision rejects an obvious alternative that a future agent might otherwise reintroduce.
-- The decision affects architecture boundaries, integration contracts, user-facing behavior, correctness, data integrity, migrations, evaluations, or cross-surface behavior.
-- Implementation or validation changed an existing trace's status.
-- The session established a reusable agent-workflow signal such as a repeated failure mode, missing validation gate, better decomposition boundary, or corrected skill behavior.
+Within that authority, record material with future decision value:
+
+- a settled engineering constraint, invariant, or rejected alternative that future work must preserve;
+- evidence that confirms or corrects a recurring review claim or diagnosis;
+- implementation or validation that materially changes an existing decision's status;
+- a demonstrated workflow lesson, such as a missing validation gate or corrected decomposition boundary.
 
 Do not write a trace for a routine implementation detail, transient plan or TODO list, meeting-style recap, unresolved investigation, unchanged duplicate, raw transcript, raw training data, or matter better captured by a final response, inline comment, issue, ADR, or ordinary project document.
 
-If the gate fails, stop this workflow and briefly state why no durable trace was created. If the result is borderline in an interactive session, explain the tradeoff and ask or propose before creating a new trace.
+If authorization or recording value is absent, keep the conclusion in the current
+response. Propose a trace only when preserving it would materially help; do not
+add a routine approval step to unrelated work.
 
 This skill does not replace a formal ADR. When a decision changes public architecture, APIs, integration contracts, or team policy, recommend updating the relevant human-facing documentation too.
 
@@ -52,7 +60,7 @@ This skill does not replace a formal ADR. When a decision changes public archite
 7. **Classify every trace.** Write an explicit privacy class in the trace whether or not TraceGym metadata will be present. Use `local_raw_trace` for the normal repository-grounded trace. Use `sanitized_trace_seed` or `public_benchmark_candidate` only for a separately authorized derived artifact that satisfies the corresponding publication gate.
 8. **Add reusable-signal metadata conditionally.** When the trace has reusable workflow, eval, benchmark, evaluator, or skill-improvement value, read [TraceGym metadata](references/tracegym-metadata.md) and append its appropriate final-footer template. When metadata is included, write exactly one final `## TraceGym Metadata` section, immediately followed by a YAML fence whose opening line is exactly three backticks followed by `yaml`; its fence begins with `tracegym_metadata:` and, after the closing fence, the trace contains no non-whitespace content. The Full or Compact template is the body of that final footer, not an arbitrary code sample elsewhere in the trace. When present, `skill_application_evidence` is the final metadata field. Use its canonical skill-application entry fields only for observed loading or use, record human review honestly, and keep application evidence distinct from skills that might learn from the case. Omit metadata altogether when this conditional gate fails; record the omission reason while retaining the standalone privacy classification.
 9. **Respect privacy and publication boundaries.** Keep private or ignored traces unstaged unless the user explicitly asks otherwise. Treat any future sanitized or public derivative as separate work requiring separate review.
-10. **Verify the artifact.** Check existence, readability, filename, evidence accuracy, current status, privacy class, version-control state, and honest validation claims.
+10. **Verify the artifact.** Check existence, readability, local placement and filename, evidence accuracy, current status, privacy classification, and version-control state. Keep any metadata privacy class consistent with the standalone classification; report only validation that ran.
 
 ## Repository Convention And Placement
 
@@ -62,7 +70,7 @@ Choose placement in this order:
 
 1. Use the user-specified location.
 2. Otherwise follow an existing trace, decision, or findings convention.
-3. Otherwise follow an existing agent-memory or repository-context convention.
+3. Otherwise follow an existing repository-local context convention.
 4. Otherwise ask or propose in an interactive session.
 5. Otherwise use a conservative directory such as `decision-traces/` in a non-interactive session and state that no convention was found.
 
@@ -86,7 +94,10 @@ Use this evidence hierarchy when sources conflict:
 4. Logs or external evidence whose source and freshness are known.
 5. Inference, clearly labeled.
 
-When evidence is incomplete, state what was inspected and what remains unknown. Never invent code references or paths, and never present planned or blocked validation as completed.
+This hierarchy evaluates factual claims; current user instructions govern scope
+and authorization. When evidence is incomplete, state what was inspected and what
+remains unknown. Never invent code references or present planned or blocked
+validation as completed.
 
 ## Asset Layers And Publication Gates
 
@@ -133,7 +144,3 @@ In the final response, state the trace path, whether it was created or updated, 
 - If an existing trace already captures the same decision with no material change, do not create a duplicate.
 - If sanitization or publication is requested, treat it as a separate workflow and do not expose the raw trace.
 - If validation is unsafe, unavailable, skipped, or blocked, state that exactly.
-
-## Before Finishing
-
-Verify that the trace exists and is readable; follows the filename and local placement convention; includes concrete evidence and user clarification; distinguishes facts, inference, decision, and status; contains no prohibited sensitive material; keeps ignored/private files unstaged absent explicit authorization; states an explicit privacy class whether TraceGym metadata is present or omitted; keeps any metadata privacy class consistent with the standalone classification; and reports only validation that actually ran.

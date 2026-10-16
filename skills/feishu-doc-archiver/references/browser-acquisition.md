@@ -1,9 +1,10 @@
 # Browser acquisition
 
 Read this when downloading through a browser or resolving media omitted by a
-document export. Use the selected browser's installed skill and runtime API as
-the authority for supported actions. The notes below are decision rules, not a
-stored automation session or a guarantee about current UI labels.
+document export. Use the selected browser tool's current instructions and returned
+runtime API documentation as the authority for supported actions. The notes below
+are decision rules, not a stored automation session or a guarantee about current
+UI labels.
 
 ## Discover the content surface
 
@@ -64,10 +65,10 @@ only proof of success. Never consume partial download files.
 
 If native export is permitted but transport fails, consult the browser's current
 documented capabilities. Saving an already loaded, DOM-observed resource is a
-possible fallback only when supported and allowed by the application. For example,
-a documented CDP capability may expose `Page.getResourceTree` and
-`Page.getResourceContent`; the resource must belong to the observed page/frame and
-match the current image. Do not invent endpoints, alter signed resource URLs,
+possible fallback only through a documented capability that is actually available
+and allowed by the application. Do not start a separate CDP connection or assume
+resource APIs exist. The resource must belong to the observed page/frame and match
+the current image. Do not invent endpoints, alter signed resource URLs,
 invoke hidden application APIs, issue arbitrary authenticated fetches, or read
 session storage. This fallback must never bypass disabled export permissions.
 

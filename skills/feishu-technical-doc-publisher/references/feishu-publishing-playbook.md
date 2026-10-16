@@ -29,11 +29,45 @@ It produces:
 - `<stem>.publish.md`: source with PlantUML fences replaced by visible insertion markers;
 - `<stem>.publish.html`: standard HTML suitable for opening and rich-text copying;
 - `diagrams/diagram-XX.puml`: one file per PlantUML fence;
-- `publish-manifest.json`: source SHA-256, output paths, counts, and editorial warnings.
+- `publish-manifest.json`: source and final-artifact SHA-256 values, output paths,
+  final HTML structure, diagram mappings, and editorial warnings.
 
 Review warnings before publishing. The helper does not decide whether a numbered heading or `待定` is correct, and it never edits the source or Feishu.
 
-The first command previews planned files and existing-path conflicts. The write command refuses to overwrite generated files; use `--force` only after confirming that the output directory is the intended generated-publication location.
+Both commands render with the Python `markdown` package before counting structure;
+use an existing configured runtime that provides it. The first command previews
+planned files, existing-path conflicts and the ledger without writing. The write
+command refuses to overwrite generated files; use `--force` when the output
+directory is the intended generated-publication location.
+
+### Manifest version 3
+
+- `inventory.headings` and `headings_by_level` count actual generated HTML headings,
+  including Setext headings and excluding heading-like lines inside code.
+- `inventory.code_blocks` counts final `<pre>` blocks, including indented code and
+  excluding extracted PlantUML. The older `fenced_code_blocks` key remains as an
+  alias of this corrected count; it no longer describes raw source fences.
+- `publication_ledger.headings` identifies each heading by order, level and text.
+  `publication_ledger.code_blocks` identifies each code block by order, language,
+  decoded text hash, line count, a searchable `tail_marker` and final `tail_lines`.
+- `requires_tail_check` defaults to true at 20 rendered lines. Configure it with
+  `--long-code-lines <positive-number>`. The threshold is a preflight aid; also
+  inspect any shorter block that Feishu places in an independent scroll container.
+  A tail marker is scoped to its block and may repeat elsewhere; verify both the
+  marker and the closing lines in that block rather than accepting a global Find hit.
+- `tables` is derived from final HTML rows and visible cell text, including HTML
+  tables. Use ordinal and identifying headers; schema 3 does not promise a source
+  Markdown `line` for generated tables. Width suggestions still need visual checks.
+- `diagrams` retains each slot ID, placeholder, DSL path/hash and preview status.
+  `inventory.temporary_placeholders` counts these generated slots. Deliberately
+  deferred markers remain separate in `review_warnings`.
+- Existing output paths and integer count keys remain available. Consumers should
+  recognize `schema_version: 3` and use final-payload semantics. Generated text
+  files use UTF-8 and LF so stored artifact hashes match the bytes on Windows too.
+
+The manifest describes the generated HTML structure, not CSS visibility or Feishu
+import behavior. Cloud verification remains required. Never reuse a ledger after
+editing its generated Markdown or HTML without regenerating or reconciling it.
 
 If the project already has a more specific generator that assembles appendices or authoritative schemas, prefer it. Preserve its source boundaries and still apply the QA gates below.
 
@@ -43,7 +77,7 @@ The composite ledger should include expected heading counts by level, tables by 
 
 ## 2. Browser And Target Preflight
 
-1. Prefer the Codex in-app browser, load `browser:control-in-app-browser`, and read its runtime documentation before browser actions. Fall back only under the conditions defined in `SKILL.md`, never silently.
+1. Follow the browser capability section of `SKILL.md`. With `mcp__cua_repl`, use its prescribed entrypoint and read the returned documentation. Prefer an available in-app browser unless the user selected another surface; do not assume native input, CDP, page evaluation or an older browser skill is available.
 2. Open the exact target URL. Confirm title, current content, edit access, and whether it is the initially blank destination supplied by the user.
 3. If the page already contains useful content, note the last-modified state and locate Edit History before a broad change.
 4. Do not change sharing or permissions as part of publishing unless requested.
@@ -167,7 +201,7 @@ Do not search the top-right document overflow menu or `More Templates` for Plant
 For a repeated diagram pass, use this stable interaction rhythm:
 
 - leave the previous Board's focus before using the document outline; if the outline changes its URL/hash but does not scroll, press `Esc` once, reacquire the current state, and retry;
-- paste the complete DSL in one clipboard operation rather than typing it incrementally;
+- insert the complete DSL in one supported operation rather than typing it incrementally; use clipboard paste only when the current tool documents it, otherwise use its supported full-text insertion;
 - after pasting, click the preview area or otherwise move focus out of the code editor so Feishu starts rendering;
 - allow the preview to settle before judging it. `Insert` can remain disabled briefly, and an immediate screenshot can still show the default example;
 - after the first successful diagram, reuse the same semantic sequence, but continue to reacquire menus and never replay a chain of stale coordinates.
@@ -202,7 +236,7 @@ When Board Style is otherwise desirable, make one bounded correction pass:
 1. Replace a high-degree center node with two or three semantic path nodes.
 2. Move long text from central edges to downstream edges or dedicated nodes.
 3. Insert `\n` in long labels and combine parallel request/response descriptions when that preserves meaning.
-4. Replace deeply nested activity `if/else` with explicit components/diamonds and one-way branches.
+4. Simplify deeply nested activity branches with supported structural nodes and one-way paths; do not introduce unsupported standalone `diamond` declarations.
 5. Keep diagrams to roughly 8–12 primary nodes where possible.
 6. Check fit-to-screen and 70–100% zoom for text overlap, lines crossing labels, and unclear branch direction.
 
@@ -234,7 +268,7 @@ Keep public captions semantic. Do not show `PlantUML`, DSL instructions, or loca
 - When replacing a code block, insert a new code block, paste the complete validated content, verify it, and only then delete the obsolete block.
 - In table cells, select the exact cell, enter cell-edit mode when needed, and verify the row after pressing Enter. Do not infer paste success from keyboard completion.
 - After removing a field or concept, search the whole page for the field name and its human-readable alias. Check tables, diagrams, payloads, failure scenarios, implementation order, and acceptance criteria.
-- When a browser-upload and an edge-upload path have different trust boundaries, keep separate headings. If one path is not designed, leave it as `待定` rather than copying the other path's rules.
+- Keep paths with different ownership or authorization boundaries distinct. If one path is not designed, leave it as `待定` rather than copying another path's rules.
 
 ## 8. Recovery
 

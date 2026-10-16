@@ -41,10 +41,14 @@ Default behavior reads remote content and writes the requested local archive.
 It never edits cloud content, changes sharing, requests access on someone else's
 behalf, or uploads private material to another service.
 
-An explicit browser choice is binding. For the in-app browser, read the available
-`browser:control-in-app-browser` skill and its current runtime documentation before
-using it. If no browser was specified, follow that skill's connector discovery and
-surface-selection rules. This skill does not authorize another browser as a fallback.
+Honor the user's browser choice. Use the available browser tool's current
+instructions and returned API documentation for initialization, tab selection,
+downloads, and recovery. When `mcp__cua_repl` is available, follow its documented
+entrypoint and read the returned documentation before subsequent calls. If no
+browser was specified, use the tool's supported discovery and selection rules.
+Do not require a separately named Browser skill or assume a CDP connection exists.
+If the requested surface is unavailable, report the limitation; this skill does
+not authorize overriding the user's browser choice.
 
 Use the existing authenticated session without reading cookies, browser profiles,
 local storage, or credentials. Export permission is separate from view permission.

@@ -1,79 +1,51 @@
 ---
 name: medium-publisher
-description: Draft, format, and safely publish Medium stories through an authenticated browser. Use for Medium article preparation, editor formatting, draft creation, or publication; do not use for generic blog writing with no Medium delivery.
+description: Create, edit, verify, or publish Medium stories through an authenticated browser. Use for Medium delivery and editor failures, not generic blog writing.
 ---
 
 # Medium Publisher
 
-Use this skill to turn an approved article into a well-formatted Medium draft, or to publish an already reviewed draft. Preserve the user's publication authority: drafting, publishing, scheduling, submitting to a publication, and sharing are distinct actions.
+Prepare the requested Medium story and verify its saved state. Drafting, publishing, scheduling, submitting to a publication, and sharing are distinct actions.
 
-## Authority and browser boundary
+## Browser and authority
 
-- If the user specifies the in-app browser, Chrome, or Edge, use that exact browser through its corresponding browser-control skill. Do not switch browser families just because one is easier to access.
-- Never inspect cookies, local storage, saved passwords, or session stores.
-- Treat a Medium draft as a third-party cloud write. Obtain the confirmation required by the active browser-control policy immediately before creating or materially editing a draft, even when the user previously approved the general work.
-- Never click a final `Publish`, `Schedule for later`, `Submit`, `Share`, or equivalent action without an immediate, action-specific user confirmation.
-- Do not upload local images, private files, customer screenshots, or proprietary logs unless the user explicitly authorizes the exact asset. Do not put secrets, personal data, internal hostnames, paths, account identifiers, or private source code in a draft.
+- Use the browser tools available in the session and their current documentation. With `mcp__cua_repl`, follow its documented entry point and returned runtime instructions; do not require a separately named Browser skill. Honor the user's selected browser and account. If none was specified, follow the tool's documented selection rules.
+- Do not assume CDP, page JavaScript mutations, rich clipboard insertion, or file-chooser listeners are available. Use supported actions only. When a required operation is unavailable, preserve completed work and report the missing capability without inventing a bridge or silently switching browser surfaces.
+- Reuse the authenticated session without inspecting authentication storage or credentials. If sign-in is unavailable, ask for access in the selected browser.
+- Existing authorization continues for the requested cloud draft, edits, assets, and technical retries of the same action. Do not ask again merely because an editor action needs a retry. Follow applicable tool policy; ask when content, destination, audience, assets, or the requested action would exceed the authorized scope.
+- A draft request does not authorize publication, scheduling, submission, or sharing. An explicit request for one of those actions can authorize it within its stated scope; this skill does not require an extra confirmation solely because the final control is reached. Check an uncertain outcome before retrying to avoid duplicate drafts or publications.
 
-## Prepare before opening the editor
+## Prepare the story
 
-1. Identify the requested mode: local draft only, Medium cloud draft, final publication, scheduling, or submission to a publication.
-2. Confirm the audience, language, title, byline expectations, and whether sensitive details must be generalized.
-3. Give the user a compact preflight summary for any external write: proposed title, subtitle, topics, publication target if any, and whether images or embeds will be used.
-4. Prefer a complete local Markdown draft before browser entry. Keep the source of truth local until the user authorizes a Medium draft.
-5. Run a sensitive-content pass. Generalize organization and product names when needed; remove credentials, IPs, filesystem paths, internal URLs, customer data, and raw proprietary code.
+Identify the requested mode, intended story, text, assets, and destination from the conversation. Keep an authoritative local source when useful for a substantial article; a small existing-draft correction does not require a separate document. Preserve an unrelated existing story or draft.
 
-## Format the Medium draft
+Before entering text or uploading an asset, check its content, captions, alternative text, filenames, metadata, and links for credentials or unintended private information. Prepare sanitized material where needed; ask only if the disclosure or change in meaning exceeds the user's instructions.
 
-Read [the verified editor capabilities](references/editor-capabilities.md) and [the source-backed layout guidance](references/layout-recommendations.md) before operating the editor.
-
-- Use a concise title and subtitle. In the currently verified UI, the publish panel limits preview title to 100 characters and subtitle to 140 characters.
-- Populate Medium's native leading title block as a dedicated first action before inserting a rich body. A whole rich block pasted into a blank editor can leave the native title empty and create an ordinary H3 that only looks like a title. After saving, reload and require the page title and native title block to identify the intended story, with no duplicate title in the body.
-- Keep hierarchy shallow. Use the large T on the first line for the title; elsewhere it is a primary section header. Use the small T for a subtitle below the title, a kicker above it, or a secondary header. Do not use bold body text as a substitute for a header.
-- Use short paragraphs, meaningful headings, lists for sequences, quotations for central claims, and code blocks only for public, minimal examples.
-- Use links for sources rather than pasting long URLs into prose. Check each destination before inserting it.
-- Treat images as part of the argument, not decoration. Use a cover image only when it adds context; a relevant original visual is preferable, and no cover is better than a generic or misleading one. Place explanatory diagrams, charts, or annotated screenshots immediately after the claim they explain, with a caption and alt text.
-- For local image uploads, use the verified two-stage active-empty-paragraph flow in [the editor capabilities reference](references/editor-capabilities.md). First wait until the left-side `+` is geometrically visible and active; after clicking it, wait until the expanded menu is scaled open and the local-image button has nonzero geometry. Only then register the file-chooser listener and click the image button. DOM presence or an automation API's generic `visible` result is not sufficient.
-- Use an image at least 1192px wide when placement choice matters; otherwise the editor may hide some placements. After inserting it, inspect its live contextual controls and report what is actually available.
-- Verified image controls have appeared as inset/normal, outset/wide, and fill-width icons, but may have no accessible labels. Do not infer a layout from icon order or an internal value; keep the current placement unless the live control can be identified reliably.
-- Use a multi-image grid only when readers benefit from comparing several images. Medium creates a grid from a multi-file upload in filename order, so choose filenames deliberately and verify the final order before publishing.
-- Prefer simple, accessible visuals: readable labels, high contrast, no tiny text, and no sensitive information.
-
-## Choose the write order
-
-- Text-only stories may use one atomic, formatted whole-body insertion after a sensitive-content pass.
-- For illustrated stories, prefer the evidence-derived section-hybrid workflow: insert one complete formatted text section, immediately add its image at the verified story tail, then establish and verify a fresh tail paragraph before the next section. The 2026-08-24 baseline completed this workflow with two images and survived reload; treat the live editor as authoritative if its behavior differs.
-- Never cross an existing image to backfill earlier text. Experiments showed that visible focus does not reliably move Medium's contenteditable caret, so text can land in the title or a caption.
-- Prefer native editor controls or a rich formatted section insertion for headings, lists, and code. Do not send an entire `# heading`, repeated `* item`, or fenced-code string as one automated write and assume Medium will convert it.
-- Explicit-marker replacement has not been verified and must not be presented as a tested workflow.
+Read [editor capabilities](references/editor-capabilities.md) when working in the editor, especially for illustrated stories or a failing control. Read [layout guidance](references/layout-recommendations.md) only when layout choices, image constraints, or distribution eligibility matter. Historical controls and limits must be checked against the live editor before relying on them.
 
 ## Draft workflow
 
-1. Create or open the intended story only after the required confirmation.
-2. Choose text-only atomic insertion or the illustrated section-hybrid workflow above. Use the actual editor controls or a formatted section block instead of relying on whole-string Markdown shortcut conversion.
-3. Add only authorized visuals or embeds. Insert local images from an active empty paragraph through the verified `+` menu flow, then set alt text and a caption. For video or embed links, verify their target and do not submit a link whose public visibility the user has not approved.
-4. After every media insertion, alt-text edit, or layout action, verify the active insertion point. Attempt the true tail with `ControlOrMeta+End` on the article textbox, re-read the DOM, then enter one unique printable sentinel character absent from the article (for example `⟡`). Require it to be the sole content of the intended tail paragraph and outside the title, figure, and caption. Remove it with exactly one Backspace and require zero occurrences before continuing. Stop after two failed recoveries.
-5. Wait for a saved-draft state and record the draft URL, but also inspect error banners. If `Story could not be saved` appears, wait and re-read the live state before retrying because the editor may settle independently. Do not treat `DraftSaved` as sufficient while the error remains visible.
-6. Reload the saved draft before final handoff. Read it back visually and structurally: native title identity, absence of a duplicate body title, heading hierarchy, paragraph breaks, list and code fidelity, image order, links, captions, alt text, and mobile-friendly density. Read alt text and captions back from the figure; do not trust the Save action alone.
-7. Report exactly what was created, any contradictory save state, and which visual or editor capabilities were observed versus unverified.
+1. Create or open the authorized story. Populate its native leading title separately: a heading pasted with body text can look like a title while leaving the actual title empty.
+2. For text-only stories, a supported formatted insertion may be suitable. For illustrated stories, work from top to bottom: insert a complete section, add its related image at the verified tail, then establish the next paragraph. Do not backfill text across existing images unless the insertion point is established; visible focus has not reliably positioned the caret.
+3. Use the current native formatting controls or a documented formatted-input action. Whole strings containing Markdown headings, list markers, or fenced code have not converted reliably through automated input.
+4. Add only in-scope visuals or embeds. For local images, establish an active empty paragraph and verify both the `+` control and expanded image control are interactable before using the tool's supported upload action. The detailed historical readiness and caret checks are in the editor reference; no file-chooser or DOM API is assumed available.
+5. After media, caption, alt-text, or layout changes, verify the insertion point before adding more text. If the current tool cannot establish it, stop further insertion rather than risk writing into the title or caption.
+6. Inspect save confirmations and error banners together. `DraftSaved` has appeared alongside `Story could not be saved`; wait and re-read the state before retrying. Autosave is not publication.
+7. Reload and verify the saved story: native title identity, absence of a duplicate body title, headings, paragraphs, lists, code, image order, links, captions, and alt text. Read actual saved values back rather than trusting a closed dialog or successful tool call.
 
-## Distribution-aware editorial check
-
-- Titles, subtitles, and cover images must accurately represent the story; avoid sensational, vague, or clickbait framing.
-- When the user wants broader Medium distribution, check that the story is original, well sourced where needed, and that visuals add value with credit and alt text.
-- Do not promise Boost or General Distribution. Medium's current public guidelines say content that appears AI-generated is not eligible for those distribution categories; disclose this limitation when the user asks about reach or eligibility, and never misrepresent authorship.
+If a required media or formatting operation fails, preserve the usable draft and identify the incomplete requirement. A text-only draft may be useful progress but is not a completed illustrated-story request. Report observed capabilities separately from unverified ones.
 
 ## Publication workflow
 
-1. Before opening final publication settings, present the candidate preview title, subtitle, up to five topics, and publication destination. Ask for corrections.
-2. In the current UI, the publication panel may expose preview title, subtitle, estimated read time, topics (maximum five), a publication-submission path, `Publish`, and `Schedule for later`.
-3. Do not claim that SEO, canonical URL, or a standalone preview field exists unless it is visible in the current editor session.
-4. Immediately before the irreversible click, ask for a fresh confirmation that states the exact action: publish now, schedule for a stated time, or submit to a named publication.
-5. After the confirmed action, verify the visible outcome and report the resulting URL, publication state, and any warnings. If the confirmation is absent, stop at the ready-to-publish draft.
+1. Check that the requested action and intended content, destination, topics, audience, and schedule are covered by the existing authorization. Resolve material omissions or changes before executing; do not repeat an already settled approval.
+2. Inspect the live publication settings. The editor has exposed preview title, subtitle, topics, publication submission, `Publish`, and `Schedule for later`; controls and limits can change. Do not claim SEO, canonical URL, or other settings are available without seeing them.
+3. Use a supported action to publish, schedule, or submit only as requested. A draft-only task ends at the verified draft.
+4. Verify the resulting URL and publication, schedule, or submission state. If the result is uncertain, inspect existing state before any retry rather than risking a duplicate.
+
+Do not use publication as an editor troubleshooting experiment or as part of skill maintenance. After recovery, an already authorized publication may continue with the checks above. If distribution or reach is part of the request, consult current Medium guidance through the layout reference and do not promise eligibility or misrepresent authorship.
 
 ## Failure handling
 
-- If editor features, Unsplash search, media insertion, or formatting controls fail, record the observed failure and continue with a text-only draft when possible. Do not invent a workaround or claim an unverified layout.
-- Before classifying local-image insertion as a file-chooser failure, verify both menu-readiness stages. If either stage does not become interactive, re-establish the tail paragraph and menu once; classify that as an editor menu-readiness failure, not a chooser or network failure. Stop media insertion or insertion-point recovery after two failed attempts rather than continuing into an uncertain state.
-- If authentication is unavailable in the user-selected browser, ask the user to sign in or reactivate that exact browser; do not bypass it with another account or browser.
-- If any draft contains sensitive content, stop before external save or publication and ask for a sanitized replacement.
+- Inspect the actual UI state after a failed action. A targeted supported recovery can continue under the same authorization. Stop after two failed recoveries of the same menu or insertion-point failure, or earlier if the draft state becomes uncertain.
+- Distinguish an inactive menu, unavailable upload API, chooser failure, and save failure. Do not infer a network fault from an editor failure or change system DNS/proxy settings to repair the editor.
+- Report the exact unsupported action or access barrier and the work that remains. Do not fall back to historical CDP, DOM mutation, or undocumented clipboard recipes.

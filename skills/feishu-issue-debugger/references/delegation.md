@@ -19,7 +19,7 @@ Skip delegation for a narrow single-file issue, a strictly serial investigation,
 
 The primary agent must first:
 
-1. complete the preferred in-app Browser login and permission gate, or record why a native external browser fallback was required;
+1. complete the login and permission gate in the selected browser, respecting an explicit user choice and otherwise preferring the in-app Browser; record any permitted external-browser fallback;
 2. establish the exact single-issue or batch scope from rendered issue identifiers;
 3. establish the hard read-only Feishu boundary and local write roots;
 4. establish read/write and remote-operation boundaries;
