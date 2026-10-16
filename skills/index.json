@@ -302,7 +302,8 @@
         "transient task plans, TODO lists, meeting notes, brainstorming artifacts, or chat recaps",
         "unresolved investigations where facts are still changing",
         "formal ADRs intended for human readers",
-        "raw-trace extraction, sanitization, dataset generation, evaluator building, or skill-proposal generation"
+        "raw-trace extraction, sanitization, dataset generation, evaluator building, or skill-proposal generation",
+        "editing product-level or global user memory without an explicit user request"
       ],
       "default_side_effect_level": "local-files",
       "side_effect_level": "local-files",
@@ -313,7 +314,7 @@
         "small decision record when a compact trace is enough"
       ],
       "validation_expectations": [
-        "apply the worth-recording gate before writing and stop when no durable record is warranted",
+        "apply the worth-recording gate and establish repository-local persistence authority before writing",
         "inspect local evidence and existing trace conventions before choosing placement",
         "verify the trace file exists, is readable, evidence-grounded, privacy-safe, and has accurate status and validation claims"
       ],
@@ -498,7 +499,7 @@
         "tool-ops"
       ],
       "maturity": "personal-skill",
-      "purpose": "Investigates Feishu Project bug and performance issues against exact local repository versions, rendered issue evidence, comments, attachments, logs, and runtime observations while keeping the issue itself read-only.",
+      "purpose": "Investigates Feishu Project bugs against exact code versions and rendered evidence; when explicitly invoked on a non-bug work item, captures a read-only brief and hands it to ordinary requirement assessment.",
       "triggers": [
         "analyze or diagnose a Feishu Project issue from its issue link",
         "collect complete rendered issue evidence, comments, screenshots, and attachments for local debugging",
@@ -517,10 +518,11 @@
         "authoritative issue brief with rendered evidence and tested-version mapping",
         "validated local evidence bundle for issue-specific images, attachments, logs, and comments",
         "evidence-ranked diagnosis and verification plan",
-        "small local code fix and validation when explicitly authorized"
+        "small local code fix and validation when explicitly authorized",
+        "read-only requirement brief and handoff for an explicitly supplied non-bug work item"
       ],
       "validation_expectations": [
-        "confirm the bug work-item title or name and relevant detail fields or narrative are rendered in the authenticated browser before proceeding",
+        "confirm the work-item type, title, and relevant rendered details in the selected authenticated browser; route explicitly supplied non-bug items without imposing bug-reproduction requirements",
         "keep Feishu issue access read-only and stop at login or permission barriers",
         "unless the user requests an access-only check or no downloads, persist a sanitized brief, all captured comments, every issue-owned Description and comment image, the attachment inventory, and acquisition validation under a verified local evidence root",
         "validate downloaded assets by type, content, provenance, and issue ownership before promoting them",
@@ -567,11 +569,11 @@
       ],
       "validation_expectations": [
         "run the publication helper dry-run before writing generated artifacts and refuse unreviewed overwrites",
-        "review narrative as a reader without prior conversation context before cloud mutation",
-        "treat an initially blank named Feishu target as standing page-scoped publication authority without repeated confirmations",
-        "use a frontier execution model with high or xhigh reasoning for cloud mutation that includes UML Board or table layout work",
-        "verify every manifest table's content and widths, every diagram's rendered output, zero remaining diagram placeholders, sensitive-data hygiene, and exact deferred content",
-        "wait for cloud save, reload the target page, and reconcile manifest counts before reporting completion"
+        "review the reader-facing narrative and verify current task authority for the exact cloud target before mutation",
+        "use currently documented browser capabilities and fresh editor observations; do not require a fixed model identifier",
+        "reconcile final rendered headings, visible code blocks, diagram slots, tables, and long-block tails against the publication manifest",
+        "verify table content and widths, rendered diagrams, zero remaining diagram placeholders, privacy, and exact deferred content",
+        "wait for cloud save, reload the target page, and reconcile the final artifact ledger before reporting completion"
       ],
       "supporting_files": [
         "skills/feishu-technical-doc-publisher/references/editorial-workflow.md",
@@ -580,7 +582,7 @@
         "skills/feishu-technical-doc-publisher/scripts/prepare_feishu_publish.py"
       ],
       "agents_metadata_path": "skills/feishu-technical-doc-publisher/agents/openai.yaml",
-      "portability_notes": "Uses the public Feishu Docs product through an authenticated browser. Full cloud mutation currently recommends gpt-5.6-sol with high or xhigh reasoning; adapt the named model as capabilities evolve, but retain the frontier-model gate, preview-before-publication, local source-of-truth, block-level editing, Edit History recovery, per-table/per-diagram transactions, and reload verification."
+      "portability_notes": "Uses Feishu Docs through an authenticated browser with current documented editing, upload, and inspection capabilities. Preserve the local source of truth, target-scoped authority, block-level editing, per-table and per-diagram verification, Edit History recovery, and reload validation. Report unavailable capabilities without substituting unsupported lower-level APIs."
     },
     {
       "name": "genmedia",
@@ -719,7 +721,7 @@
         "tool-ops"
       ],
       "maturity": "personal-skill",
-      "purpose": "Prepares, attaches, saves, verifies, and safely publishes LinkedIn posts through an authenticated browser while keeping draft creation and final publication behind distinct authority gates.",
+      "purpose": "Prepares, attaches, saves, verifies, and publishes LinkedIn posts through current documented browser capabilities under the task authority for the exact draft or publication action.",
       "triggers": [
         "prepare or format copy specifically for a LinkedIn post",
         "create, edit, or verify a LinkedIn post draft through an authenticated browser",
@@ -728,9 +730,9 @@
       ],
       "do_not_use_for": [
         "generic social copy with no LinkedIn delivery",
-        "publishing without fresh confirmation of the final body, media, audience, and link state",
+        "publishing without explicit authority covering the final content, media, audience, and destination",
         "entering or uploading content that has not passed the public sensitive-information gate",
-        "using lower-level Shadow DOM fallbacks before reproducing and narrowly confirming the documented failure mode"
+        "using undocumented browser, CDP, or DOM-write fallbacks"
       ],
       "default_side_effect_level": "external-api-write",
       "side_effect_level": "publish",
@@ -739,20 +741,20 @@
         "sanitized LinkedIn-ready post copy",
         "verified LinkedIn cloud draft with approved media when authorized",
         "draft persistence and audience verification result",
-        "published LinkedIn post when separately confirmed"
+        "published LinkedIn post when the user explicitly authorized publication"
       ],
       "validation_expectations": [
         "check for an existing Feed-level Draft preview before entering content and preserve it unless the user explicitly authorizes changing that draft",
         "inspect the complete rendered public payload for secrets, private identifiers, internal details, unintended previews, and media metadata before transmission and again before publication",
         "read back the logical post text, media state, alternative text, audience, hashtags, link state, and final button state",
         "wait for the successful-draft notification, reopen the draft, and verify text and media persistence",
-        "require fresh confirmation before clicking Post and verify the resulting feed item or success notification"
+        "verify existing publication authority covers the final payload, ask only for missing or changed scope, and verify the resulting feed item or success notification"
       ],
       "supporting_files": [
         "skills/linkedin-publisher/references/shadow-dom-workaround.md"
       ],
       "agents_metadata_path": null,
-      "portability_notes": "Uses the public LinkedIn desktop composer through an authenticated browser and accounts for a dated open-Shadow-DOM failure mode. Use current live labels and browser capabilities as authority, retain the public-content scan and final-publication confirmation, and stop rather than broadening lower-level selectors when LinkedIn changes its DOM."
+      "portability_notes": "Uses LinkedIn through an authenticated browser. Dated Shadow DOM observations are diagnostic context, not executable permission for old browser APIs. Follow current tool documentation and live labels, protect existing drafts, inspect public content, and distinguish draft authority from publication authority."
     },
     {
       "name": "medium-publisher",
@@ -766,11 +768,11 @@
       "triggers": [
         "prepare or format an article specifically for Medium",
         "create or edit a Medium cloud draft through an authenticated browser",
-        "publish, schedule, or submit a reviewed Medium story after an action-specific confirmation"
+        "publish, schedule, or submit a reviewed Medium story when explicitly authorized for that action"
       ],
       "do_not_use_for": [
         "generic blog writing with no Medium delivery",
-        "publishing, scheduling, submission, or sharing without an immediate action-specific confirmation",
+        "publishing, scheduling, submission, or sharing without valid action-specific user authority",
         "uploading unapproved local assets or sensitive, private, proprietary, or credential-bearing content",
         "claiming unobserved editor controls, save success, distribution eligibility, or publication outcomes"
       ],
@@ -781,20 +783,20 @@
         "reviewable local article draft",
         "formatted Medium cloud draft when authorized",
         "verified story URL and draft or publication state",
-        "published, scheduled, or publication-submitted Medium story when explicitly confirmed"
+        "published, scheduled, or publication-submitted Medium story when explicitly authorized"
       ],
       "validation_expectations": [
         "run a sensitive-content and publication-target preflight before any external write",
         "verify the native title, body hierarchy, links, media order, captions, alt text, and save state in the live editor",
         "reload the saved draft and distinguish observed editor behavior from unverified capability assumptions",
-        "require a fresh confirmation immediately before publish, schedule, submit, or share actions and verify the resulting state"
+        "check that current authority covers the final content, assets, audience, and publish, schedule, submit, or share action; ask only for missing scope and verify the resulting state"
       ],
       "supporting_files": [
         "skills/medium-publisher/references/editor-capabilities.md",
         "skills/medium-publisher/references/layout-recommendations.md"
       ],
       "agents_metadata_path": "skills/medium-publisher/agents/openai.yaml",
-      "portability_notes": "Uses the public Medium editor through an authenticated browser. The editor baseline is dated and must yield to current live controls; browser choice, account access, publication targets, asset authorization, and final publication confirmation remain user-controlled."
+      "portability_notes": "Uses Medium through the selected authenticated browser and its currently documented controls. Dated observations yield to live editor state. Keep one installed copy, preserve browser choice and existing authority, and distinguish cloud draft editing from publication, scheduling, submission, and sharing."
     },
     {
       "name": "paper-deck-style",

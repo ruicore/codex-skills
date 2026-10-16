@@ -13,18 +13,19 @@ import json
 import re
 import unicodedata
 from datetime import datetime, timezone
+from html.parser import HTMLParser
 from pathlib import Path
 
 
-PLANTUML_FENCE = re.compile(
-    r"^```plantuml[ \t]*\r?\n(?P<body>.*?)^```[ \t]*$",
+FENCED_BLOCK = re.compile(
+    r"^(?P<fence>`{3,}|~{3,})(?P<info>[^\n]*)\n(?P<body>.*?)^(?P=fence)[ \t]*$",
     flags=re.DOTALL | re.MULTILINE | re.IGNORECASE,
 )
 MANUAL_NUMBERED_HEADING = re.compile(
     r"^(?P<marks>#{2,6})[ \t]+(?P<title>\d+(?:\.\d+)*\.?[ \t]+.+)$",
     flags=re.MULTILINE,
 )
-FENCED_CODE = re.compile(r"^```[^\n]*\n.*?^```[ \t]*$", re.DOTALL | re.MULTILINE)
+DEFAULT_LONG_CODE_LINES = 20
 
 PROCESS_PHRASES = (
     "一句话结论",
@@ -179,6 +180,8 @@ def extract_plantuml_diagrams(
     diagrams: list[dict[str, object]] = []
 
     def replace_fence(match: re.Match[str]) -> str:
+        if match.group("info").strip().casefold() != "plantuml":
+            return match.group(0)
         ordinal = len(diagrams) + 1
         slot_id = diagram_slot_id(ordinal)
         filename = f"{slot_id}.puml"
@@ -200,8 +203,133 @@ def extract_plantuml_diagrams(
         )
         return f"\n**{placeholder}**\n"
 
-    publish_text = PLANTUML_FENCE.sub(replace_fence, text).rstrip() + "\n"
+    # Scan every complete fence so a PlantUML example inside a longer code fence
+    # remains an example rather than becoming an unintended diagram.
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    publish_text = FENCED_BLOCK.sub(replace_fence, normalized).rstrip() + "\n"
     return publish_text, diagrams
+
+
+class PublicationStructure(HTMLParser):
+    """Read the generated HTML, which is also the actual rich-text payload."""
+
+    def __init__(self, long_code_lines: int) -> None:
+        super().__init__(convert_charrefs=True)
+        self.long_code_lines = long_code_lines
+        self.headings: list[dict[str, object]] = []
+        self.code_blocks: list[dict[str, object]] = []
+        self.tables: list[dict[str, object]] = []
+        self._heading: tuple[str, list[str]] | None = None
+        self._code: dict[str, object] | None = None
+        self._code_text: list[str] = []
+        self._table_stack: list[dict[str, object]] = []
+        self._ignored_depth = 0
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag in {"head", "script", "style", "template"}:
+            self._ignored_depth += 1
+        if self._ignored_depth:
+            return
+        attributes = dict(attrs)
+        if tag == "pre":
+            self._code = {"language": None}
+            self._code_text = []
+        elif tag == "code" and self._code is not None:
+            for value in (attributes.get("class") or "").split():
+                if value.startswith("language-"):
+                    self._code["language"] = value.removeprefix("language-")
+        elif re.fullmatch(r"h[1-6]", tag) and self._code is None:
+            self._heading = (tag, [])
+        elif tag == "table":
+            table: dict[str, object] = {"ordinal": len(self.tables) + 1, "rows": []}
+            self.tables.append(table)
+            self._table_stack.append(table)
+        elif tag == "tr" and self._table_stack:
+            self._table_stack[-1]["row"] = []
+        elif tag in {"th", "td"} and self._table_stack:
+            self._table_stack[-1]["cell"] = []
+        elif tag == "br":
+            self.handle_data("\n")
+
+    def handle_data(self, data: str) -> None:
+        if self._ignored_depth:
+            return
+        if self._heading is not None:
+            self._heading[1].append(data)
+        if self._code is not None:
+            self._code_text.append(data)
+        if self._table_stack and "cell" in self._table_stack[-1]:
+            self._table_stack[-1]["cell"].append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"head", "script", "style", "template"} and self._ignored_depth:
+            self._ignored_depth -= 1
+            return
+        if self._ignored_depth:
+            return
+        if self._heading is not None and tag == self._heading[0]:
+            self.headings.append({
+                "ordinal": len(self.headings) + 1,
+                "level": int(tag[1]),
+                "text": " ".join("".join(self._heading[1]).split()),
+            })
+            self._heading = None
+        elif tag == "pre" and self._code is not None:
+            content = "".join(self._code_text).replace("\r\n", "\n").replace("\r", "\n")
+            lines = content.splitlines()
+            nonempty = [line for line in lines if line.strip()]
+            marker = next((line for line in reversed(nonempty) if any(c.isalnum() for c in line)), "")
+            self.code_blocks.append({
+                "ordinal": len(self.code_blocks) + 1,
+                "language": self._code["language"],
+                "line_count": len(lines),
+                "sha256": sha256_bytes(content.encode("utf-8")),
+                "requires_tail_check": len(lines) >= self.long_code_lines,
+                "tail_marker": marker or (nonempty[-1] if nonempty else ""),
+                "tail_lines": lines[-3:],
+            })
+            self._code = None
+            self._code_text = []
+        elif tag in {"th", "td"} and self._table_stack:
+            table = self._table_stack[-1]
+            if "cell" in table:
+                table.setdefault("row", []).append(" ".join("".join(table.pop("cell")).split()))
+        elif tag == "tr" and self._table_stack:
+            table = self._table_stack[-1]
+            if "row" in table:
+                table["rows"].append(table.pop("row"))
+        elif tag == "table" and self._table_stack:
+            self._table_stack.pop()
+
+
+def publication_structure(html: str, long_code_lines: int = DEFAULT_LONG_CODE_LINES) -> dict[str, object]:
+    if long_code_lines < 1:
+        raise ValueError("long_code_lines must be positive")
+    parser = PublicationStructure(long_code_lines)
+    parser.feed(html)
+    parser.close()
+    tables = []
+    for table in parser.tables:
+        rows = table["rows"]
+        columns = max((len(row) for row in rows), default=0)
+        tables.append({
+            "ordinal": table["ordinal"],
+            "headers": rows[0] if rows else [],
+            "columns": columns,
+            "data_rows": max(0, len(rows) - 1),
+            "suggested_width_percent": suggested_table_widths(rows, columns),
+            "feishu_layout_status": "required",
+        })
+    return {
+        "headings": parser.headings,
+        "headings_by_level": {
+            f"h{level}": sum(item["level"] == level for item in parser.headings)
+            for level in range(1, 7)
+        },
+        "code_blocks": parser.code_blocks,
+        "tables": tables,
+        "long_code_lines": long_code_lines,
+    }
 
 
 def parse_args() -> argparse.Namespace:
@@ -225,11 +353,20 @@ def parse_args() -> argparse.Namespace:
         help="Print the planned artifacts without writing files",
     )
     parser.add_argument(
+        "--long-code-lines",
+        type=int,
+        default=DEFAULT_LONG_CODE_LINES,
+        help="Mark code blocks at least this many rendered lines for tail checks (default: 20)",
+    )
+    parser.add_argument(
         "--force",
         action="store_true",
         help="Overwrite generated artifacts that already exist",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.long_code_lines < 1:
+        parser.error("--long-code-lines must be positive")
+    return args
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -277,6 +414,20 @@ def main() -> None:
 
     stem = args.name or source.stem
     publish_text, diagrams = extract_plantuml_diagrams(text, diagrams_dir)
+    html = markdown_to_html(publish_text)
+    structure = publication_structure(html, args.long_code_lines)
+    inventory = {
+        "headings": len(structure["headings"]),
+        "headings_by_level": structure["headings_by_level"],
+        "tables": len(structure["tables"]),
+        "code_blocks": len(structure["code_blocks"]),
+        # Retained as a compatibility alias; version 3 counts the final payload,
+        # including indented/raw-HTML blocks and excluding extracted diagrams.
+        "fenced_code_blocks": len(structure["code_blocks"]),
+        "plantuml_diagrams": len(diagrams),
+        "long_code_blocks": sum(block["requires_tail_check"] for block in structure["code_blocks"]),
+        "temporary_placeholders": len(diagrams),
+    }
 
     publish_md = output_dir / f"{stem}.publish.md"
     publish_html = output_dir / f"{stem}.publish.html"
@@ -295,7 +446,7 @@ def main() -> None:
     deferred_hits = {
         marker: text.count(marker) for marker in DEFERRED_MARKERS if marker in text
     }
-    tables = extract_markdown_tables(text)
+    tables = structure["tables"]
     diagram_warnings = [
         {
             "diagram": diagram["ordinal"],
@@ -310,6 +461,7 @@ def main() -> None:
     planned_files.extend(Path(str(diagram["path"])) for diagram in diagrams)
     existing_files = [str(path) for path in planned_files if path.exists()]
     plan = {
+        "schema_version": 3,
         "source": str(source),
         "source_sha256": sha256_bytes(raw),
         "output_directory": str(output_dir),
@@ -319,6 +471,12 @@ def main() -> None:
         "tables": len(tables),
         "table_layout_checklist": tables,
         "plantuml_compatibility_warnings": diagram_warnings,
+        "inventory": inventory,
+        "publication_ledger": {
+            "headings": structure["headings"],
+            "code_blocks": structure["code_blocks"],
+            "long_code_lines": args.long_code_lines,
+        },
     }
     if args.dry_run:
         print(json.dumps(plan, ensure_ascii=False, indent=2))
@@ -332,11 +490,11 @@ def main() -> None:
 
     output_dir.mkdir(parents=True, exist_ok=True)
     diagrams_dir.mkdir(parents=True, exist_ok=True)
-    publish_md.write_text(publish_text, encoding="utf-8")
-    publish_html.write_text(markdown_to_html(publish_text), encoding="utf-8")
+    publish_md.write_text(publish_text, encoding="utf-8", newline="\n")
+    publish_html.write_text(html, encoding="utf-8", newline="\n")
     for diagram in diagrams:
         Path(str(diagram["path"])).write_text(
-            str(diagram["content"]), encoding="utf-8"
+            str(diagram["content"]), encoding="utf-8", newline="\n"
         )
 
     manifest_diagrams = [
@@ -344,7 +502,7 @@ def main() -> None:
         for diagram in diagrams
     ]
     manifest = {
-        "schema_version": 2,
+        "schema_version": 3,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source": {
             "path": str(source),
@@ -355,13 +513,11 @@ def main() -> None:
             "publish_markdown": str(publish_md),
             "publish_html": str(publish_html),
             "diagrams_directory": str(diagrams_dir),
+            "publish_markdown_sha256": sha256_bytes(publish_text.encode("utf-8")),
+            "publish_html_sha256": sha256_bytes(html.encode("utf-8")),
         },
-        "inventory": {
-            "headings": len(re.findall(r"^#{1,6}[ \t]+", text, flags=re.MULTILINE)),
-            "tables": len(tables),
-            "fenced_code_blocks": len(FENCED_CODE.findall(text)),
-            "plantuml_diagrams": len(diagrams),
-        },
+        "inventory": inventory,
+        "publication_ledger": plan["publication_ledger"],
         "tables": tables,
         "diagrams": manifest_diagrams,
         "review_warnings": {
@@ -374,6 +530,7 @@ def main() -> None:
     manifest_path.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
 
     print(json.dumps(manifest, ensure_ascii=False, indent=2))

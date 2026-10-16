@@ -45,7 +45,10 @@ git grep <pattern> <target-ref>
 git diff <target-ref>...HEAD -- <path>
 ```
 
-When the target version must be installed or executed, create a separate worktree at a safe, explicit path. A detached worktree is appropriate when no branch edits are needed:
+When the target version must be installed or executed, follow the host's managed
+worktree workflow and reuse a suitable attached worktree when available. If that
+workflow is unavailable, create a separate worktree at a safe, explicit path. A
+detached worktree is appropriate when no branch edits are needed:
 
 ```text
 git worktree add --detach <separate-path> <target-ref>

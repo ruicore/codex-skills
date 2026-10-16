@@ -1,107 +1,47 @@
 ---
 name: linkedin-publisher
-description: Draft, format, attach media, save, verify, and safely publish LinkedIn posts through an authenticated browser. Use for LinkedIn post preparation, draft editing, media upload, publication, or troubleshooting the current Shadow DOM composer; do not use for generic social copy with no LinkedIn delivery.
+description: Create, edit, verify, or publish LinkedIn posts through an authenticated browser. Use for LinkedIn delivery or composer failures, not generic social copy.
 ---
 
 # LinkedIn Publisher
 
-Prepare reader-friendly LinkedIn posts, preserve the user's authenticated browser session, and keep publication behind an explicit final confirmation.
+Prepare the requested LinkedIn draft or post, preserving its text, media, audience, and publication authority.
 
 ## Browser and authority
 
-- Honor an explicitly requested browser surface. When the user requests the in-app browser, use the Browser skill and do not switch to Chrome, a connector, or an API.
-- Use the existing signed-in session. Do not inspect cookies, local storage, tokens, passwords, or session files.
-- Treat entering or editing post text, uploading media, saving a draft, and publishing as external mutations. Obtain the confirmation required by the active browser policy.
-- Never click `Post` until the user gives a fresh, explicit confirmation after seeing or approving the final text, media, audience, and link state.
-- Draft authorization does not authorize publication.
-- Before creating a draft, inspect the Feed-level `Start a post` control for an existing `Draft:` preview. LinkedIn may restore that draft directly instead of creating a separate one. Do not overwrite, discard, or repurpose an existing draft unless the user explicitly authorizes that exact draft change; otherwise preserve it and report that it blocks an isolated draft test.
+- Use the browser tools actually available in the session and read their current instructions. With `mcp__cua_repl`, follow its documented entry point and returned runtime documentation; do not require a separately named Browser skill. Honor the user's selected browser and account. If no browser was specified, use the tool's documented selection rules.
+- Do not assume CDP, page JavaScript mutations, clipboard insertion, or file-chooser listeners are available. Use only actions supported by the selected tool's current documentation. If a required action is unavailable, report the missing capability and the remaining work rather than recreating an old bridge or switching browsers silently.
+- Reuse the signed-in session without inspecting authentication storage or credentials.
+- Existing authorization continues for the requested draft creation, edits, media, and technical retries of the same action. Do not ask again merely because the tool or editor needs another attempt. Follow any applicable tool policy; ask when the content, destination, audience, assets, or action would exceed the authorized scope.
+- Draft authorization does not authorize posting. An explicit publication request can authorize posting within its stated scope; do not impose an additional confirmation solely because this skill loaded. Before any uncertain retry, check whether the draft or post already exists to avoid duplication.
+- Inspect the Feed-level `Start a post` control for an existing `Draft:` preview. LinkedIn may restore that draft instead of creating an isolated one. Preserve an unrelated draft unless the user has authorized editing or replacing it.
 
-## Sensitive-information gate
+## Prepare the payload
 
-Treat every LinkedIn post as public content unless the user explicitly selects a narrower audience. Before entering text or uploading media, inspect the complete public payload for sensitive information. Repeat the check immediately before publication.
+Use the user's requested length and style. A teaser should identify its useful finding and link to the full article; a self-contained post may need more detail. The live composer and current [LinkedIn Help](https://www.linkedin.com/help/linkedin/answer/a528176) determine platform limits.
 
-Review all of these surfaces:
+Before entering text or uploading media, check the actual payload, including alternative text, filenames, screenshots, metadata, and link previews, for credentials or unintended private information. Use an appropriate sanitized asset when needed. Ask only when sanitization or disclosure would require a choice outside the user's instructions. A local file's location does not establish that it is suitable for publication.
 
-- Post body, hashtags, mentions, and alternative text.
-- Images, screenshots, charts, captions, visible browser or application chrome, and embedded metadata that the platform may expose.
-- Destination URLs, link previews, filenames, document titles, and quoted log or code excerpts.
+## Draft workflow
 
-Look specifically for:
+1. Identify the intended text, media, link, audience, and whether the request ends at a draft or a published post.
+2. Open LinkedIn Feed in the selected signed-in browser and inspect any existing draft before starting.
+3. Prefer the visible `Start a post` flow for text-only posts. For images, the Feed-level `Photo` flow has avoided composer-specific upload failures. Use a currently documented upload action with the authorized local file; do not assume a file-chooser API exists. If the tool documents an event waiter, register it before the triggering click and handle rejection.
+4. Enter the text, attach the intended media, and set the authorized audience and alternative text. After each action, inspect the resulting state rather than treating a successful tool call as proof.
+5. Save the draft through the current visible controls and reopen it to verify persistence. If publication is authorized, continue to the publication checks below.
 
-- Passwords, tokens, API keys, cookies, session identifiers, private keys, access codes, or connection strings.
-- Private IP addresses, internal hostnames, usernames, email addresses, phone numbers, precise locations, or personal identifiers.
-- Internal filesystem paths, database locations, customer or project names, issue IDs, private repository details, unpublished commit identifiers, or non-public architecture and performance data.
-- Screenshot artifacts such as terminals, browser tabs, account names, notifications, QR codes, timestamps, machine names, or internal dashboards.
+If the composer rejects input or a button becomes a no-op, read [the Shadow DOM failure reference](references/shadow-dom-workaround.md). Preserve the draft and report a precise blocker when supported actions cannot complete the task. Do not leave test text, dummy URLs, duplicate media, or an unintended link preview.
 
-Do not upload or enter the original content when a suspected secret or private identifier is present. Prepare a sanitized local copy, remove unnecessary metadata, and verify the rendered replacement. If redaction would change the meaning or ownership is unclear, stop and ask the user which public wording to use.
+## Verification and publication
 
-Never treat a file's location in `.manifest`, a private repository, or an ignored directory as evidence that its contents are safe to publish.
+Before saving or posting, verify:
 
-## Recommended copy shape
+- The full logical body matches the intended source, allowing only platform line-ending representation differences.
+- The intended media, alternative text, audience, and link preview are present, with no unintended disclosure.
+- The current action matches the user's authorization. An enabled `Post` button alone is not authority to click it.
 
-LinkedIn currently permits up to 3,000 characters in an ordinary post. See [LinkedIn Help: Post and share updates](https://www.linkedin.com/help/linkedin/answer/a528176).
+A transient editor match is not persistence proof. After saving, look for the save confirmation (historically `Draft successfully saved.`), reopen the draft, and repeat the content and media checks.
 
-For an image-led engineering post or a teaser for a longer article, default to:
+For an authorized publication, use the supported `Post` interaction and verify the resulting post or publication confirmation and URL. Composer closure alone does not establish success. If the outcome is uncertain, inspect the feed or existing post before retrying; do not risk creating a duplicate. A different supported technical action for the same authorized result does not itself require fresh confirmation.
 
-- 100-140 English words.
-- Roughly 700-900 characters.
-- A strong first one or two lines before the feed truncation point.
-- Short paragraphs, one concrete observation, one key conclusion, and an optional call to action.
-- Three to five relevant hashtags at the end.
-
-This is a readability default, not a platform limit. Preserve longer text when the user wants a self-contained technical explanation or when removing detail would weaken the argument.
-
-Avoid reproducing an entire Medium article in the LinkedIn post. Use LinkedIn to establish the problem, reveal the non-obvious finding, and give readers a reason to continue.
-
-## Normal workflow
-
-1. Read or prepare the authoritative post text and confirm which media and destination link are in scope.
-2. Complete the sensitive-information gate on the text, media, alternative text, filenames, and destination link before transmitting any of them to LinkedIn.
-3. Open LinkedIn Feed in the authenticated browser and check whether `Start a post` already exposes a `Draft:` preview.
-4. If no draft exists, prefer the visible `Start a post` flow for text-only posts. If a draft exists, preserve it unless the user explicitly authorizes replacing or editing that specific draft.
-5. For an image post, prefer the Feed-level `Photo` button, upload the sanitized local file through the file chooser, and continue to the post composer.
-6. Enter the body, confirm the audience, and add useful alternative text when requested.
-7. Read back the logical text, media state, audience, and final button state.
-8. Save as a draft unless the user has explicitly requested publication and has confirmed the final version.
-9. Reopen a saved draft and verify that both text and media persisted.
-10. Mark the tab for user handoff when the user may inspect or publish later.
-
-When uploading a file, start the file-chooser waiter before clicking the control and attach a rejection handler immediately. Use an absolute local path. Prefer a real `input[type=file]` when one is available.
-
-## LinkedIn Shadow DOM failure mode
-
-LinkedIn may render its composer inside the open Shadow Root hosted by `div#interop-outlet`. In that version of the UI:
-
-- `document.activeElement` is the Shadow Host.
-- The real editor is `document.activeElement.shadowRoot.activeElement`.
-- The editor is a `contenteditable` element labeled `Text editor for creating content`.
-
-Some browser-control layers compare only the first-level active element with the inner editor. Typical symptoms are:
-
-- `Active element is no longer the expected input target`.
-- `fill`, `type`, paste, or key presses return an error or make no change.
-- Shadow DOM buttons report a successful click but do not advance the UI.
-- `Add media` does not open a file chooser.
-
-Try the normal workflow first. If these symptoms are reproduced, read and follow [references/shadow-dom-workaround.md](references/shadow-dom-workaround.md).
-
-## Verification gates
-
-Before saving or publishing, verify:
-
-- The sensitive-information gate passes for the final rendered text, image, alternative text, filename, and link preview. Do not rely only on the original local source inspection.
-- The logical body matches the approved source text after normalizing LinkedIn paragraph nodes.
-- The intended image is attached and no unintended test link or preview remains.
-- The audience is the intended value, commonly `Anyone`.
-- Hashtags are recognized and not accidentally duplicated.
-- The `Post` button is enabled, but remains unclicked unless separately confirmed.
-
-After saving, wait for `Draft successfully saved.`, reopen the draft, and repeat the text and media checks. A transient DOM match before saving is not persistence proof.
-
-## Publication
-
-Immediately before publication, summarize the exact body, media, audience, link state, and sensitive-information review result, then request fresh confirmation. After confirmation:
-
-1. Prefer the visible, high-level `Post` button interaction.
-2. If the confirmed click is a known no-op because of the Shadow DOM defect, explain the exact fallback and obtain confirmation again before using a lower-level page action.
-3. Verify the resulting feed item or success notification. Do not infer success merely because the composer closed.
+Report the resulting draft or post, verification performed, and any remaining limitation. Do not use publication as a troubleshooting experiment or as part of skill maintenance or a draft-only request. After recovery, an already authorized publication may continue with the checks above.
