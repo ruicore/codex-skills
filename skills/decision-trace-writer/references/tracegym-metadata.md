@@ -145,7 +145,7 @@ tracegym_metadata:
 
 Do not add false precision to make a trace appear benchmark-ready, archive raw transcripts, copy private production data into fixtures, turn every trace into an eval case, label subjective or unverified reasoning objective, or make the reusable lesson stronger than the evidence.
 
-A separate later workflow may derive a sanitized task, fixture strategy, expected behavior, evaluator signal, or bounded skill proposal from reviewed traces. Keep that derivation separate from trace writing even when metadata makes it easier. This skill does not scan trace directories, sanitize artifacts, build benchmarks, generate datasets, train models, construct evaluators, or create and approve skill proposals.
+A separate later workflow may derive a sanitized task, fixture strategy, expected behavior, evaluator signal, or bounded skill proposal from reviewed traces. Keep that derivation separate from trace writing even when metadata makes it easier. This skill may inspect relevant existing traces to avoid duplicates or update the current decision. It does not perform bulk trace aggregation, sanitize artifacts, build benchmarks, generate datasets, train models, construct evaluators, or create and approve skill proposals.
 
 ## Improvement Loop Catalog
 

@@ -1,6 +1,6 @@
 ---
 name: feishu-issue-debugger
-description: Read and investigate Feishu Project work items that report bugs or performance issues against local repositories, exact versions, screenshots, attachments, logs, and runtime evidence. Use when the user asks to analyze, reproduce, diagnose, or prepare a local fix for a bug work item in Feishu Project. Feishu access is always read-only; do not use for ordinary Feishu documents, non-bug work items, issue administration, issue mutation, or publishing.
+description: Investigate Feishu Project bugs and performance issues using exact versions, rendered fields, media, logs, and repository evidence. When explicitly invoked for a non-bug work item, acquire its read-only brief and hand off to ordinary requirements assessment. Not for ordinary Feishu documents, work-item administration, mutation, or publishing.
 ---
 
 # Feishu Issue Debugger
@@ -19,11 +19,11 @@ Treat names such as `.manifest/AGENTS.md`, `context.md`, `knowledge.md`, `valida
 
 ## Enforce the Browser Gate
 
-After the minimal instruction read, open the exact Feishu Project bug work-item URL supplied by the user. Prefer the Codex in-app Browser and select it explicitly when the browser control surface supports a stable in-app selector such as `iab`; do not use URL-based automatic browser selection for the first attempt.
+After the minimal instruction read, open the exact Feishu Project work-item URL supplied by the user. Honor an explicit browser choice; otherwise prefer the Codex in-app Browser and select it explicitly when the browser control surface supports a stable in-app selector such as `iab`. Do not use URL-based automatic browser selection for the default first attempt. Follow the available browser tool's current initialization and API documentation.
 
-The in-app Browser is a preference, not an absolute prohibition on native external browsers. Fall back to a connected native external browser only when the in-app Browser is unavailable, disconnected after bounded recovery, cannot render the issue, or lacks an operation required to collect the evidence. Do not choose the external browser merely because it is more convenient or already open. Record the reason for fallback and the actual browser surface used.
+The in-app Browser is a preference, not an absolute prohibition on native external browsers. When no explicit browser choice prevents it, fall back to a connected native external browser only when the in-app Browser is unavailable, disconnected after bounded recovery, cannot render the issue, or lacks an operation required to collect the evidence. Do not choose the external browser merely because it is more convenient or already open. Record the reason for fallback and the actual browser surface used.
 
-Confirm that the target bug work item itself is visible, including its title or name and the relevant rendered detail fields or narrative. Do not require a literal `Description` label. A cookie, Feishu homepage, loading shell, login page, SSO page, or permission error does not prove access.
+Confirm that the target work item itself is visible, including its title or name, type when available, and relevant rendered detail fields or narrative. Do not require a literal `Description` label. A homepage, loading shell, login page, SSO page, or permission error does not prove access.
 
 If the selected browser reaches a login, SSO, or permission barrier, stop. State the precise blocker and ask the user to log in or restore access in that browser; do not switch browser surfaces merely to bypass authentication. Do not silently fall back to public search, an API summary, copied browser credentials, local history, or a guessed issue description.
 
@@ -34,6 +34,22 @@ This read-only boundary applies to Feishu remote state, not to the local evidenc
 Downloaded staging artifacts created by the current run are temporary. After a final artifact is copied into the verified issue evidence root and passes the required validation, delete the exact staging file by default. This standing cleanup rule does not authorize deleting pre-existing downloads, user-provided files, final evidence, or anything whose ownership cannot be proven. Follow the guarded cleanup procedure in [references/evidence-and-validation.md](references/evidence-and-validation.md).
 
 Local evidence persistence is the default for an investigation. Unless the user explicitly requests an access-only or download-capability check, or explicitly says not to download, create a verified ignored or external issue evidence root and retain a sanitized issue brief, all captured comments, every non-sensitive issue-owned Description or comment image, every diagnostically relevant non-sensitive image-valued custom field, the attachment inventory and relevant downloaded attachments, lifecycle evidence that was inspected, and a validation/acquisition index. Keep final evidence; clean only proven task-created staging artifacts. If any required evidence cannot be saved, report the exact coverage and blocker rather than silently continuing with a browser-only summary.
+
+## Recognize the Work-Item Type
+
+Use the rendered type, title, and request to distinguish a bug or performance issue
+from a requirement, support request, or other work item. If the user explicitly
+invoked this skill for a non-bug item, use the same read-only access, media, and
+privacy rules to capture a verified brief: requested outcome, scope, constraints,
+acceptance criteria, relevant comments or attachments, and unresolved information.
+Then continue with the user's ordinary requirements or impact assessment. Do not
+force reproduction steps, a tested bug baseline, or a root-cause conclusion onto
+that item; those fields may be inapplicable rather than missing. This handoff does
+not authorize implementation or work-item changes.
+
+For a bug or performance item, continue with the investigation below. If its type
+is unclear, preserve that uncertainty and assess the stated request without
+inventing a failure.
 
 ## Establish the Authoritative Issue Brief
 
@@ -66,7 +82,9 @@ When comments, activity, screenshots, attachments, logs, customer projects, or r
 
 ## Load Local Context Progressively
 
-Use the issue brief to choose the next evidence source. Search first, then read only the relevant section or the one or two most relevant records.
+Use the issue brief to choose evidence that resolves an open question. Follow the
+repository's code-navigation rules, including any required indexed-code tool,
+before text search. Read only the relevant section or one or two matching records.
 
 - Load project orientation when ownership, runtime entrypoints, or adjacent repositories are unclear.
 - Search durable knowledge when the issue resembles a known mistake or recurring failure.
@@ -74,8 +92,6 @@ Use the issue brief to choose the next evidence source. Search first, then read 
 - Read validation guidance when using downloaded projects, logs, private tests, hardware, or external services.
 - Read delivery conventions only when the user asks to prepare a commit, push, or merge request.
 - Expand to adjacent repositories only when the observed path crosses their boundary.
-
-Before loading another substantial file, identify the unresolved question it should answer. Do not load it if it cannot materially answer that question.
 
 Local summaries orient the investigation; current code, Git history, artifacts, and runtime observations establish proof.
 
@@ -96,15 +112,8 @@ Read [references/git-baselines.md](references/git-baselines.md) whenever the tes
 
 Follow the real entrypoint and data/state ownership across every repository that participates in the reported path. Establish ordering, cache and object lifetimes, configuration overlays, background work, and the point where the observed symptom is emitted.
 
-Keep these categories explicit:
-
-- rendered issue evidence;
-- current code facts;
-- commit-specific code facts;
-- runtime or log observations;
-- inference;
-- competing explanations;
-- unknowns.
+Distinguish rendered evidence, current or commit-specific code facts, runtime
+observations, inference, competing explanations, and unknowns.
 
 Do not replace the work-item title or name with a broader theory. Separate workflow correctness from observability defects such as duplicate, absent, delayed, or misleading logs. A failed implementation or experiment invalidates that result, not automatically the underlying proposal.
 

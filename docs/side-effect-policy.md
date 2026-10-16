@@ -13,18 +13,21 @@ workflow behavior, express safety lessons from private practice only as abstract
 invariants, and independently design every public rule, example, and workflow
 expression before restructuring.
 
+Examples include workflows retained from earlier library versions; current
+installed membership is defined by `skills/index.json`.
+
 ## Level Summary
 
 | Level | Short meaning | Default confirmation posture |
 |---|---|---|
 | `none` | No tool, file, network, account, or repository mutation. | Not required. |
 | `read-only` | Reads local files, local state, or already available context only. | Not required unless a command may be expensive or sensitive. |
-| `local-files` | Creates or edits local files outside a version-control publication step. | Required when the target path is unclear, durable, private, or user-owned. |
+| `local-files` | Creates or edits local files outside a version-control publication step. | Proceed within authorized scope; clarify unresolved target or persistence authority. |
 | `git-working-tree` | Changes files in a repository working tree, stages, commits, or pushes. | Required for commits, pushes, or broad edits; edits require user intent. |
 | `external-api-read` | Reads remote account, service, web, or API state without mutation. | Usually not required after the user asks for that service or live data. |
 | `external-api-write` | Mutates a remote service without immediate public publication. | Required unless the user explicitly requested the exact mutation. |
-| `publish` | Creates, schedules, queues, exports, or shares externally visible material. | Required, with preview or preflight. |
-| `destructive` | Deletes, overwrites, purges, force-updates, or performs hard-to-recover mutation. | Required immediately before action, with target repetition. |
+| `publish` | Creates, schedules, queues, exports, or shares externally visible material. | Requires valid action-specific authority and preview or preflight. |
+| `destructive` | Deletes, overwrites, purges, force-updates, or performs hard-to-recover mutation. | Requires valid explicit authority for the exact target and operation. |
 
 ## General Rules
 
@@ -42,6 +45,13 @@ expression before restructuring.
   summary. Use the preview form that best matches the workflow.
 - For publish-affecting and destructive operations, confirmation must refer to
   the specific target and action. A vague earlier approval is not enough.
+- Valid task-specific authorization persists across turns and retries while the
+  target, content, audience, mode, and material risk stay within that scope.
+  Do not ask again merely because time passed or a tool failed. Reinspect an
+  uncertain result before retrying to avoid duplicate side effects. If authority
+  is missing or a material boundary changes, prepare the reviewable result first
+  and ask only for the unresolved action. Draft authority does not grant
+  publication, scheduling, submission, or wider sharing authority.
 - If rollback is uncertain, say so before acting and choose the lower side-effect
   path when possible.
 
@@ -150,9 +160,9 @@ Examples from this repository:
 
 User confirmation:
 
-- Required when the target path is unclear, the file may contain private
-  context, the write is durable agent memory, or the user did not clearly ask
-  for an artifact.
+- Required when the target path or persistence authority is unresolved. Respect
+  separate product-memory rules; repository-local writing authority does not
+  authorize global memory updates.
 - Not required when the user asks for a concrete artifact and the skill writes
   only expected generated files in a conventional or scratch output location.
 
@@ -375,10 +385,10 @@ Examples from this repository:
 
 User confirmation:
 
-- Required immediately before publication, scheduling, queueing, sharing, push,
-  or PR/MR creation unless the user's latest instruction explicitly asked for
-  that exact action.
-- Confirmation must name the destination and mode, such as channel, service,
+- Publication, scheduling, queueing, sharing, push, or PR/MR creation requires
+  valid authority for that action. Existing explicit authorization remains valid
+  within the same task and scope; it need not be repeated in the latest message.
+- Authorization must identify the destination and mode, such as channel, service,
   due time, branch, remote, PR target, or share destination.
 
 Dry-run or preview:
@@ -436,11 +446,12 @@ Examples from this repository:
 
 User confirmation:
 
-- Always required immediately before the action.
-- Repeat the exact target, scope, and operation. For example: post ID, node
+- Explicit authorization is required for the exact target, scope, and operation.
+  A specific earlier instruction in the same task suffices while scope remains
+  unchanged; broad or unrelated approval does not.
+- Verify the exact target, scope, and operation. For example: post ID, node
   selection, file path, branch, remote, table/database, account, or installed
   skill name.
-- Do not rely on broad approval from earlier in the conversation.
 
 Dry-run or preview:
 
@@ -467,7 +478,7 @@ Codex must never do automatically:
 
 - Do not delete, purge, force-push, hard reset, overwrite, remove installed
   skills, run migrations, run backfills, repair data, or delete external records
-  without immediate explicit confirmation.
+  without valid explicit authorization for that operation and target.
 - Do not compose destructive filesystem commands from unverified computed paths.
 - Do not broaden a destructive target beyond the user's named scope.
 - Do not continue with additional destructive actions after an unexpected result.

@@ -1,144 +1,38 @@
-# LinkedIn Shadow DOM workaround
+# LinkedIn Shadow DOM failure reference
 
-Use this reference only after the normal LinkedIn composer flow has reproduced the `#interop-outlet` focus or click failure.
+Use this reference after normal composer actions reproduce a focus error or a click that leaves the UI unchanged. These are historical observations, not a promise about the current editor or an instruction to use unsupported APIs.
 
-## Confirm the failure
+## Recognize the failure
 
-Read the page state without changing it:
+An affected composer used an open Shadow Root hosted by `div#interop-outlet`. The top-level active element was the Shadow Host while the actual focused editor was its `shadowRoot.activeElement`, labeled `Text editor for creating content`.
 
-```javascript
-const host = document.querySelector("#interop-outlet");
-const deep = host?.shadowRoot?.activeElement;
+Observed symptoms included:
 
-({
-  hostExists: Boolean(host),
-  shadowMode: host?.shadowRoot?.mode,
-  topActive: document.activeElement?.id,
-  deepActive: deep?.getAttribute("aria-label"),
-  contenteditable: deep?.getAttribute("contenteditable"),
-});
-```
+- `Active element is no longer the expected input target` during text entry.
+- `fill`, typing, paste, or key presses failing or making no change.
+- `Next`, `Add media`, `Dismiss`, or `Save as draft` reporting a successful click without advancing the UI.
 
-The known failure signature is:
+When the current browser tool supports read-only DOM inspection, use it to distinguish the host from the focused inner editor. Otherwise inspect the available accessibility state and screenshots. Do not claim a Shadow DOM root cause from a generic failed click alone.
 
-```text
-topActive  = interop-outlet
-deepActive = Text editor for creating content
-```
+## Recover through supported actions
 
-The browser believes the host is focused while LinkedIn correctly focuses the inner editor according to Shadow DOM semantics.
+1. Re-read the current browser tool documentation and observe the live composer. Use supported focus, text-entry, and click actions that can reach the exact intended control. Stop on ambiguous targets or an unexpected dialog.
+2. For an image post, the Feed-level `Photo` control historically opened uploads outside the affected Shadow Root. Use it only if returning there will preserve the current draft and the selected tool supports the upload operation.
+3. If the tool documents a file-chooser event, register its waiter before clicking and handle rejection. Otherwise use its documented upload action. A file-chooser or CDP API from an older runtime must not be assumed available.
+4. After a failed attempt, inspect what changed before retrying. A verified no-op can be retried through another supported action within the same authorization. If a targeted recovery still fails or the outcome is uncertain, preserve the draft and report the exact failed control and missing capability.
 
-## Text-only posts with an intended link
+Older tooling successfully used CDP to target shadow-root buttons and `document.execCommand("insertText")` to preserve editor semantics. Those observations explain the failure boundary; they are not a current fallback recipe. Do not inject those mutations, build an alternate bridge, or assign `innerHTML` or `textContent` merely because ordinary input failed. Visible DOM changes can disagree with the editor's saved framework state.
 
-LinkedIn can prefill commentary before the Shadow DOM editor mounts:
+LinkedIn also historically accepted a share URL plus commentary before the Shadow DOM composer mounted. Do not use that as an automatic bypass or add dummy URLs: it can create an unintended link preview, and putting draft text in a navigation URL changes where it may be recorded.
 
-```text
-https://www.linkedin.com/feed/?shareActive=true
-  &url=<encoded-destination-url>
-  &shareUrl=<encoded-destination-url>
-  &text=<encoded-post-text>
-```
+## Verify text, media, and persistence
 
-Use this only when the post is intentionally sharing that URL. LinkedIn will attempt to create a link preview. Do not use a dummy or invalid URL in a real draft: it may leave an unwanted preview state or dead link.
+LinkedIn has represented each input line as a paragraph and blank lines as `<p><br></p>`. A flattened `innerText` value can therefore contain extra newlines. Compare all logical paragraphs with the intended text, normalizing only that representation and platform line endings. Do not accept a prefix match. Use supported read-only inspection or visible review; do not mutate the document to make comparison easier.
 
-The `text` parameter without a valid shared URL did not reliably open the composer in the tested UI.
+Verify media independently. Historical signals included a `Remove media` button and an image named `Image preview`, `View image`, or the uploaded filename; use the current visible content rather than hard-coding those labels as universal requirements.
 
-## Image plus text: verified fallback
+Saving has used a `Dismiss` action followed by a distinct `Save as draft` prompt. Observe the intermediate prompt before proceeding. Never broaden an ambiguous selector to `Post` or combine unobserved state transitions into one action.
 
-### 1. Upload from outside the Shadow Root
+After the save confirmation, reopen the `Draft:` entry and repeat full text and media checks. The confirmation historically arrived several seconds after composer closure. If persistence cannot be verified, say so rather than treating the closed composer as success.
 
-Navigate to LinkedIn Feed and use the Feed-level `Photo` button. It remains in the normal document and reliably opens the file chooser.
-
-Start `waitForEvent("filechooser")` before clicking `Photo`, attach a rejection handler immediately, and upload the absolute local path. Verify that the media editor shows the intended filename or preview.
-
-Do not rely on `Add media` inside the affected composer; it may report a successful click without opening the chooser.
-
-### 2. Advance the media editor
-
-If the visible `Next` button is a no-op, use the tab's documented CDP capability to query the open Shadow Root and click exactly one enabled `Next` button.
-
-Before acting, assert:
-
-```javascript
-const root = document.querySelector("#interop-outlet")?.shadowRoot;
-const buttons = [...(root?.querySelectorAll("button") || [])]
-  .filter(button => button.getAttribute("aria-label") === "Next");
-
-({ count: buttons.length, disabled: buttons.map(button => button.disabled) });
-```
-
-Proceed only when `count === 1` and the button is enabled. Stop on zero or multiple matches.
-
-### 3. Insert text through editor semantics
-
-Do not assign `innerHTML` or `textContent`. LinkedIn's editor maintains framework state and applies Trusted Types and structured paragraph behavior; raw assignment can produce a visually changed DOM that is not represented in the saved post.
-
-Instead, focus the real editor, select its existing contents, and use the native editing command:
-
-```javascript
-const root = document.querySelector("#interop-outlet")?.shadowRoot;
-const editor = root?.querySelector(
-  '[aria-label="Text editor for creating content"]',
-);
-
-if (!editor) throw new Error("LinkedIn editor not found");
-
-editor.focus();
-
-const selection = window.getSelection();
-const range = document.createRange();
-range.selectNodeContents(editor);
-selection.removeAllRanges();
-selection.addRange(range);
-
-document.execCommand("insertText", false, approvedText);
-```
-
-When constructing a CDP expression, serialize `approvedText` with `JSON.stringify`. Do not interpolate unescaped text into executable source.
-
-This command was verified to create LinkedIn paragraph nodes and hashtag nodes and to survive saving and reopening the draft.
-
-### 4. Verify logical text
-
-LinkedIn represents every input line as a paragraph. Blank lines become `<p><br></p>`, while `innerText` can appear to contain extra newlines. Compare the logical content instead:
-
-```javascript
-const logicalText = [...editor.children]
-  .map(paragraph => paragraph.innerHTML === "<br>" ? "" : paragraph.innerText)
-  .join("\n");
-```
-
-Require `logicalText === approvedText` after normalizing only platform line endings. Do not accept a prefix check for publication.
-
-Verify media independently through both of these signals when available:
-
-- Exactly one `Remove media` button.
-- An image whose accessible name is `Image preview`, `View image`, or the expected filename.
-
-### 5. Save and prove persistence
-
-Use the exact composer `Dismiss` button to open the save prompt. Assert that exactly one `Save as draft` button exists, then activate it.
-
-In the 2026-08-25 composer, normal browser clicks for both `Dismiss` and `Save as draft` were visible but became no-ops under the confirmed Shadow DOM failure signature. When that exact failure is reproduced and draft saving is authorized, use the documented CDP capability to click these buttons one at a time:
-
-1. In the open Shadow Root, require exactly one button whose accessible label or trimmed text is `Dismiss`, then click it and re-read the root.
-2. Require exactly one `Save as draft` button in the resulting prompt, then click it and wait for the success toast.
-3. Stop on zero or multiple matches, a disabled target, or any unexpected dialog. Never broaden either selector to `Post` or another action.
-
-Do not combine the two clicks into one expression. The save prompt is an intermediate state that must be observed before the second mutation.
-
-Wait for:
-
-```text
-Draft successfully saved.
-```
-
-The toast can arrive several seconds after the composer closes. Reopen the `Draft:` entry through `Start a post`, then repeat the exact logical-text and media checks.
-
-## Safety boundaries
-
-- Lower-level page actions directly modify the unsent draft. Disclose their use in the final response.
-- Match exact accessible labels and require exactly one target before every lower-level click.
-- Never select or click `Post` as part of diagnosis, draft creation, or fallback testing.
-- Do not leave dummy URLs, test strings, duplicate media, or invalid link-preview warnings in the final draft.
-- If LinkedIn changes its DOM, stop rather than broadening selectors until the new state has been inspected.
+Draft troubleshooting does not authorize publication. Existing authorization for the same draft action remains valid during supported technical retries; changes to the content, audience, destination, or requested action require their own scope decision.
