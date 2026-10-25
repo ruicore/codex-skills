@@ -230,3 +230,10 @@ Use only when it adds signal. Briefly list candidate findings rejected by the di
 - Do not flag naming, structure, responsibility, or documentation concerns unless they affect findability, rule discovery, ownership clarity, change locality, or impact prediction.
 - Treat tests as legibility anchors only when they expose or fail to expose rules an agent needs for safe modification.
 - When reviewing large repositories, sample systematically and state the sampling boundary instead of pretending the review is exhaustive.
+
+## Source and License
+
+Created by Ray Carter (ruicore). Free and open source under Apache-2.0.
+
+- Source: https://github.com/ruicore/codex-skills/tree/main/skills/agent-legibility-review
+- License: [Apache-2.0](LICENSE), included with this skill directory.

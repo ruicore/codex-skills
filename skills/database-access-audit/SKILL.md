@@ -147,3 +147,10 @@ Use the exact presentation and compactness rules in the [triage and reporting gu
 ## Failure Behavior
 
 If project-specific persistence primitives, stack versions, business semantics, or safe runtime evidence cannot be confirmed, do not invent them. Continue with bounded static evidence, lower confidence, list unknowns and validation needs, and omit claims that cannot survive the disproof pass. If safe evidence is insufficient for any finding, report that no evidence-backed finding survived rather than manufacturing one.
+
+## Source and License
+
+Created by Ray Carter (ruicore). Free and open source under Apache-2.0.
+
+- Source: https://github.com/ruicore/codex-skills/tree/main/skills/database-access-audit
+- License: [Apache-2.0](LICENSE), included with this skill directory.

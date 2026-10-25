@@ -609,3 +609,10 @@ reports.
 - **Scope expansion discovered:** preserve completed in-scope work, pause the
   affected slice, and send a Decision Request. Because the master cannot grant
   new authority, record `BLOCKED` and ask the human before expanding.
+
+## Source and License
+
+Created by Ray Carter (ruicore). Free and open source under Apache-2.0.
+
+- Source: https://github.com/ruicore/codex-skills/tree/main/skills/agentic-repository-execution
+- License: [Apache-2.0](LICENSE), included with this skill directory.

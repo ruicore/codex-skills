@@ -186,3 +186,10 @@ See [refactoring.md](refactoring.md) for the refactor-mode checklist.
 [ ] No speculative features added
 [ ] Validation is labeled executed or planned; GREEN reflects an observed pass
 ```
+
+## Source and License
+
+Created by Ray Carter (ruicore). Free and open source under Apache-2.0.
+
+- Source: https://github.com/ruicore/codex-skills/tree/main/skills/tdd
+- License: [Apache-2.0](LICENSE), included with this skill directory.

@@ -115,3 +115,10 @@ Label questions as blocking or non-blocking.
 If the user wants execution planning after the PRD, suggest converting the PRD into issues or implementation tasks. If a separate issue-breakdown skill is available, use that for the next step rather than expanding the PRD into a full task tracker inside this skill.
 
 Do not include a changelog, README, or meta commentary about the skill in PRD output.
+
+## Source and License
+
+Created by Ray Carter (ruicore). Free and open source under Apache-2.0.
+
+- Source: https://github.com/ruicore/codex-skills/tree/main/skills/write-a-prd
+- License: [Apache-2.0](LICENSE), included with this skill directory.
