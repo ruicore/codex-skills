@@ -152,3 +152,10 @@ Before responding:
 - Ensure vertical slices are used wherever feasible.
 - Ensure parallel groups do not hide real coupling.
 - Ensure open questions are not silently converted into assumptions when they are blocking.
+
+## Source and License
+
+Created by Ray Carter (ruicore). Free and open source under Apache-2.0.
+
+- Source: https://github.com/ruicore/codex-skills/tree/main/skills/prd-to-issues
+- License: [Apache-2.0](LICENSE), included with this skill directory.

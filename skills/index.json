@@ -32,7 +32,9 @@
         "run a disproof pass against candidate findings",
         "cite concrete files, modules, docs, tests, or repo-wide structure"
       ],
-      "supporting_files": [],
+      "supporting_files": [
+        "skills/agent-legibility-review/LICENSE"
+      ],
       "agents_metadata_path": "skills/agent-legibility-review/agents/openai.yaml",
       "portability_notes": "Portable review workflow, but findings must stay grounded in the target repository's actual docs, tests, code, and conventions."
     },
@@ -79,7 +81,8 @@
         "skills/agentic-repository-execution/references/execution-templates.md",
         "skills/agentic-repository-execution/references/independent-review-policy.md",
         "skills/agentic-repository-execution/references/model-and-effort-routing.md",
-        "skills/agentic-repository-execution/references/task-decomposition-and-handoffs.md"
+        "skills/agentic-repository-execution/references/task-decomposition-and-handoffs.md",
+        "skills/agentic-repository-execution/LICENSE"
       ],
       "agents_metadata_path": "skills/agentic-repository-execution/agents/openai.yaml",
       "portability_notes": "Portable coordination workflow that must adapt to the target repository's governance, durable-memory convention, available sub-agent controls, current models and reasoning efforts, validation commands, and user-authorized side effects. Risk classification never grants authority; unresolved material decisions are stopped and escalated rather than guessed."
@@ -161,7 +164,8 @@
       ],
       "supporting_files": [
         "skills/architecture-review/examples/notification-preferences-boundary.md",
-        "skills/architecture-review/examples/repository-layout-ownership.md"
+        "skills/architecture-review/examples/repository-layout-ownership.md",
+        "skills/architecture-review/LICENSE"
       ],
       "agents_metadata_path": "skills/architecture-review/agents/openai.yaml",
       "portability_notes": "Portable review workflow. It should not be used to impose a desired architecture that is not supported by the target repository's current evidence."
@@ -277,7 +281,8 @@
       ],
       "supporting_files": [
         "skills/database-access-audit/quick-reference.md",
-        "skills/database-access-audit/references/audit-pattern-catalog.md"
+        "skills/database-access-audit/references/audit-pattern-catalog.md",
+        "skills/database-access-audit/LICENSE"
       ],
       "agents_metadata_path": "skills/database-access-audit/agents/openai.yaml",
       "portability_notes": "Portable across stacks, but the audit must discover project-specific database primitives before applying generic search terms."
@@ -321,7 +326,8 @@
       "supporting_files": [
         "skills/decision-trace-writer/examples/export-idempotency-trace.md",
         "skills/decision-trace-writer/references/trace-formats.md",
-        "skills/decision-trace-writer/references/tracegym-metadata.md"
+        "skills/decision-trace-writer/references/tracegym-metadata.md",
+        "skills/decision-trace-writer/LICENSE"
       ],
       "agents_metadata_path": "skills/decision-trace-writer/agents/openai.yaml",
       "portability_notes": "Portable durable-memory workflow. Placement must follow the target repository's existing durable-memory convention and should avoid committing ignored or private agent-facing traces unless explicitly requested."
@@ -905,7 +911,8 @@
         "ensure each issue has acceptance criteria, verification, and realistic parallelization guidance"
       ],
       "supporting_files": [
-        "skills/prd-to-issues/examples/team-invite-expiration.md"
+        "skills/prd-to-issues/examples/team-invite-expiration.md",
+        "skills/prd-to-issues/LICENSE"
       ],
       "agents_metadata_path": "skills/prd-to-issues/agents/openai.yaml",
       "portability_notes": "Portable planning workflow. Output is a plan, not direct creation of remote GitHub or Linear issues unless another tool or user request handles that step."
@@ -1150,7 +1157,8 @@
         "skills/tdd/interface-design.md",
         "skills/tdd/mocking.md",
         "skills/tdd/refactoring.md",
-        "skills/tdd/tests.md"
+        "skills/tdd/tests.md",
+        "skills/tdd/LICENSE"
       ],
       "agents_metadata_path": "skills/tdd/agents/openai.yaml",
       "portability_notes": "Portable engineering workflow, but the public interface, test runner, and behavior priorities must come from the target project and user."
@@ -1246,7 +1254,9 @@
         "make requirements specific, testable, scoped, prioritized, and traceable",
         "label open questions as blocking or non-blocking"
       ],
-      "supporting_files": [],
+      "supporting_files": [
+        "skills/write-a-prd/LICENSE"
+      ],
       "agents_metadata_path": "skills/write-a-prd/agents/openai.yaml",
       "portability_notes": "Portable planning workflow. It should produce a PRD or specification, not execute implementation or issue creation unless the user separately asks."
     }

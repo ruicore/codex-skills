@@ -98,6 +98,15 @@ stores source-commit and file-hash receipts outside the discovery directory.
 [local workflow tools](docs/local-workflow-tools.md) for installation details and
 the read-only task-start snapshot and staged commit-scope checker.
 
+### Optional: Agensi MCP
+
+Selected skills are also available free through [Agensi MCP](https://www.agensi.io/mcp).
+Connect your agent and ask for the skill by its published title.
+
+This repository remains the canonical source under Apache-2.0. Agensi serves
+its approved published versions, which may differ from `main`. The local
+installation methods above remain available.
+
 ## Use
 
 Each skill is self-contained:

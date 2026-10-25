@@ -320,3 +320,10 @@ For each phase, name expected blast radius, validation needs, and rollback shape
 - Do not include technology-specific rules unless they come from the current repository's own docs or code.
 - For non-trivial recommendations, identify likely owner, expected blast radius, validation needs, and rollback shape.
 - Do not recommend splitting a large file or adding directories unless the new boundary gives a concept a clearer owner or materially narrows its change surface.
+
+## Source and License
+
+Created by Ray Carter (ruicore). Free and open source under Apache-2.0.
+
+- Source: https://github.com/ruicore/codex-skills/tree/main/skills/architecture-review
+- License: [Apache-2.0](LICENSE), included with this skill directory.

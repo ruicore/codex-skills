@@ -144,3 +144,10 @@ In the final response, state the trace path, whether it was created or updated, 
 - If an existing trace already captures the same decision with no material change, do not create a duplicate.
 - If sanitization or publication is requested, treat it as a separate workflow and do not expose the raw trace.
 - If validation is unsafe, unavailable, skipped, or blocked, state that exactly.
+
+## Source and License
+
+Created by Ray Carter (ruicore). Free and open source under Apache-2.0.
+
+- Source: https://github.com/ruicore/codex-skills/tree/main/skills/decision-trace-writer
+- License: [Apache-2.0](LICENSE), included with this skill directory.
