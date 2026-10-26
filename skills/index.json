@@ -7,7 +7,7 @@
       "category": "review-audit",
       "secondary_categories": [],
       "maturity": "portable-candidate",
-      "purpose": "Reviews whether a repository is easy for future AI coding agents to find, understand, modify, and safely evolve without replacing architecture ownership or boundary decisions.",
+      "purpose": "Reviews realistic change paths for future coding agents, identifying wrong edit points, unclear authority, and overlooked constraints or downstream effects.",
       "triggers": [
         "review a repository for agent navigability",
         "find hidden conventions, duplicated authority, ambiguous ownership, or agent risk hotspots",
@@ -17,7 +17,7 @@
         "ordinary code-style review",
         "framework-specific review",
         "bug, performance, security, clean-code, maintainability, or generic architecture review unless agent legibility is explicitly requested",
-        "deciding or redesigning architectural ownership and boundaries; use architecture-review"
+        "unsolicited architecture redesign"
       ],
       "default_side_effect_level": "read-only",
       "side_effect_level": "read-only",
@@ -29,7 +29,7 @@
       ],
       "validation_expectations": [
         "inspect repository evidence before reporting findings",
-        "run a disproof pass against candidate findings",
+        "check whether existing navigation aids, tests, or conventions resolve candidate concerns",
         "cite concrete files, modules, docs, tests, or repo-wide structure"
       ],
       "supporting_files": [
