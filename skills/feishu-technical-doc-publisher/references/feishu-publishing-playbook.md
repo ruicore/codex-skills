@@ -194,6 +194,40 @@ The generated manifest inventories every Markdown table and provides a suggested
 
 ## 6. PlantUML And UML Board
 
+First establish the required interaction granularity. The PlantUML path below is
+suitable for whole-diagram rendering and discussion. When the user needs comments
+on individual components, build independent native shapes and connectors in the
+Board instead. Retain a local semantic source with node labels, relationships and
+layout intent; the helper's automatic PlantUML inventory does not cover manually
+built diagrams, so add them to the publication ledger explicitly.
+
+For component review, verify that one node can be selected separately and its
+comment control opens; discard the empty draft without posting. A generated outer
+Section or group can capture selection. If so, use the current UI's ungroup or
+remove-container operation only when it preserves the children, then verify again.
+Do not delete the contents. A Board-level comment button is insufficient proof.
+
+Read flows top to bottom unless another direction better expresses the relationship.
+Align peer nodes and semantic layers, keep labels short, and verify arrow directions
+and boundary crossings. Preserve a requested complete architecture diagram; a node
+count target is not a reason to omit its content.
+
+### Diagram meaning check
+
+Before publication, identify the critical relationships from the prose and semantic
+source. After insertion and again after reload, follow those relationships in the
+actual drawing: origin, destination, direction, meaning and relevant boundary.
+Check independent paths, parallel actors, returns, branches and ownership handoffs
+where the design uses them. Do not infer a direct relationship from an indirect
+chain, or let a sequence layout imply that unrelated traffic traverses every node.
+
+For manually rebuilt diagrams, reconcile each critical relationship with the
+retained semantic source; shortening a label is acceptable only when the meaning
+remains clear. Record an observed match, an intentional abstraction, or a defect.
+If the drawing and prose disagree, resolve the discrepancy and synchronize the local
+source before completion. A matching shape count or an open comment control cannot
+substitute for this check.
+
 Open `UML Diagram`. This first opens a blank Board and its template panel; the PlantUML entry is not in that initial template list. In the Board's left floating toolbar, open the nine-dot/More menu and select `PlantUML Diagram`. Paste the extracted `.puml`, preview, choose a style, and insert.
 
 Do not search the top-right document overflow menu or `More Templates` for PlantUML, and do not conclude that the feature is unavailable from those panels. Prefer semantic text/role locators after each menu opens. When a semantic locator is unavailable, take a fresh screenshot immediately before the single coordinate action; never chain coordinates learned from an earlier layout state.
@@ -229,7 +263,7 @@ Before clicking `Insert`:
 
 ### Choose style by diagram complexity
 
-Board Style is editable but has a different layout engine from PlantUML Classic. Use it for simple diagrams with short labels, limited branching, and no high-degree center node. Choose Classic Style initially when the diagram has several branching paths, long edge labels, a dense center, or a layout whose primary value is faithful PlantUML rendering.
+For the PlantUML path, Board Style can produce editable objects but uses a different layout engine from PlantUML Classic. Use it for simple diagrams with short labels, limited branching, and no high-degree center node. Choose Classic Style initially when the priority is faithful rendering of dense relationships. Neither the style name nor the containing Board proves that individual nodes can be commented on.
 
 When Board Style is otherwise desirable, make one bounded correction pass:
 
@@ -237,10 +271,10 @@ When Board Style is otherwise desirable, make one bounded correction pass:
 2. Move long text from central edges to downstream edges or dedicated nodes.
 3. Insert `\n` in long labels and combine parallel request/response descriptions when that preserves meaning.
 4. Simplify deeply nested activity branches with supported structural nodes and one-way paths; do not introduce unsupported standalone `diamond` declarations.
-5. Keep diagrams to roughly 8–12 primary nodes where possible.
+5. Simplify the orientation view when useful; do not enforce a node cap on a requested complete architecture.
 6. Check fit-to-screen and 70–100% zoom for text overlap, lines crossing labels, and unclear branch direction.
 
-If the diagram remains unreadable after that pass, select Classic Style. Do not repeatedly distort a sound architecture or execution model merely to satisfy the Board layout engine.
+If the diagram remains unreadable after that pass and whole-diagram rendering meets the request, select Classic Style. For individual-component review, keep native components and adjust their layout instead. Do not repeatedly distort a sound architecture or execution model merely to satisfy the Board layout engine.
 
 ### Insertion behavior
 
@@ -295,6 +329,8 @@ Before declaring completion:
 - use Find for removed field names, process-only phrases, diagram markers, and local paths;
 - inspect every inventoried table for the common outer width and readable internal widths, and reconcile the `adjusted/total` count;
 - inspect every diagram for an actual rendered drawing, syntax-error images, overlap, and duplicate board objects, and reconcile the `rendered/total` count;
+- trace the critical diagram relationships against the prose and semantic source, including distinct data/control paths and completion or recovery boundaries where applicable;
+- where per-component collaboration was requested, verify native node selection and its comment control after reload without posting a test comment;
 - search every manifest diagram placeholder and generic placeholder/instruction patterns; all must be absent from the public page;
 - confirm code blocks contain the intended full payload/schema rather than a partial paste;
 - for every long code block with an independent scroll container, scroll inside the block to a source-derived tail marker and confirm its closing structure; outer page height, the next heading's visibility, and code-block count alone do not prove completeness;
@@ -318,6 +354,7 @@ Record a compact local result:
 - Cloud state: Saved to cloud, reloaded
 - Tables adjusted: <adjusted/total, common boundary, explicit exceptions>
 - Diagrams rendered: <rendered/total, DSL paths, preview and reload result>
+- Diagram meaning: <critical paths/branches checked, intentional abstractions, discrepancies resolved>
 - Headings/code blocks reconciled: <counts by level, code total, long-block tail checks>
 - Representative prose sections checked: <names>
 - Targeted searches: <terms and results>

@@ -551,9 +551,10 @@
         "tool-ops"
       ],
       "maturity": "personal-skill",
-      "purpose": "Turns authoritative local Markdown engineering conclusions into reader-ready, native-block Feishu technical documents while preserving local truth, safe cloud editing, visual layout, and reload verification.",
+      "purpose": "Writes reviewer-facing designs and implementation documents in the author's voice, then publishes native Feishu content while preserving local truth, safe cloud editing, visual layout, and reload verification.",
       "triggers": [
         "publish or synchronize a local Markdown technical design to Feishu",
+        "prepare a reviewer-facing design or implementation document for Feishu delivery",
         "rewrite a discussion-derived engineering conclusion for no-context Feishu readers",
         "refine and verify an existing Feishu technical document against a maintainable local source"
       ],
@@ -575,11 +576,12 @@
       ],
       "validation_expectations": [
         "run the publication helper dry-run before writing generated artifacts and refuse unreviewed overwrites",
-        "review the reader-facing narrative and verify current task authority for the exact cloud target before mutation",
-        "use currently documented browser capabilities and fresh editor observations; do not require a fixed model identifier",
-        "reconcile final rendered headings, visible code blocks, diagram slots, tables, and long-block tails against the publication manifest",
-        "verify table content and widths, rendered diagrams, zero remaining diagram placeholders, privacy, and exact deferred content",
-        "wait for cloud save, reload the target page, and reconcile the final artifact ledger before reporting completion"
+        "review narrative as a reader without prior conversation context before cloud mutation",
+        "treat an initially blank named Feishu target as standing page-scoped publication authority without repeated confirmations",
+        "check audience-appropriate depth, author voice and consequential open decisions without inventing implementation or validation evidence",
+        "use currently supported browser capabilities and verify individual native components when component-level comments are requested",
+        "verify every manifest table's content and widths, every diagram's rendered output, zero remaining diagram placeholders, sensitive-data hygiene, and exact deferred content",
+        "wait for cloud save, reload the target page, and reconcile manifest counts before reporting completion"
       ],
       "supporting_files": [
         "skills/feishu-technical-doc-publisher/references/editorial-workflow.md",
@@ -588,7 +590,7 @@
         "skills/feishu-technical-doc-publisher/scripts/prepare_feishu_publish.py"
       ],
       "agents_metadata_path": "skills/feishu-technical-doc-publisher/agents/openai.yaml",
-      "portability_notes": "Uses Feishu Docs through an authenticated browser with current documented editing, upload, and inspection capabilities. Preserve the local source of truth, target-scoped authority, block-level editing, per-table and per-diagram verification, Edit History recovery, and reload validation. Report unavailable capabilities without substituting unsupported lower-level APIs."
+      "portability_notes": "Uses the public Feishu Docs product through an authenticated browser with supported current-state inspection, insertion and rendered-result verification. Review and implementation content modes share local source-of-truth, block-level editing, Edit History recovery, per-table/per-diagram transactions and reload verification."
     },
     {
       "name": "genmedia",

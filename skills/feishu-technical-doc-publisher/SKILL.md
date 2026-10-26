@@ -1,6 +1,6 @@
 ---
 name: feishu-technical-doc-publisher
-description: Publish or synchronize local Markdown technical documents to a named Feishu page, with native diagrams, table layout, and reload verification. Use for Feishu delivery, not ordinary Markdown editing or read-only document access.
+description: Write, publish, or synchronize reviewer-facing designs and implementation documents in Feishu, with local sources, native diagrams, table layout, and reload verification. Use for Feishu technical-document delivery, not ordinary Markdown editing or read-only page access.
 ---
 
 # Feishu Technical Doc Publisher
@@ -8,6 +8,32 @@ description: Publish or synchronize local Markdown technical documents to a name
 Keep a maintainable local source and publish a self-contained Feishu document for
 readers who do not share the conversation context. Preserve deliberately undecided
 content as `待定` or the user's chosen marker.
+
+## Audience and author
+
+Choose the document's job before outlining it. Infer it from the requested audience,
+purpose and supplied examples; do not ask the user to select a mode when those are clear.
+
+| Mode | Reader needs to decide or do | Main content |
+| --- | --- | --- |
+| Review design / 评审稿 | Judge direction, feasibility and material tradeoffs | Proposal, boundaries, key relationships, consequential decisions, evidence, risks and acceptance |
+| Implementation document / 执行稿 | Implement, integrate or operate the agreed design | Responsibilities, necessary contracts, configuration, lifecycle, failure handling and verifiable outcomes |
+
+These are two content modes of one publication workflow. Review writing is more than
+shortening an implementation document: retain any detail that determines feasibility,
+cost, ownership or a consequential risk. Implementation writing adds actionable
+precision, not a longer retelling of the discussion. Do not invent interfaces or
+parameters to make an unfinished design look executable.
+
+Write from the user's position as the document's author. State the proposal directly,
+using component subjects or a natural team voice where appropriate. Do not narrate a
+conversation among the user, assistant and reviewer, or claim personal verification
+that the evidence does not support. See [Editorial workflow](references/editorial-workflow.md)
+for detail placement, paired documents, author voice and mode-specific checks.
+
+For mixed audiences, keep a reviewable main path and link to implementation detail.
+Create a second cloud page only when that deliverable is authorized. Preserve protected
+sections and requested complete architecture diagrams rather than imposing a template.
 
 ## Scope and authority
 
@@ -47,7 +73,7 @@ complete the local package and report the precise blocked step. A missing login 
 not permission to switch accounts or bypass authentication. Reuse the signed-in
 session without reading cookies, credentials, storage, or browser profiles.
 
-Parallelize local preparation and review; serialize mutations in a shared browser
+When delegation is authorized, parallelize local preparation and review; serialize mutations in a shared browser
 session. Assign an exact page URL to each editing worker and verify its title and
 initial content before the first write. Never infer ownership from the newest
 untitled page or selected tab.
@@ -56,7 +82,7 @@ untitled page or selected tab.
 
 | Task | Reference |
 | --- | --- |
-| Rewrite conclusions for readers, remove conversation artifacts, choose a main narrative and appendices | [Editorial workflow](references/editorial-workflow.md) |
+| Choose review or implementation depth, write in the author's voice, organize visuals, or reconcile paired documents | [Editorial workflow](references/editorial-workflow.md) |
 | Generate the package, paste native blocks, size tables, insert PlantUML, recover or verify publication | [Publishing playbook](references/feishu-publishing-playbook.md) |
 | Use components beyond headings, prose, tables, code, Callout and UML Board; inspect nesting constraints | [Component selection and nesting](references/component-selection-and-nesting.md) |
 
@@ -67,7 +93,9 @@ guidance only when that work is needed.
 
 1. Freeze the reader-facing source, including any generated appendix. Use the local
    helper below or an established project generator; derive the manifest from the
-   exact final payload. Multiple paste fragments need one reconciled ledger.
+   exact final payload. Before simplifying, reconcile the decision-driving goals
+   and established constraints with their intended location in the draft; see the
+   editorial workflow. Multiple paste fragments need one reconciled ledger.
 2. Inspect the target and establish Edit History before broad replacement. For a
    blank page, prove the main-document root focus with a harmless type-and-undo
    probe, then paste the complete ordinary body using a supported rich-text method.
@@ -96,14 +124,19 @@ does not prove that Feishu preserved that structure or rendered PlantUML correct
 
 ## Fragile operations
 
+- Match diagram format to the requested review interaction. For comments on individual
+  components, use independent native Board shapes and connectors; a picture, DSL block
+  or Board container alone does not meet that requirement. Keep semantic sources locally.
 - Never use global `Ctrl+A` in a Feishu document, code block, or table editor;
   focus can escape and select the whole document. Prefer scoped block operations.
 - Find PlantUML inside the opened UML Board's left-toolbar More/nine-dot menu,
   not the initial template panel. Reacquire the UI at every menu boundary.
-- Use Board Style for simple diagrams and Classic Style for dense branching or
+- When a UML rendering is suitable, use Board Style for simple diagrams and Classic Style for dense branching or
   long labels. After one bounded Board compatibility/layout correction, prefer
   Classic rather than repeatedly distorting valid DSL. Insert only a successful
-  preview; do not silently substitute a static image for requested native UML.
+  preview. Classic rendering is not a fallback for a requirement to comment on
+  individual components; retain native shapes in that case. Do not silently
+  substitute a static image for requested native UML.
 - After broad accidental replacement, stop editing, restore the nearest known-good
   Edit History revision, reload and verify before retrying. On the assigned blank
   page this is covered by publication authority. Stop for direction if recovery
@@ -117,6 +150,15 @@ position, all visible code-block counts, and long or independently scrollable
 code blocks through their tail markers and closing lines. Feishu virtualizes
 off-screen blocks: combine outline, native Find and targeted navigation rather
 than treating a first-screen snapshot as the full document.
+
+Check the selected audience mode before calling the content complete: a reviewer can
+explain the proposal and identify its consequential open decisions without reading
+implementation detail; an implementer can locate the necessary contracts, failure
+behavior and verification steps. Check actual diagram relationships against the
+prose and semantic source; correct counts, rendering and editability do not prove
+that a required path or branch survived. For component-level review, verify a single node can
+be selected and its comment control opened, then discard the empty draft; do not post
+a test comment without authorization.
 
 Require zero temporary diagram slots, local paths or editing instructions in the
 public page. Keep intentionally deferred markers. Reconcile adjusted/total tables,
