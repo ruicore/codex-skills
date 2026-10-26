@@ -25,6 +25,12 @@ files remain package content; this is not a general `.gitignore` exclusion.
 The repository itself,
 registry, and unrelated packages are not installed. Package symlinks are rejected.
 
+`python scripts/list_skills.py` shows each skill's independent registry version.
+Install plans and successful installs identify packages as `name@version`.
+Versions apply to the complete package, including references and scripts; see
+[release policy](release-policy.md) for increment rules. Installation always uses
+the current checkout; skill names do not accept version selectors.
+
 Each install compares source and destination file SHA-256 values and directory
 membership. It prepares a copy before replacing an old installation and verifies
 the installed copy again. `--verify` performs the same content comparison against
@@ -35,11 +41,21 @@ prints its plan without creating target, temporary files, or receipts.
 Receipts default to a hidden sibling of the target, for example
 `~/.agents/.skills-install-receipts/diagnose.json`. Set `--receipt-dir` to choose
 another location outside both the discovery target and source packages. Receipts
-record source commit, package path, whether the local package differs from HEAD,
-destination, per-file SHA-256 values, and directory membership. A modified-source
-receipt identifies the copied content by its hashes; the recorded commit alone
-does not reconstruct uncommitted content. Receipts are local audit evidence,
-not signatures or a remote trust guarantee.
+record `skill_version`, source commit, package path, whether the local package or
+registry differs from HEAD (`package_modified` and `registry_modified`), destination,
+per-file SHA-256 values, and directory membership. Receipt `version: 1` describes
+the receipt format, independently of `skill_version`. A modified-source receipt
+identifies copied content by its hashes; the recorded commit alone does not
+reconstruct uncommitted content or registry metadata. `registry_modified` covers
+the whole registry and can also reflect changes to other skills. Receipts are
+local audit evidence, not signatures or a remote trust guarantee.
+
+Existing receipts without `skill_version` remain eligible for verification and
+replacement under the same content checks. They acquire a declared skill version
+on the next successful install; earlier installations are not assigned versions
+retroactively. `--verify` still compares content with the current source, without
+changing a receipt or proving that two declared versions are equal. A version
+label never bypasses hash verification or local-edit protection.
 
 Existing destinations require `--overwrite`. Replacement is allowed only when
 the destination still matches its prior receipt, or an unmanaged destination

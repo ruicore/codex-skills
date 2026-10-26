@@ -1,13 +1,69 @@
 # Release Policy
 
-This repository currently evolves through Git history and the `Unreleased`
-section of `CHANGELOG.md`. Tagged releases should be introduced when there is a
-reviewable public surface worth pointing users to, not merely because files have
-changed.
+Skills evolve independently. `skills/index.json` owns each skill's current
+`version`; Git history and `CHANGELOG.md` record changes. Repository tags are
+optional collection snapshots and do not force unrelated skills to change
+version.
+
+## Independent Skill Versions
+
+Versioning starts with the current skill set: every existing skill begins at
+`0.1.0`. Do not reconstruct versions for earlier commits or installations. New
+skills also start at `0.1.0` unless they explicitly introduce a stable `1.0.0`
+contract. Version and maturity are separate: assigning a version does not promote
+a skill's maturity.
+
+Maintain the current version only in the skill's `skills/index.json` entry.
+It covers the complete package directory: `SKILL.md`, agent metadata, references,
+templates, and helper scripts. Do not duplicate it in skill frontmatter or agent
+metadata. Registry fields that define a skill's use, such as triggers and output
+or side-effect contracts, are also part of its versioned behavior. Repository
+tooling and the registry's `schema_version` evolve separately.
+
+Use normal `X.Y.Z` versions without leading zeroes, prerelease labels, or build
+metadata. After `1.0.0`, follow [Semantic Versioning](https://semver.org/):
+
+| Change | Version increment |
+|---|---|
+| Compatible correction or clarification, including package documentation fixes | Patch: `1.2.0` to `1.2.1` |
+| Compatible new capability, optional workflow, parameter, or deprecation | Minor: `1.2.1` to `1.3.0` |
+| Incompatible trigger, output, path, script interface, or operational authorization change | Major: `1.3.0` to `2.0.0` |
+
+During `0.x`, use patch increments for compatible fixes and minor increments for
+new capabilities or breaking changes. Always label breaking changes and describe
+migration, even during `0.x`. Adopt `1.0.0` when the skill has a defined, stable
+usage contract.
+
+Increment only affected skills when preparing a reviewed update for delivery,
+not for each intermediate development commit. Several edits may share one pending
+version. Once delivered, do not reuse that version for different package content.
+An unchanged skill keeps its version. Repository-only edits and administrative
+classification changes do not require a skill bump unless they change its usage
+contract.
+
+For each delivered update:
+
+1. Update the affected skill's registry version.
+2. Add a `CHANGELOG.md` entry naming the skill, old and new versions, and user-visible
+   effect. Include migration instructions when breaking.
+3. Run `python scripts/validate_skills.py --require-denylist` and applicable behavior
+   checks before delivery.
+
+The installer records `skill_version` alongside the source commit and content
+hashes. Receipt `version` is the receipt format number; registry `schema_version`
+is the registry format number. Neither is a skill version. Local development
+copies can differ from the declared version's delivered content; use hashes and
+the source modification flags to identify those copies.
+
+The current installer uses the checked-out source, without version lookup or
+remote resolution. To reproduce a delivered version, use its source commit in a
+separate checkout and install from there. Per-skill tags can be added later if
+named version lookup becomes necessary.
 
 ## When To Tag A Release
 
-Tag a release when at least one of these is true:
+Tag a collection release when there is a reviewable public checkpoint worth
+pointing users to and at least one of these is true:
 
 - a skill reaches a stable enough public reuse point that external users should
   install a known version
@@ -89,6 +145,7 @@ truth aligned:
   `skills/index.json`
 - update `skills/index.json` when category, maturity, side-effect level,
   supporting files, validation expectations, or portability notes change
+- update only affected skill versions according to the independent version rules
 - update `schemas/skill-registry.schema.json` when registry field structure or
   allowed values change
 - update README tables when the public skill list, categories, or install

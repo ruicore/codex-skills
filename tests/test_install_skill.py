@@ -32,7 +32,8 @@ class InstallSkillTests(unittest.TestCase):
             (package / "empty").mkdir()
             (package / "SKILL.md").write_text(f"# {name}\n", encoding="utf-8")
             (package / "notes" / "guide.md").write_text("supporting content\n", encoding="utf-8")
-            entries.append({"name": name, "path": f"skills/{name}", "category": "sample"})
+            entries.append({"name": name, "version": "0.1.0",
+                            "path": f"skills/{name}", "category": "sample"})
         (self.repo / "skills" / "index.json").write_text(json.dumps({"skills": entries}), encoding="utf-8")
         (self.repo / "README.md").write_text("repository-only material\n", encoding="utf-8")
         self.git("init", "-q")
@@ -63,14 +64,19 @@ class InstallSkillTests(unittest.TestCase):
         self.assertEqual(install_skill.inventory(self.repo / "skills" / "alpha"),
                          install_skill.inventory(self.target / "alpha"))
         receipt = json.loads((self.receipts / "alpha.json").read_text(encoding="utf-8"))
+        self.assertEqual("0.1.0", receipt["skill_version"])
+        self.assertEqual(1, receipt["version"])
         self.assertEqual(self.git("rev-parse", "HEAD"), receipt["source"]["commit"])
+        self.assertFalse(receipt["source"]["registry_modified"])
         self.assertFalse(receipt["source"]["package_modified"])
         self.assertEqual(hashlib.sha256((self.repo / "skills" / "alpha" / "SKILL.md").read_bytes()).hexdigest(),
                          receipt["content"]["files"]["SKILL.md"])
         self.run_installer("alpha", "--verify")
 
     def test_dry_run_has_no_writes_and_multiple_selection_is_explicit(self) -> None:
-        self.run_installer("alpha", "beta", "--dry-run")
+        result = self.run_installer("alpha", "beta", "--dry-run")
+        self.assertIn("alpha@0.1.0", result.stdout)
+        self.assertIn("beta@0.1.0", result.stdout)
         self.assertFalse(self.target.exists())
         self.assertFalse(self.receipts.exists())
         self.run_installer("alpha", "beta")
@@ -81,6 +87,60 @@ class InstallSkillTests(unittest.TestCase):
         self.assertFalse(self.target.exists())
         self.run_installer("--category", "sample")
         self.assertTrue((self.target / "beta").is_dir())
+
+    def test_upgrade_records_only_selected_skill_version(self) -> None:
+        self.run_installer("alpha", "beta")
+        beta_receipt = (self.receipts / "beta.json").read_bytes()
+        beta_content = install_skill.inventory(self.target / "beta")
+        index = self.repo / "skills" / "index.json"
+        registry = json.loads(index.read_text(encoding="utf-8"))
+        registry["skills"][0]["version"] = "0.2.0"
+        index.write_text(json.dumps(registry), encoding="utf-8")
+        (self.repo / "skills" / "alpha" / "notes" / "guide.md").write_text(
+            "new supporting workflow\n", encoding="utf-8")
+
+        result = self.run_installer("alpha", "--overwrite")
+
+        self.assertIn("alpha@0.2.0", result.stdout)
+        receipt = json.loads((self.receipts / "alpha.json").read_text(encoding="utf-8"))
+        self.assertEqual("0.2.0", receipt["skill_version"])
+        self.assertTrue(receipt["source"]["registry_modified"])
+        self.assertTrue(receipt["source"]["package_modified"])
+        self.assertEqual(beta_receipt, (self.receipts / "beta.json").read_bytes())
+        self.assertEqual(beta_content, install_skill.inventory(self.target / "beta"))
+        self.run_installer("alpha", "--verify")
+
+    def test_legacy_receipt_can_be_verified_and_upgraded(self) -> None:
+        self.run_installer("alpha")
+        path = self.receipts / "alpha.json"
+        receipt = json.loads(path.read_text(encoding="utf-8"))
+        del receipt["skill_version"]
+        del receipt["source"]["registry_modified"]
+        path.write_text(json.dumps(receipt), encoding="utf-8")
+        legacy = path.read_bytes()
+
+        self.run_installer("alpha", "--verify")
+        self.assertEqual(legacy, path.read_bytes())
+        self.run_installer("alpha", "--overwrite")
+        updated = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual("0.1.0", updated["skill_version"])
+        self.assertEqual(1, updated["version"])
+
+    def test_invalid_or_missing_version_blocks_all_selected_installs(self) -> None:
+        index = self.repo / "skills" / "index.json"
+        registry = json.loads(index.read_text(encoding="utf-8"))
+        for version in (None, 1, True, "", "1.2", "01.2.3", "1.02.3", "1.2.03",
+                        "-1.2.3", "1.2.3-rc.1", "1.2.3+build", "1.2.3\n"):
+            with self.subTest(version=version):
+                if version is None:
+                    registry["skills"][1].pop("version", None)
+                else:
+                    registry["skills"][1]["version"] = version
+                index.write_text(json.dumps(registry), encoding="utf-8")
+                result = self.run_installer("alpha", "beta", expected=1)
+                self.assertIn("valid X.Y.Z registry version", result.stderr)
+                self.assertFalse(self.target.exists())
+                self.assertFalse(self.receipts.exists())
 
     def test_overwrite_updates_unchanged_installation_but_protects_local_edits(self) -> None:
         self.run_installer("alpha")
@@ -179,7 +239,7 @@ class InstallSkillTests(unittest.TestCase):
                 install_skill, "receipt_path", side_effect=RuntimeError("receipt unavailable")):
             with self.assertRaisesRegex(RuntimeError, "receipt unavailable"):
                 install_skill.install_one("alpha", self.repo / "skills" / "alpha",
-                                          self.target / "alpha", self.target, self.receipts)
+                                          self.target / "alpha", self.target, self.receipts, "0.1.0")
         self.assertEqual("# alpha\n", (self.target / "alpha" / "SKILL.md").read_text(encoding="utf-8"))
         self.assertEqual(original_receipt, (self.receipts / "alpha.json").read_bytes())
 
@@ -223,7 +283,7 @@ class InstallSkillTests(unittest.TestCase):
                 Path, "rename", deny_restore):
             with self.assertRaisesRegex(RuntimeError, "previous installation preserved at") as raised:
                 install_skill.install_one("alpha", self.repo / "skills" / "alpha",
-                                          self.target / "alpha", self.target, self.receipts)
+                                          self.target / "alpha", self.target, self.receipts, "0.1.0")
         retained = list(self.base.glob(".skill-install-*"))
         self.assertEqual(1, len(retained))
         self.assertIn(str(retained[0] / "previous"), str(raised.exception))
@@ -233,7 +293,8 @@ class InstallSkillTests(unittest.TestCase):
 
     def test_bad_registry_cannot_install_repository_root(self) -> None:
         index = self.repo / "skills" / "index.json"
-        index.write_text(json.dumps({"skills": [{"name": "alpha", "path": "."}]}), encoding="utf-8")
+        index.write_text(json.dumps({"skills": [{"name": "alpha", "version": "0.1.0",
+                                                "path": "."}]}), encoding="utf-8")
         self.run_installer("alpha", expected=1)
         self.assertFalse(self.target.exists())
 
@@ -250,7 +311,7 @@ class InstallSkillTests(unittest.TestCase):
         with patch.object(install_skill, "REPO_ROOT", self.repo), patch.object(install_skill.shutil, "copytree", corrupt_copy):
             with self.assertRaisesRegex(RuntimeError, "verification failed"):
                 install_skill.install_one("alpha", self.repo / "skills" / "alpha",
-                                          self.target / "alpha", self.target, self.receipts)
+                                          self.target / "alpha", self.target, self.receipts, "0.1.0")
         self.assertEqual("# alpha\n", (self.target / "alpha" / "SKILL.md").read_text(encoding="utf-8"))
 
 
