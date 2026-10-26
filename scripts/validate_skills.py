@@ -30,6 +30,7 @@ SKILL_TAXONOMY_PATH = REPO_ROOT / "docs" / "skill-taxonomy.md"
 
 REQUIRED_ENTRY_FIELDS = {
     "name",
+    "version",
     "path",
     "category",
     "secondary_categories",
@@ -65,6 +66,7 @@ SIDE_EFFECT_LEVEL_ORDER = (
 )
 NON_EMPTY_STRING_FIELDS = (
     "name",
+    "version",
     "path",
     "purpose",
     "portability_notes",
@@ -327,6 +329,14 @@ class Validator:
         }
         name = string_values["name"]
         path_value = string_values["path"]
+        version = string_values["version"]
+        if version is not None and not re.fullmatch(
+            r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", version
+        ):
+            self.error(
+                f"{rel(INDEX_PATH)}:{label}.version: must use X.Y.Z without "
+                "leading zeroes, prerelease labels, or build metadata"
+            )
         for field in NON_EMPTY_STRING_LIST_FIELDS:
             self.validate_non_empty_string_list_field(label, entry, field)
         self.validate_bool_field(label, entry, "requires_credentials")

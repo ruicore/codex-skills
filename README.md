@@ -93,7 +93,8 @@ python scripts/install_skill.py --category review-audit --target ~/.agents/skill
 ```
 
 `install_skill.py` copies selected skill directories, verifies their content, and
-stores source-commit and file-hash receipts outside the discovery directory.
+stores skill-version, source-commit, and file-hash receipts outside the discovery
+directory.
 `--overwrite` refuses locally modified destinations. See
 [local workflow tools](docs/local-workflow-tools.md) for installation details and
 the read-only task-start snapshot and staged commit-scope checker.
@@ -119,6 +120,14 @@ Each skill is self-contained:
 Use a skill when the task matches the workflow, not because the skill name sounds related. For example, use `diagnose` when there is a concrete bug or performance regression; use `architecture-review` when the question is where ownership, authority, or boundaries should live; use `agent-legibility-review` when the question is whether a future agent can find and safely modify the current repository; use `repository-layout-refactor` when the user wants to implement a behavior-preserving ownership and package migration.
 
 [skills/index.json](skills/index.json) is the machine-readable registry for skill metadata, including category, maturity, default and maximum normal side-effect levels, supporting files, validation expectations, and portability notes. The historical `side_effect_level` field remains the maximum normal side-effect level for backward compatibility. It is descriptive metadata for the current skill set, not a requirement to move or rewrite directories.
+
+Each skill has an independent `version` in the registry, starting at `0.1.0` for
+the current baseline without reconstructing earlier versions. The version covers
+the complete skill directory. `list_skills.py` shows versions and the installer
+records them in receipts; a manual directory copy does not carry the registry
+version. See [release policy](docs/release-policy.md) for version increments and
+breaking-change guidance. Registry `schema_version` describes the metadata format
+and evolves separately.
 
 Run the repository validation command after skill, docs, registry, or README changes:
 

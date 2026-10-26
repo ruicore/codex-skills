@@ -1,8 +1,9 @@
 {
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "skills": [
     {
       "name": "agent-legibility-review",
+      "version": "0.1.0",
       "path": "skills/agent-legibility-review",
       "category": "review-audit",
       "secondary_categories": [],
@@ -40,6 +41,7 @@
     },
     {
       "name": "agentic-repository-execution",
+      "version": "0.1.0",
       "path": "skills/agentic-repository-execution",
       "category": "planning-execution",
       "secondary_categories": [
@@ -89,6 +91,7 @@
     },
     {
       "name": "ai-career-signal-researcher",
+      "version": "0.1.0",
       "path": "skills/ai-career-signal-researcher",
       "category": "research",
       "secondary_categories": [
@@ -131,6 +134,7 @@
     },
     {
       "name": "architecture-review",
+      "version": "0.1.0",
       "path": "skills/architecture-review",
       "category": "review-audit",
       "secondary_categories": [],
@@ -172,6 +176,7 @@
     },
     {
       "name": "brand-deal-researcher",
+      "version": "0.1.0",
       "path": "skills/brand-deal-researcher",
       "category": "research",
       "secondary_categories": [
@@ -208,6 +213,7 @@
     },
     {
       "name": "buffer-publisher",
+      "version": "0.1.0",
       "path": "skills/buffer-publisher",
       "category": "tool-ops",
       "secondary_categories": [
@@ -249,6 +255,7 @@
     },
     {
       "name": "database-access-audit",
+      "version": "0.1.0",
       "path": "skills/database-access-audit",
       "category": "review-audit",
       "secondary_categories": [],
@@ -289,6 +296,7 @@
     },
     {
       "name": "decision-trace-writer",
+      "version": "0.1.0",
       "path": "skills/decision-trace-writer",
       "category": "agent-memory",
       "secondary_categories": [
@@ -334,6 +342,7 @@
     },
     {
       "name": "diagnose",
+      "version": "0.1.0",
       "path": "skills/diagnose",
       "category": "core-engineering",
       "secondary_categories": [],
@@ -379,6 +388,7 @@
     },
     {
       "name": "ecosystem-review",
+      "version": "0.1.0",
       "path": "skills/ecosystem-review",
       "category": "review-audit",
       "secondary_categories": [],
@@ -419,6 +429,7 @@
     },
     {
       "name": "excalidraw-diagrams",
+      "version": "0.1.0",
       "path": "skills/excalidraw-diagrams",
       "category": "visual-artifacts",
       "secondary_categories": [],
@@ -457,6 +468,7 @@
     },
     {
       "name": "feishu-doc-archiver",
+      "version": "0.1.0",
       "path": "skills/feishu-doc-archiver",
       "category": "tool-ops",
       "secondary_categories": [],
@@ -499,6 +511,7 @@
     },
     {
       "name": "feishu-issue-debugger",
+      "version": "0.1.0",
       "path": "skills/feishu-issue-debugger",
       "category": "core-engineering",
       "secondary_categories": [
@@ -545,6 +558,7 @@
     },
     {
       "name": "feishu-technical-doc-publisher",
+      "version": "0.1.0",
       "path": "skills/feishu-technical-doc-publisher",
       "category": "publishing",
       "secondary_categories": [
@@ -594,6 +608,7 @@
     },
     {
       "name": "genmedia",
+      "version": "0.1.0",
       "path": "skills/genmedia",
       "category": "tool-ops",
       "secondary_categories": [
@@ -643,6 +658,7 @@
     },
     {
       "name": "grill-me",
+      "version": "0.1.0",
       "path": "skills/grill-me",
       "category": "review-audit",
       "secondary_categories": [
@@ -679,6 +695,7 @@
     },
     {
       "name": "grill-with-docs",
+      "version": "0.1.0",
       "path": "skills/grill-with-docs",
       "category": "review-audit",
       "secondary_categories": [
@@ -723,6 +740,7 @@
     },
     {
       "name": "linkedin-publisher",
+      "version": "0.1.0",
       "path": "skills/linkedin-publisher",
       "category": "publishing",
       "secondary_categories": [
@@ -766,6 +784,7 @@
     },
     {
       "name": "medium-publisher",
+      "version": "0.1.0",
       "path": "skills/medium-publisher",
       "category": "publishing",
       "secondary_categories": [
@@ -808,6 +827,7 @@
     },
     {
       "name": "paper-deck-style",
+      "version": "0.1.0",
       "path": "skills/paper-deck-style",
       "category": "visual-artifacts",
       "secondary_categories": [],
@@ -844,6 +864,7 @@
     },
     {
       "name": "paper-mcp",
+      "version": "0.1.0",
       "path": "skills/paper-mcp",
       "category": "tool-ops",
       "secondary_categories": [
@@ -882,6 +903,7 @@
     },
     {
       "name": "prd-to-issues",
+      "version": "0.1.0",
       "path": "skills/prd-to-issues",
       "category": "planning-execution",
       "secondary_categories": [],
@@ -921,6 +943,7 @@
     },
     {
       "name": "python-backend-review",
+      "version": "0.1.0",
       "path": "skills/python-backend-review",
       "category": "review-audit",
       "secondary_categories": [],
@@ -956,6 +979,7 @@
     },
     {
       "name": "python-ecosystem-review",
+      "version": "0.1.0",
       "path": "skills/python-ecosystem-review",
       "category": "review-audit",
       "secondary_categories": [],
@@ -993,6 +1017,7 @@
     },
     {
       "name": "radar-analysis",
+      "version": "0.1.0",
       "path": "skills/radar-analysis",
       "category": "agent-memory",
       "secondary_categories": [
@@ -1034,6 +1059,7 @@
     },
     {
       "name": "readwise-cli-control",
+      "version": "0.1.0",
       "path": "skills/readwise-cli-control",
       "category": "tool-ops",
       "secondary_categories": [
@@ -1077,6 +1103,7 @@
     },
     {
       "name": "repository-layout-refactor",
+      "version": "0.1.0",
       "path": "skills/repository-layout-refactor",
       "category": "core-engineering",
       "secondary_categories": [
@@ -1118,6 +1145,7 @@
     },
     {
       "name": "tdd",
+      "version": "0.1.0",
       "path": "skills/tdd",
       "category": "core-engineering",
       "secondary_categories": [],
@@ -1167,6 +1195,7 @@
     },
     {
       "name": "weekly-radar-ingestion",
+      "version": "0.1.0",
       "path": "skills/weekly-radar-ingestion",
       "category": "agent-memory",
       "secondary_categories": [
@@ -1225,6 +1254,7 @@
     },
     {
       "name": "write-a-prd",
+      "version": "0.1.0",
       "path": "skills/write-a-prd",
       "category": "planning-execution",
       "secondary_categories": [],

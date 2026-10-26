@@ -2,14 +2,19 @@
 
 All notable changes to this repository should be recorded here.
 
-This repository is evolving informally until tagged releases are introduced.
-Use the `Unreleased` section to summarize reviewable changes as skills,
-metadata, validation, and public documentation mature.
+Skills have independent versions in `skills/index.json`; repository tags are
+optional collection snapshots. Use the `Unreleased` section to summarize
+reviewable changes, naming affected skill versions for subsequent updates.
 
 ## Unreleased
 
 ### Added
 
+- Independent skill versions, initialized at `0.1.0` for all current skills
+  without reconstructing historical versions. Listing and installation output
+  show versions; new installation receipts record `skill_version` alongside the
+  source commit and hashes, plus a registry-modified indicator. Existing receipts
+  remain compatible.
 - Added Apache-2.0 licensing for public reuse.
 - Added a release policy for future tagged releases and maintenance notes.
 - Added repository contract and grounded evolution guidance for preserving
@@ -61,3 +66,11 @@ metadata, validation, and public documentation mature.
 - Updated the README direction, repository guide links, install flow, registry
   notes, category overview, skill outcomes, and validation guidance to reflect
   the current public repository surface.
+
+### Breaking Changes
+
+- Registry schema `0.1.0` to `0.2.0`: every skill entry now requires a normal
+  `X.Y.Z` version. Previously, entries could omit it. Custom registries must add
+  `version` to each skill before using the updated validator or installer; new
+  baselines can start at `0.1.0`. This does not retroactively version existing
+  installations or change the receipt format number.

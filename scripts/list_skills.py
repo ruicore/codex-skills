@@ -14,6 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 INDEX_PATH = REPO_ROOT / "skills" / "index.json"
 DISPLAY_FIELDS = (
     ("name", "name"),
+    ("version", "version"),
     ("category", "category"),
     ("maturity", "maturity"),
     ("default_side_effect_level", "default_side_effect"),
@@ -56,7 +57,7 @@ def render_table(skills: list[dict[str, object]], show_secondary: bool = False) 
 
     display_fields = list(DISPLAY_FIELDS)
     if show_secondary:
-        display_fields.insert(2, (SECONDARY_DISPLAY_FIELD, "secondary_categories"))
+        display_fields.insert(3, (SECONDARY_DISPLAY_FIELD, "secondary_categories"))
 
     rows = [
         {label: stringify(skill.get(field, "")) for field, label in display_fields}

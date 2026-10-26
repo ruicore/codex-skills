@@ -332,6 +332,12 @@ skill to the safe behavior.
 
 ## Assigning Category And Maturity
 
+Each skill also needs an independent `version` in `skills/index.json`. Start new
+skills at `0.1.0` unless introducing a defined stable `1.0.0` contract. Follow
+[release policy](release-policy.md) when preparing updates; the version covers
+the entire package and its usage contract, independently of maturity. Keep the
+current version in the registry rather than duplicating it in skill files.
+
 Use `docs/skill-taxonomy.md` for the current category and maturity vocabulary.
 Do not invent new labels unless a separate issue updates the taxonomy.
 

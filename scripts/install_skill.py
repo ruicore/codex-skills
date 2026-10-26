@@ -78,12 +78,17 @@ def inventory(directory: Path) -> dict[str, object]:
 
 
 def plan_installs(skills: list[dict[str, object]], target: Path
-                  ) -> list[tuple[str, Path, Path]]:
+                  ) -> list[tuple[str, Path, Path, str]]:
     plan = []
     for skill in skills:
         name, raw = skill.get("name"), skill.get("path")
         if not isinstance(name, str) or not re.fullmatch(r"[a-z0-9][a-z0-9_-]*", name):
             raise RuntimeError("registry has an invalid skill name")
+        version = skill.get("version")
+        if not isinstance(version, str) or not re.fullmatch(
+            r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", version
+        ):
+            raise RuntimeError(f"skill {name} must have a valid X.Y.Z registry version")
         if not isinstance(raw, str) or not raw:
             raise RuntimeError(f"skill {name} has no valid registry path")
         source = (REPO_ROOT / raw).resolve()
@@ -95,7 +100,7 @@ def plan_installs(skills: list[dict[str, object]], target: Path
         destination = target / name
         if target.is_relative_to(source) or source.is_relative_to(target):
             raise RuntimeError("source and installation target must not overlap")
-        plan.append((name, source, destination))
+        plan.append((name, source, destination, version))
     return plan
 
 
@@ -106,6 +111,7 @@ def source_revision(source: Path) -> dict[str, object]:
         return result.stdout.strip()
     return {
         "commit": git("rev-parse", "HEAD"),
+        "registry_modified": bool(git("status", "--porcelain", "--", "skills/index.json")),
         "package_modified": bool(git(
             "status", "--porcelain", "--untracked-files=all", "--ignored=matching", "--", str(source),
             ":(exclude,glob)**/__pycache__", ":(exclude,glob)**/__pycache__/**",
@@ -121,9 +127,9 @@ def receipt_path(receipts: Path, name: str) -> Path:
     return path
 
 
-def check_conflicts(plan: list[tuple[str, Path, Path]], overwrite: bool,
+def check_conflicts(plan: list[tuple[str, Path, Path, str]], overwrite: bool,
                     receipts: Path) -> None:
-    for name, source, destination in plan:
+    for name, source, destination, _version in plan:
         source_tree = inventory(source)
         if destination.is_symlink():
             raise RuntimeError(f"destination must not be a symlink: {destination}")
@@ -162,7 +168,7 @@ def remove_created_tree(directory: Path) -> None:
 
 
 def install_one(name: str, source: Path, destination: Path, target: Path,
-                receipts: Path) -> None:
+                receipts: Path, skill_version: str) -> None:
     expected = inventory(source)
     revision = source_revision(source)
     target.mkdir(parents=True, exist_ok=True)
@@ -184,7 +190,8 @@ def install_one(name: str, source: Path, destination: Path, target: Path,
                 raise RuntimeError(f"installed content verification failed: {name}")
             receipts.mkdir(parents=True, exist_ok=True)
             path = receipt_path(receipts, name)
-            record = {"version": 1, "skill": name, "destination": str(destination),
+            record = {"version": 1, "skill": name, "skill_version": skill_version,
+                      "destination": str(destination),
                       "source": revision, "content": expected}
             with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=receipts,
                                              delete=False) as receipt_file:
@@ -223,7 +230,7 @@ def install_one(name: str, source: Path, destination: Path, target: Path,
                 remove_created_tree(temporary)
             except OSError as cleanup_error:
                 print(f"Warning: temporary installation copy remains at {temporary}: {cleanup_error}", file=sys.stderr)
-    print(f"- installed and verified {name}: {destination}")
+    print(f"- installed and verified {name}@{skill_version}: {destination}")
 
 
 def parse_args(argv: Iterable[str]) -> argparse.Namespace:
@@ -253,22 +260,22 @@ def main(argv: Iterable[str] | None = None) -> int:
             raise RuntimeError("receipt directory must be outside the skills target and must not contain it")
         selected = select_skills(load_skills(), args.names, args.category)
         plan = plan_installs(selected, target)
-        if any(receipts.is_relative_to(source) or source.is_relative_to(receipts) for _, source, _ in plan):
+        if any(receipts.is_relative_to(source) or source.is_relative_to(receipts) for _, source, _, _ in plan):
             raise RuntimeError("receipt directory must not overlap a source package")
         if args.verify:
-            for name, source, destination in plan:
+            for name, source, destination, version in plan:
                 if inventory(source) != inventory(destination):
                     raise RuntimeError(f"installed content differs from current source: {name}")
-                print(f"- verified {name}: {destination}")
+                print(f"- verified {name} content against registry version {version}: {destination}")
             return 0
         check_conflicts(plan, args.overwrite, receipts)
         print(f"{'Would install' if args.dry_run else 'Installing'} {len(plan)} skill(s) into {target}")
-        for name, source, destination in plan:
+        for name, source, destination, version in plan:
             if args.dry_run:
-                print(f"- {name}: {source} -> {destination}; receipt: {receipt_path(receipts, name)}")
+                print(f"- {name}@{version}: {source} -> {destination}; receipt: {receipt_path(receipts, name)}")
             else:
-                check_conflicts([(name, source, destination)], args.overwrite, receipts)
-                install_one(name, source, destination, target, receipts)
+                check_conflicts([(name, source, destination, version)], args.overwrite, receipts)
+                install_one(name, source, destination, target, receipts, version)
     except (RuntimeError, OSError, ValueError, subprocess.CalledProcessError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
