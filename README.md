@@ -67,6 +67,11 @@ The repository direction is captured in a small set of docs:
 
 Use these docs to classify, contain, and validate existing behavior. Do not use them as permission for broad directory moves or cosmetic rewrites.
 
+For new projects, use the [global style defaults and project AGENTS templates](templates/agents/README.md).
+Keep personal defaults in the active Codex home's `AGENTS.md` and choose a
+Python, JavaScript / TypeScript, or mixed project template for local facts and
+language rules. These templates are maintained separately from installable skills.
+
 ## Install
 
 Copy the skill directory you want into your Codex skills directory:
