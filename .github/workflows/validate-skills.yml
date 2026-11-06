@@ -7,8 +7,12 @@ on:
   pull_request:
 
 jobs:
-  validate-skills:
-    runs-on: ubuntu-latest
+  validate-platform:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -34,8 +38,20 @@ jobs:
             python scripts/validate_skills.py --require-denylist
           fi
 
-      - name: Test public hygiene scanner
+      - name: Test repository tools and public hygiene
         run: python -m unittest discover -s tests -p "test_*.py"
+
+      - name: Test workflow decision evaluator (no model calls)
+        run: python -m unittest discover -s evals/workflow-behavior/tests
+
+      - name: Test runtime plan evaluator (no model calls)
+        run: python -m unittest discover -s evals/runtime-diagnose/tests
+
+      - name: Test review trial preparation (no model calls)
+        run: python -m unittest discover -s evals/agent-legibility/tests
+
+      - name: Reproduce tool demonstrations
+        run: python -B scripts/demo_workflow_tools.py
 
       - name: Test Feishu publication preparation
         run: |
@@ -77,4 +93,15 @@ jobs:
         run: python scripts/install_skill.py diagnose --dry-run
 
       - name: Smoke test category install plan
-        run: python scripts/install_skill.py --category core-engineering --target /tmp/codex-skills-install --dry-run
+        run: python scripts/install_skill.py --category core-engineering --target "${{ runner.temp }}/codex-skills-install" --dry-run
+
+  validate-skills:
+    name: validate-skills
+    if: ${{ always() }}
+    needs: validate-platform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require successful validation on every platform
+        env:
+          PLATFORM_RESULT: ${{ needs.validate-platform.result }}
+        run: test "$PLATFORM_RESULT" = success

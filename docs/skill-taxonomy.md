@@ -135,6 +135,11 @@ Maturity describes public-readiness and reuse confidence. It is not a judgment
 of usefulness. A low-maturity skill may be valuable because it preserves an
 opinionated public workflow that should not be generalized yet.
 
+Maturity does not measure incremental effectiveness. Even `stable-workflow`
+does not imply that loading the skill improves outcomes over an ordinary
+request. Packaging checks, behavior-contract checks, and comparative task
+results support different conclusions; see [evidence and limitations](evidence.md).
+
 Private practice may identify only an abstract capability, invariant,
 authorization boundary, or failure mode. Every tracked maturity level requires
 independently designed public content; private practice is never source material
