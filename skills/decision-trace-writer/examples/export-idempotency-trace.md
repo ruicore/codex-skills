@@ -27,6 +27,7 @@
 - Trace title with date and focused decision name.
 - Problem, evidence, clarified constraint, final decision, validation, and revisit trigger.
 - Concrete local file references discovered in the current repository.
+- `trace_privacy_class: local_raw_trace`; no TraceGym footer unless explicitly requested.
 - Brief final response stating the trace path and validation performed.
 
 ## Validation Or Review Notes

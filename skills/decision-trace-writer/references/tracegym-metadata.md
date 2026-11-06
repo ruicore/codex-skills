@@ -1,6 +1,8 @@
 # TraceGym Metadata For Decision Traces
 
-Read this reference only when a stable trace has reusable workflow, skill-improvement, benchmark, evaluator, or proposal value. The metadata is a structured footer for possible later sanitized derivation; it is not a dataset, sanitized artifact, benchmark item, evaluator, or skill proposal.
+Read this reference only when the user or an applicable repository rule explicitly requests TraceGym metadata, or when correcting affected fields in an existing footer. A reusable lesson alone does not opt a new trace into metadata. Ordinary records need no footer or omission explanation.
+
+This reference retains the optional schema for existing consumers. Metadata does not authorize sanitization, publication, dataset generation, evaluator construction or skill proposals.
 
 ## Contents
 
@@ -9,7 +11,6 @@ Read this reference only when a stable trace has reusable workflow, skill-improv
 - [Compact Metadata Footer](#compact-metadata-footer)
 - [Field Rules](#field-rules)
 - [Quality And Derivation Boundaries](#quality-and-derivation-boundaries)
-- [Improvement Loop Catalog](#improvement-loop-catalog)
 
 ## Footer Contract
 
@@ -78,7 +79,7 @@ tracegym_metadata:
 
 ## Compact Metadata Footer
 
-Use this only with Small Decision Mode:
+Use this when metadata is explicitly required and the decision is brief:
 
 ````markdown
 ## TraceGym Metadata
@@ -147,18 +148,7 @@ Do not add false precision to make a trace appear benchmark-ready, archive raw t
 
 A separate later workflow may derive a sanitized task, fixture strategy, expected behavior, evaluator signal, or bounded skill proposal from reviewed traces. Keep that derivation separate from trace writing even when metadata makes it easier. This skill may inspect relevant existing traces to avoid duplicates or update the current decision. It does not perform bulk trace aggregation, sanitize artifacts, build benchmarks, generate datasets, train models, construct evaluators, or create and approve skill proposals.
 
-## Improvement Loop Catalog
-
-Use this catalog only to classify a reusable trace signal:
-
-1. A user correction, operational trace, review finding, debugging result, implementation result, or validation evidence creates a signal.
-2. Repository evidence separates an actionable stable finding from expected behavior, noise, or unresolved investigation.
-3. User, reviewer, test, or repository evidence settles the relevant constraint.
-4. A later task can use the trace as bounded context with an explicit success condition.
-5. Implementation changes only the scoped surface while preserving the recorded contract.
-6. Repository-appropriate validation records exactly what ran and what did not.
-7. A separate workflow may derive a sanitized task and synthetic or replayable fixture.
-8. Repeated reviewed evidence may later justify a bounded skill update or proposal.
-9. Implementation, validation, or a changed decision updates the durable trace and its metadata.
-
-If the trace cannot guide a future scoped task, validation gate, or skill improvement, prefer purely local memory without metadata, a shorter note, or no durable trace.
+Keep privacy layers distinct: `local_raw_trace` is private repository context;
+`sanitized_trace_seed` is a separately authorized and reviewed derivative;
+`public_benchmark_candidate` must derive from a sanitized seed and still needs
+publication review. Never export a raw trace directly as a public candidate.

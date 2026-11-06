@@ -8,6 +8,16 @@ reviewable changes, naming affected skill versions for subsequent updates.
 
 ## Unreleased
 
+### Breaking Changes
+
+- `decision-trace-writer` `0.1.0` -> `0.2.0`: new traces omit TraceGym metadata
+  unless the user or repository rules explicitly request it. Consumers that
+  require the footer must opt in; the schema and existing footer support remain
+  available. Existing traces need no bulk migration. Ordinary recording no
+  longer requires loading a format reference, expanded sections by topic, or a
+  metadata-omission explanation. Core authorization, evidence, privacy,
+  update-in-place and validation boundaries are retained.
+
 ### Evidence and reproducibility
 
 - Clarified intended outcomes, reuse maturity, and comparative effectiveness as
