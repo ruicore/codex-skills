@@ -8,6 +8,18 @@ reviewable changes, naming affected skill versions for subsequent updates.
 
 ## Unreleased
 
+### Evidence and reproducibility
+
+- Clarified intended outcomes, reuse maturity, and comparative effectiveness as
+  separate claims; added evidence guidance and a direct-request alternative.
+- Added disposable demonstrations of real installation protection, receipt
+  verification, and task-start commit-scope checks.
+- Added Linux/Windows CI coverage and explicit tests for evaluation helpers,
+  preserving the required `validate-skills` status through an aggregate gate.
+- Prepared an independently designed, three-condition agent-legibility pilot
+  with operator-only grading material. No model runs or effectiveness results
+  are claimed. Skill package content and versions are unchanged.
+
 ### Added
 
 - Independent skill versions, initialized at `0.1.0` for all current skills

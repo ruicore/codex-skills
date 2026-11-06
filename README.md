@@ -5,7 +5,19 @@ public use through clean-room authoring.
 
 This repository is not a prompt gallery. It is a small operating manual library for repeatable engineering work: diagnosis, code review, architecture review, database access audit, test-driven development, specification writing, PRD-to-issue planning, delegated repository execution, durable decision traces, reviewed weekly radar ingestion, radar history analysis, external research, visual artifacts, publishing workflows, and tool-specific operations.
 
-The goal is to make AI-assisted engineering more reliable under real project pressure. Each skill defines a workflow that an agent can follow with local repository evidence, explicit validation, and clear boundaries.
+The goal is to explore more reliable AI-assisted engineering workflows. The
+instructions encode intended behavior; their presence does not establish an
+improvement over a normal request or a short task-specific instruction.
+
+## Start with the evidence
+
+- For runnable engineering tools, try the [installation and commit-scope demos](docs/tool-demos.md).
+- For what has and has not been verified, read [evidence and limitations](docs/evidence.md).
+- To investigate incremental skill value, use the [three-condition review trial](evals/agent-legibility/README.md). It is prepared, not yet run.
+
+Choose individual workflows when they add something your task needs. Directly
+asking for the desired review or behavior can be sufficient; installing the
+whole collection is not recommended as a default.
 
 Private practice may reveal an abstract capability, engineering invariant,
 authorization boundary, or failure mode. Public skills must express those
@@ -35,7 +47,8 @@ This is not:
 
 ## Why This Exists
 
-I use Codex as an engineering partner, not only as a code generator. The work that benefits most from reusable skills is the work where consistency matters:
+I use Codex as an engineering partner, not only as a code generator. This
+collection explores workflows where consistency matters:
 
 - turning vague requests into scoped implementation plans
 - debugging with a reproduce, minimize, instrument, fix, and regression-test loop
@@ -158,7 +171,11 @@ Some category memberships are secondary; the registry records those in `secondar
 
 ## Skills and Engineering Outcomes
 
-| Skill | Engineering outcome | What it protects against |
+These are design goals and risks to inspect, not measured reductions in errors
+or evidence of superiority over no-skill use. Registry maturity describes reuse
+readiness, separately from comparative effectiveness. See [evidence and limitations](docs/evidence.md).
+
+| Skill | Intended outcome | Risks addressed by the instructions |
 |---|---|---|
 | <nobr><a href="skills/diagnose/"><code>diagnose</code></a></nobr> | Builds a fast feedback loop before fixing bugs. | Guessing, unverified fixes, missing regression tests. |
 | <nobr><a href="skills/tdd/"><code>tdd</code></a></nobr> | Drives feature work through red-green-refactor slices and structural changes through behavior-preserving green-to-green slices. | Brittle tests, implementation-coupled tests, speculative code, unsafe structural cutovers. |
@@ -220,11 +237,14 @@ Repeatable skill-driven flow:
 9. If the work needs a durable issue plan, use `prd-to-issues` to split follow-up work into verifiable slices.
 10. Use `decision-trace-writer` when an important tradeoff or constraint needs to be preserved.
 
-The value is not that the agent receives a better phrase. The value is that the work becomes inspectable, repeatable, and easier to resume later.
+The intended result is inspectable work that is easier to repeat and resume.
+Whether extra instructions improve that result needs a comparison appropriate
+to the task, model, tools, and existing repository guidance.
 
 ## Maintenance
 
-This repository is versioned informally through Git history. When changing a skill:
+Skills have independent registry versions, with source history and content hashes
+for exact tracking; see [release policy](docs/release-policy.md). When changing a skill:
 
 - keep the skill focused on its original engineering outcome
 - update supporting notes when workflow assumptions change
