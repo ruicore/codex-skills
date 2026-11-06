@@ -156,7 +156,8 @@ Examples from this repository:
   images, and sometimes a Markdown index.
 - `genmedia` saves downloaded media and JSON receipts under `outputs/`.
 - `decision-trace-writer` can create local agent-facing decision traces when the
-  repository has a convention or the user asks for durable context.
+  user requests persistence or an applicable repository rule authorizes it.
+  A directory convention determines placement, not permission to write.
 
 User confirmation:
 
